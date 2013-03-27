@@ -3,8 +3,8 @@
   <component name="DevKit.ModuleBuildProperties" url="file://$MODULE_DIR$/META-INF/plugin.xml" />
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
-    <content url="file://$MODULE_DIR$/../RandoriCompiler">
-      <sourceFolder url="file://$MODULE_DIR$/../RandoriCompiler/src" isTestSource="false" />
+    <content url="file://$MODULE_DIR$/../Compiler">
+      <sourceFolder url="file://$MODULE_DIR$/../Compiler/src" isTestSource="false" />
     </content>
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
