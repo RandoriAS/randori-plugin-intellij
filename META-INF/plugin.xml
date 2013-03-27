@@ -1,0 +1,114 @@
+<idea-plugin version="2" url="http://randoriframework.com">
+    <name>Randori Framework</name>
+    <version>0.2.1</version>
+    <idea-version since-build="123.169"/>
+
+    <vendor>Teoti Graphix, LLC</vendor>
+    <category>Framework integration</category>
+
+    <description><![CDATA[
+    <p>The Randori Framework is a tool that helps making LARGE Javascript application development manageable.</p>
+    <p>It consists of an Actionscript cross-compiler and a client-side JavaScript framework.</p>
+    <p>Please visit <strong>http://randoriframework.com</strong> for more information.</p>
+    ]]></description>
+
+    <change-notes>
+        <![CDATA[
+         <h3>0.2.1 changes:</h3>
+            <ul>
+                <li>[plugin-feature] Build on file save.</li>
+                <li>[plugin-enhancement] Added Behavior, Mediator and Context templates.</li>
+                <li>[compiler-feature] Private constructors cancel build.</li>
+            </ul>
+         <h3>0.2.0 changes:</h3>
+            <ul>
+                <li>Plugin alpha release.</li>
+            </ul>
+        ]]>
+    </change-notes>
+
+    <application-components>
+        <component>
+            <implementation-class>randori.plugin.runner.RandoriRunnerConfigurationType</implementation-class>
+        </component>
+        <component>
+            <implementation-class>randori.plugin.components.RandoriApplicationComponent</implementation-class>
+        </component>
+        <component>
+            <implementation-class>randori.plugin.components.WorkspaceApplicationComponent</implementation-class>
+        </component>
+    </application-components>
+
+    <project-components>
+        <component>
+            <implementation-class>randori.plugin.components.RandoriProjectComponent</implementation-class>
+        </component>
+        <!-- component>
+            <implementation-class>randori.plugin.components.RandoriBundleProjectComponent</implementation-class>
+        </component -->
+        <component>
+            <implementation-class>randori.plugin.runner.RandoriServerComponent</implementation-class>
+        </component>
+        <!--<component>-->
+        <!--<implementation-class>randori.plugin.components.ASProjectComponent</implementation-class>-->
+        <!--</component>-->
+    </project-components>
+
+    <module-components>
+        <!--<component>-->
+        <!--<implementation-class>randori.plugin.components.RandoriModuleComponent</implementation-class>-->
+        <!--</component>-->
+    </module-components>
+
+    <actions>
+        <action id="RandoriPlugin.BuildClean" class="randori.plugin.action.RunBuildCleanAction"
+                text="Build and Clean Randori..."
+                description="Build and Cleans a Randori project">
+            <add-to-group group-id="BuildMenu" anchor="last"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl alt C"/>
+        </action>
+        <action id="RandoriPlugin.Build" class="randori.plugin.action.RunBuildAction" text="Build Randori..."
+                description="Builds a Randori project">
+            <add-to-group group-id="BuildMenu" anchor="last"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl alt R"/>
+        </action>
+
+        <!--<action class="randori.plugin.action.CreateActionScriptClassAction" text="AS Class" id="NewASClass">-->
+        <!--<add-to-group anchor="last" group-id="NewGroup"/>-->
+        <!--</action>-->
+
+    </actions>
+
+    <extensions defaultExtensionNs="com.intellij">
+
+        <!--<fileTemplateGroup implementation="randori.plugin.action.RandoriTemplatesFactory"/>-->
+
+        <sdkType implementation="randori.plugin.roots.RandoriSdk"/>
+
+        <moduleType id="RANDORI_MODULE"
+                    implementationClass="randori.plugin.module.RandoriModuleType"
+                    classpathProvider="true"/>
+
+        <!-- moduleType id="RANDORI_BUNDLE_MODULE"
+                    implementationClass="randori.plugin.module.RandoriBundleModuleType"
+                    classpathProvider="true"/ -->
+
+        <moduleConfigurationEditorProvider implementation="randori.plugin.module.RandoriModuleEditorsProvider"/>
+
+        <!-- moduleConfigurationEditorProvider implementation="randori.plugin.module.RandoriBundleModuleEditorsProvider"/ -->
+
+        <configurationType implementation="randori.plugin.runner.RandoriRunnerConfigurationType"/>
+
+        <toolWindow id="Randori Problems" anchor="bottom" icon="/icons/randori13x13.png"
+                    factoryClass="randori.plugin.ui.ProblemsToolWindowFactory"/>
+
+        <dom.fileDescription implementation="randori.plugin.xml.FalconConfigDomFileDescription"></dom.fileDescription>
+
+        <projectService
+                serviceImplementation="randori.plugin.service.RandoriProjectPreferences"/>
+        <projectService
+                serviceImplementation="randori.plugin.service.ProblemsService"/>
+
+    </extensions>
+
+</idea-plugin>

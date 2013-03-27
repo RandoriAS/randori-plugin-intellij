@@ -1,0 +1,10 @@
+package ${PACKAGE_NAME} {
+import randori.behaviors.AbstractMediator;
+#parse("File Header.java")
+public class ${NAME} extends AbstractMediator {
+
+    override protected function onRegister():void {
+
+    }
+}
+}
