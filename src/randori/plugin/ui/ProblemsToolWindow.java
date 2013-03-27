@@ -218,6 +218,7 @@ public class ProblemsToolWindow
     }
 
     private String generateMenuTitle(int rowIndex) {
+        rowIndex = table.convertRowIndexToModel(rowIndex);
         ProblemsTableModel model = (ProblemsTableModel) table.getModel();
         ICompilerProblem problem = model.getProblemAt(rowIndex);
         if (problem != null)
