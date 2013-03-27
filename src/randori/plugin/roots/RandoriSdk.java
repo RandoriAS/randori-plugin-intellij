@@ -62,9 +62,9 @@ public class RandoriSdk extends SdkType
 
     private static final String BUILTIN = "builtin";
 
-    private static final String RANDORI = "Randori";
+    private static final String RANDORI = "randori-framework";
 
-    private static final String RANDORI_GUICE = "RandoriGuice";
+    private static final String RANDORI_GUICE = "randori-guice-framework";
 
     private static final String JQUERY = "JQuery";
 
@@ -253,18 +253,18 @@ public class RandoriSdk extends SdkType
 
             // copy the files to generated
             VirtualFile randoriJS = sdkRoot.findFileByRelativePath("src/"
-                    + RANDORI + ".js");
+                    + "Randori" + ".js");
             VirtualFile guiceJS = sdkRoot.findFileByRelativePath("src/"
-                    + RANDORI_GUICE + ".js");
+                    + "RandoriGuice" + ".js");
 
             try
             {
                 FileUtil.copy(new File(randoriJS.getPath()),
-                        new File(baseDir.getPath(), libPath + "/" + RANDORI
+                        new File(baseDir.getPath(), libPath + "/" + "Randori"
                                 + ".js"));
                 FileUtil.copy(new File(guiceJS.getPath()),
                         new File(baseDir.getPath(), libPath + "/"
-                                + RANDORI_GUICE + ".js"));
+                                + "RandoriGuice" + ".js"));
             }
             catch (IOException e)
             {
