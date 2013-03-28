@@ -19,6 +19,15 @@
 
 package randori.plugin.components;
 
+import javax.swing.JComponent;
+
+import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NotNull;
+
+import randori.plugin.forms.RandoriProjectConfigurationForm;
+import randori.plugin.ui.ProblemsToolWindowFactory;
+import randori.plugin.utils.ProjectUtils;
+
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.components.State;
@@ -26,24 +35,16 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
-
-import com.intellij.openapi.roots.impl.SdkFinder;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
-import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
-import randori.plugin.forms.RandoriProjectConfigurationForm;
-import randori.plugin.ui.ProblemsToolWindowFactory;
-import randori.plugin.utils.ProjectUtils;
-
-import javax.swing.*;
 
 @State(name = RandoriProjectComponent.COMPONENT_NAME, storages = { @Storage(id = "randoriproject", file = "$PROJECT_FILE$") })
 // TODO Need to get the state out of this component and into a Model class
 /**
  * @author Michael Schmalle
  */
-public class RandoriProjectComponent extends BaseRandoriProjectComponent implements ProjectComponent, Configurable,
+public class RandoriProjectComponent extends BaseRandoriProjectComponent
+        implements ProjectComponent, Configurable,
         PersistentStateComponent<RandoriProjectModel>
 {
     public static final String COMPONENT_NAME = "RandoriProject";
@@ -123,9 +124,6 @@ public class RandoriProjectComponent extends BaseRandoriProjectComponent impleme
     @Override
     public void loadState(RandoriProjectModel state)
     {
-        //setBasePath(state.getBasePath());
-        //setLibraryPath(state.getLibraryPath());
-        //setClassesAsFile(state.isClassesAsFile());
     }
 
     @Override

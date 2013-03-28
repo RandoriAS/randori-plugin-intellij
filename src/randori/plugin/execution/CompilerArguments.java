@@ -36,13 +36,15 @@ public class CompilerArguments
 
     private List<String> sources = new ArrayList<String>();
 
+    private String appName;
+
     private String output;
 
     private String jsLibraryPath;
 
     private String jsBasePath;
 
-    private boolean jsOutputAsFiles;
+    private boolean jsOutputAsFiles = false;
 
     public void addLibraryPath(String path)
     {
@@ -56,6 +58,16 @@ public class CompilerArguments
         if (sources.contains(path))
             return;
         sources.add(path);
+    }
+
+    public String getAppName()
+    {
+        return appName;
+    }
+
+    public void setAppName(String value)
+    {
+        appName = value;
     }
 
     public String getOutput()
@@ -122,22 +134,20 @@ public class CompilerArguments
     {
         List<String> result = new ArrayList<String>();
 
-        // libs
         for (String arg : libraries)
         {
             result.add("-library-path=" + arg);
         }
-        // sources
+        
         for (String arg : sources)
         {
             result.add("-sp=" + arg);
         }
-        //
 
+        result.add("-app-name=" + getAppName());
         result.add("-js-base-path=" + getJsBasePath());
         result.add("-js-library-path=" + getJsLibraryPath());
-        //result.add("-js-classes-as-files=" + (isJsOutputAsFiles() ? "true" : "false"));
-        result.add("-js-classes-as-files=true");
+        result.add("-js-classes-as-files=" + (isJsOutputAsFiles() ? "true" : "false"));
         result.add("-output=" + getOutput());
 
         return result.toArray(new String[] {});
@@ -145,6 +155,7 @@ public class CompilerArguments
 
     public void configure(Project project, RandoriProjectModel model)
     {
+        setAppName(project.getName());
         setJsBasePath(model.getBasePath());
         setJsLibraryPath(model.getLibraryPath());
         setJsOutputAsFiles(model.isClassesAsFile());

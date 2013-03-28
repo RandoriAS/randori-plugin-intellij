@@ -19,13 +19,7 @@
 
 package randori.plugin.components;
 
-import com.intellij.openapi.components.ApplicationComponent;
-import com.intellij.openapi.vfs.VirtualFileListener;
-import com.intellij.openapi.vfs.VirtualFileManager;
 import org.jetbrains.annotations.NotNull;
-import randori.plugin.builder.FileChangeListener;
-import randori.plugin.execution.BuildSourceCommand;
-import randori.plugin.execution.CompilerArguments;
 
 /**
  * @author Michael Schmalle
