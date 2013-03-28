@@ -46,11 +46,15 @@ public class CompilerArguments
 
     public void addLibraryPath(String path)
     {
+        if (libraries.contains(path))
+            return;
         libraries.add(path);
     }
 
     public void addSourcepath(String path)
     {
+        if (sources.contains(path))
+            return;
         sources.add(path);
     }
 
