@@ -1,5 +1,5 @@
 <idea-plugin version="2" url="http://randoriframework.com">
-    <name>Randori Framework</name>
+    <name>Randori</name>
     <version>0.2.1</version>
     <idea-version since-build="123.169"/>
 
@@ -16,6 +16,8 @@
         <![CDATA[
          <h3>0.2.1 changes:</h3>
             <ul>
+                <li>[compiler-bug] getClassDependencies() now tracks Type arguments as dependencies.</li>
+                <li>[compiler-bug] Array literal variable error.</li>
                 <li>[plugin-feature] Build on file save.</li>
                 <li>[plugin-enhancement] Added Behavior, Mediator and Context templates.</li>
                 <li>[compiler-feature] Private constructors cancel build.</li>
