@@ -1,5 +1,5 @@
 <idea-plugin version="2" url="http://randoriframework.com">
-    <name>Randori</name>
+    <name>Randori Compiler</name>
     <version>0.2.1</version>
     <idea-version since-build="123.169"/>
 
