@@ -189,10 +189,8 @@ public class RandoriSdk extends SdkType
     {
         ArrayList<VirtualFile> result = new ArrayList<VirtualFile>();
         Collection<IBundleLibrary> libraries = bundle.getLibraries();
-        Iterator<IBundleLibrary> iterator = libraries.iterator();
-        while(iterator.hasNext())
+        for(IBundleLibrary library : libraries)
         {
-            IBundleLibrary library = iterator.next();
             result.addAll(getSWCPathsFromBundleLibrary(library, sdkRoot));
         }
         return result;
@@ -200,35 +198,26 @@ public class RandoriSdk extends SdkType
 
     private Collection<VirtualFile> getSWCPathsFromBundleLibrary(IBundleLibrary bundleLibrary, VirtualFile sdkRoot) {
         ArrayList<VirtualFile> result = new ArrayList<VirtualFile>();
-        Iterator<IBundleContainer> containerIterator = bundleLibrary.getContainers().iterator();
-        while(containerIterator.hasNext())
+        IBundleContainer container = bundleLibrary.getContainer(IBundleContainer.Type.BIN);
+        if (container != null)
         {
-            IBundleContainer container = containerIterator.next();
-            if (container.getType().equals(IBundleContainer.Type.BIN))
-            {
-                getEntriesFromCategories(sdkRoot, result, container);
-            }
+            getEntriesFromCategories(sdkRoot, result, container);
         }
         return result;
     }
 
     private void getEntriesFromCategories(VirtualFile sdkRoot, ArrayList<VirtualFile> result, IBundleContainer container) {
-        Iterator<IBundleCategory> categoryIterator =  container.getCategories().iterator();
-        while(categoryIterator.hasNext())
+        IBundleCategory category = container.getCategory(IBundleCategory.Type.SWC);
+        if (category != null)
         {
-            IBundleCategory category = categoryIterator.next();
-            if (category.getType().equals(IBundleCategory.Type.SWC))
-            {
-                getSWCEntries(sdkRoot, result, category);
-            }
+            getSWCEntries(sdkRoot, result, category);
         }
     }
 
     private void getSWCEntries(VirtualFile sdkRoot, ArrayList<VirtualFile> result, IBundleCategory category) {
-        Iterator<IBundleEntry> entriesIterator = category.getEntries().iterator();
-        while(entriesIterator.hasNext())
+        Collection<IBundleEntry> entries = category.getEntries();
+        for(IBundleEntry entry : entries)
         {
-            IBundleEntry entry = entriesIterator.next();
             result.add(getSWC(sdkRoot, entry.getPath()));
         }
     }
@@ -268,11 +257,13 @@ public class RandoriSdk extends SdkType
         final VirtualFile baseDir = project.getBaseDir();
 
         final Sdk sdk = ProjectRootManager.getInstance(project).getProjectSdk();
-        RandoriSdk randoriSdk = (RandoriSdk) sdk.getSdkType();
 
         if (sdk == null)
             throw new RuntimeException(
                     "Tried to copy libraries but SDK was null");
+
+        RandoriSdk randoriSdk = (RandoriSdk) sdk.getSdkType();
+
 
         VirtualFile sdkRoot = sdk.getHomeDirectory();
         if (sdkRoot == null || !sdkRoot.exists())
@@ -304,44 +295,33 @@ public class RandoriSdk extends SdkType
 
     private static void copyJSFilesFromBundle(VirtualFile baseDir, VirtualFile sdkRoot, IBundle sdkBundle) {
         Collection<IBundleLibrary> libraries = sdkBundle.getLibraries();
-        Iterator<IBundleLibrary> iterator = libraries.iterator();
-        while(iterator.hasNext())
+        for(IBundleLibrary library : libraries)
         {
-            IBundleLibrary library = iterator.next();
             copyJSFilesFromLibrary(baseDir, sdkRoot, library);
         }
     }
 
     private static void copyJSFilesFromLibrary(VirtualFile baseDir, VirtualFile sdkRoot, IBundleLibrary library) {
-        Iterator<IBundleContainer> containerIterator = library.getContainers().iterator();
-        while(containerIterator.hasNext())
-        {
-            IBundleContainer container = containerIterator.next();
-            if (container.getType().equals(IBundleContainer.Type.JS))
-            {
-                copyJSFilesFromContainer(baseDir, sdkRoot, container);
-            }
-        }
 
-    }
+        IBundleContainer container = library.getContainer(IBundleContainer.Type.JS);
+        if (container != null)
+        {
+            copyJSFilesFromContainer(baseDir, sdkRoot, container);
+        }
+   }
 
     private static void copyJSFilesFromContainer(VirtualFile baseDir, VirtualFile sdkRoot, IBundleContainer container) {
-        Iterator<IBundleCategory> categoryIterator =  container.getCategories().iterator();
-        while(categoryIterator.hasNext())
+        IBundleCategory category = container.getCategory(IBundleCategory.Type.MONO);
+        if (category != null)
         {
-            IBundleCategory category = categoryIterator.next();
-            if (category.getType().equals(IBundleCategory.Type.MONO))
-            {
-                copyJSFilesFromCategory(baseDir, sdkRoot, category);
-            }
+            copyJSFilesFromCategory(baseDir, sdkRoot, category);
         }
     }
 
     private static void copyJSFilesFromCategory(VirtualFile baseDir, VirtualFile sdkRoot, IBundleCategory category) {
-        Iterator<IBundleEntry> entriesIterator = category.getEntries().iterator();
-        while(entriesIterator.hasNext())
+        Collection<IBundleEntry> entries = category.getEntries();
+        for(IBundleEntry entry : entries)
         {
-            IBundleEntry entry = entriesIterator.next();
             copyJSEntry(baseDir, sdkRoot, entry);
         }
     }
