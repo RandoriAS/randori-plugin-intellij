@@ -134,18 +134,6 @@ public class ProjectUtils
     }
 
     /**
-     * Return the current <code>playerglobal.swc</code> for the current Sdk.
-     * 
-     * @param project The project.
-     */
-    public static final String getPlayerGloablPath(Project project)
-    {
-        String path = getSDKBasePath(project);
-        path = path + "/bin/builtin.swc";
-        return path;
-    }
-
-    /**
      * Return a List of all swcs found within the Project.
      * 
      * @param project The project.

@@ -110,15 +110,6 @@ public class BaseRandoriProjectComponent {
 
         arguments.configure(project, getModel());
 
-        if (ProjectUtils.isSDKInstalled(project))
-        {
-            arguments.addLibraryPath(ProjectUtils.getPlayerGloablPath(project));
-        }
-        else
-        {
-            // TODO throw Exception()
-        }
-
         for (String library : ProjectUtils.getAllProjectSWCs(project))
         {
             arguments.addLibraryPath(library);
