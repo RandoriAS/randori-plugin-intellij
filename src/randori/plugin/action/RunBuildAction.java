@@ -30,7 +30,7 @@ import com.intellij.openapi.project.Project;
 /**
  * @author Michael Schmalle
  */
-public class RunBuildAction extends AnAction
+public class RunBuildAction extends BaseRandoriBuildAction
 {
 
     @Override

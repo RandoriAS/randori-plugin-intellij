@@ -29,7 +29,7 @@ import randori.plugin.utils.ProjectUtils;
 /**
  * @author Michael Schmalle
  */
-public class RunBuildCleanAction extends AnAction
+public class RunBuildCleanAction extends BaseRandoriBuildAction
 {
 
     @Override
