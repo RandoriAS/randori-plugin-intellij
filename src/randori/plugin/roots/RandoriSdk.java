@@ -151,7 +151,7 @@ public class RandoriSdk extends SdkType
         {
             sdkVersion = sdkBundle.getVersion();
         }
-        return sdkVersion.getBundleVersion().toString();
+        return sdkVersion.getRandoriVersion().toString();
     }
 
     @Override
