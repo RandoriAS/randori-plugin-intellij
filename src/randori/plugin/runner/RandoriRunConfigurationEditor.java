@@ -19,21 +19,22 @@
 
 package randori.plugin.runner;
 
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.*;
 
 import com.intellij.execution.ui.ConfigurationModuleSelector;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 /**
  * @author Michael Schmalle
+ * @author Roland Zwaga
  */
 public class RandoriRunConfigurationEditor extends
-        SettingsEditor<RandoriRunConfiguration>
+        SettingsEditor<RandoriRunConfiguration> implements ActionListener
 {
     private JPanel panel;
 
@@ -42,6 +43,9 @@ public class RandoriRunConfigurationEditor extends
     @SuppressWarnings({ "rawtypes" })
     private JComboBox modules;
     private JTextField webRoot;
+    private JRadioButton useEmbeddedServer;
+    private JRadioButton useExistingWebserver;
+    private ButtonGroup webserverGroup;
 
     //private JTextField webRoot;
 
@@ -62,6 +66,7 @@ public class RandoriRunConfigurationEditor extends
         //configuration.webRoot = webRoot.getText();
         configuration.indexRoot = indexRoot.getText();
         configuration.explicitWebroot = webRoot.getText();
+        configuration.useExplicitWebroot = (useExistingWebserver.isSelected());
         moduleSelector.applyTo(configuration);
     }
 
@@ -72,14 +77,39 @@ public class RandoriRunConfigurationEditor extends
         //webRoot.setText(configuration.webRoot);
         indexRoot.setText(configuration.indexRoot);
         webRoot.setText(configuration.explicitWebroot);
+        if (configuration.useExplicitWebroot)
+        {
+            useExistingWebserver.setSelected(true);
+            useEmbeddedServer.setSelected(false);
+        }
+        else
+        {
+            useExistingWebserver.setSelected(false);
+            useEmbeddedServer.setSelected(true);
+        }
+        webRoot.setEnabled(configuration.useExplicitWebroot);
         moduleSelector.reset(configuration);
     }
 
     @Override
     protected JComponent createEditor()
     {
+        webserverGroup = new ButtonGroup();
+        webserverGroup.add(useEmbeddedServer);
+        webserverGroup.add(useExistingWebserver);
+
+        useEmbeddedServer.setActionCommand("EMBEDDED");
+        useExistingWebserver.setActionCommand("EXISTING");
+
+        useEmbeddedServer.addActionListener(this);
+        useExistingWebserver.addActionListener(this);
+
         moduleSelector = new ConfigurationModuleSelector(project, modules);
         return panel;
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        webRoot.setEnabled(e.getActionCommand() == "EXISTING");
     }
 
     @Override

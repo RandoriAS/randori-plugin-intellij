@@ -187,10 +187,10 @@ public class RandoriServerComponent implements ProjectComponent
 
     public String getURL(String index, String explicitWebRoot)
     {
-        int port = component.getState().getPort();
         String url  = explicitWebRoot;
         if (url.length() == 0)
         {
+            int port = component.getState().getPort();
             url = "http://localhost:" + port + "/" + index;
         }
         else

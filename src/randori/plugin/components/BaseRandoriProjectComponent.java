@@ -41,7 +41,8 @@ public class BaseRandoriProjectComponent {
     {
         RandoriServerComponent component = getProject().getComponent(
                 RandoriServerComponent.class);
-        component.openURL(configuration.indexRoot, configuration.explicitWebroot);
+        String explicitWebroot = (configuration.useExplicitWebroot) ? configuration.explicitWebroot : "";
+        component.openURL(configuration.indexRoot, explicitWebroot);
     }
 
     public void reparse(VirtualFile file)

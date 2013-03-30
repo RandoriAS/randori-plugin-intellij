@@ -54,9 +54,7 @@ import com.intellij.util.xmlb.XmlSerializer;
 public class RandoriRunConfiguration extends
         ModuleBasedConfiguration<RandoriApplicationModuleBasedConfiguration>
 {
-    //----------------------------------
-    // explicitWebroot
-    //----------------------------------
+    public boolean useExplicitWebroot = false;
 
     public String explicitWebroot = "";
 
