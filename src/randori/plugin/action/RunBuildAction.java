@@ -22,7 +22,6 @@ package randori.plugin.action;
 import randori.plugin.components.RandoriProjectComponent;
 import randori.plugin.utils.ProjectUtils;
 
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.project.Project;
@@ -30,7 +29,7 @@ import com.intellij.openapi.project.Project;
 /**
  * @author Michael Schmalle
  */
-public class RunBuildAction extends BaseRandoriBuildAction
+public class RunBuildAction extends BaseRandoriMenuAction
 {
 
     @Override

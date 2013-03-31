@@ -74,11 +74,9 @@
             <add-to-group group-id="BuildMenu" anchor="last"/>
             <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl alt R"/>
         </action>
-
         <!--<action class="randori.plugin.action.CreateActionScriptClassAction" text="AS Class" id="NewASClass">-->
         <!--<add-to-group anchor="last" group-id="NewGroup"/>-->
         <!--</action>-->
-
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">

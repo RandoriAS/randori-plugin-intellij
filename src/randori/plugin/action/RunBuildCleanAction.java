@@ -19,7 +19,6 @@
 
 package randori.plugin.action;
 
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.project.Project;
@@ -29,7 +28,7 @@ import randori.plugin.utils.ProjectUtils;
 /**
  * @author Michael Schmalle
  */
-public class RunBuildCleanAction extends BaseRandoriBuildAction
+public class RunBuildCleanAction extends BaseRandoriMenuAction
 {
 
     @Override

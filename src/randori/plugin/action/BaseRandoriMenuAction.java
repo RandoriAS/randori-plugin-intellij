@@ -2,13 +2,21 @@ package randori.plugin.action;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.util.IconLoader;
 import randori.plugin.utils.ProjectUtils;
 
 /**
  * @author Roland Zwaga <roland@stackandheap.com>
  */
-public class BaseRandoriBuildAction extends AnAction
+public class BaseRandoriMenuAction extends AnAction
 {
+
+    public BaseRandoriMenuAction()
+    {
+        super(IconLoader
+                .getIcon("/icons/randori.png"));
+    }
+
     @Override
     public void actionPerformed(AnActionEvent event)
     {
