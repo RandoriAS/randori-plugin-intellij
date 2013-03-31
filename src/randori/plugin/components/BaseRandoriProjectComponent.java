@@ -2,6 +2,7 @@ package randori.plugin.components;
 
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.LogicalPosition;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.module.Module;
@@ -119,7 +120,11 @@ public class BaseRandoriProjectComponent {
         {
             arguments.addSourcepath(library);
         }
-
+        
+        // save all files before parse, devs might have other files open that are
+        // not saved, IDEA works on save everything, use local history to revert paradigm I guess
+        FileDocumentManager.getInstance().saveAllDocuments();
+        
         Module[] modules = ModuleManager.getInstance(project).getModules();
         for (Module module : modules)
         {
