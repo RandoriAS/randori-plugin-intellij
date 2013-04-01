@@ -1,6 +1,6 @@
 <idea-plugin version="2" url="http://randoriframework.com">
     <name>Randori Compiler</name>
-    <version>0.2.1</version>
+    <version>0.2.2</version>
     <idea-version since-build="123.169"/>
 
     <vendor>Teoti Graphix, LLC</vendor>
@@ -14,6 +14,10 @@
 
     <change-notes>
         <![CDATA[
+         <h3>0.2.2 changes:</h3>
+            <ul>
+                <li>[plugin-enhancement] TODO</li>
+         </ul>
          <h3>0.2.1 changes:</h3>
             <ul>
                 <li>[compiler-bug] getClassDependencies() now tracks Type arguments as dependencies.</li>
