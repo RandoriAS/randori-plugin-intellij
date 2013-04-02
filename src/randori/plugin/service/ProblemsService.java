@@ -96,8 +96,7 @@ public class ProblemsService
 
         if (!new File(path).exists())
         {
-            log.error("Problem File does not exist for "
-                    + problem.getSourcePath());
+            log.error("Problem - " + problem.toString());
             return;
         }
 

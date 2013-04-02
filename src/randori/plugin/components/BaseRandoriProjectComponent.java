@@ -17,6 +17,8 @@ import randori.plugin.service.ProblemsService;
 import randori.plugin.utils.ProjectUtils;
 import randori.plugin.utils.VFileUtils;
 
+import java.io.File;
+
 public class BaseRandoriProjectComponent {
     protected RandoriProjectModel model;
     private Project project;
@@ -103,7 +105,7 @@ public class BaseRandoriProjectComponent {
         }
     }
 
-    public void configureDependencies(Project project,
+    public boolean configureDependencies(Project project,
             CompilerArguments arguments)
     {
         arguments.clear();
@@ -112,7 +114,12 @@ public class BaseRandoriProjectComponent {
 
         if (ProjectUtils.isSDKInstalled(project))
         {
-            arguments.addLibraryPath(ProjectUtils.getPlayerGloablPath(project));
+            String builtin = ProjectUtils.getPlayerGloablPath(project);
+            if (builtin == null || !new File(builtin).exists())
+            {
+               throw new RuntimeException("builtin.swc not found, please check you SDK setup " + builtin);
+            }
+            arguments.addLibraryPath(builtin);
         }
         else
         {
@@ -139,6 +146,8 @@ public class BaseRandoriProjectComponent {
                 arguments.addSourcepath(virtualFile.getPath());
             }
         }
+
+        return true;
     }
 
     public RandoriProjectModel getModel()
