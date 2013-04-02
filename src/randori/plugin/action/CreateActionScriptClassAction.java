@@ -34,6 +34,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import randori.plugin.icons.RandoriIcons;
 import randori.plugin.module.RandoriModuleType;
 
 /**
@@ -46,7 +47,7 @@ public class CreateActionScriptClassAction extends
     public CreateActionScriptClassAction()
     {
         super("Create new AS Class", "Creates a new ActionScript class",
-                RandoriModuleType.RANDORI_ICON_SMALL, true);
+                RandoriIcons.Randori16, true);
     }
 
     @Nullable
@@ -66,8 +67,9 @@ public class CreateActionScriptClassAction extends
         // templateName 'template'
 
         final String fileName = className + ".as";
-        final PsiFile fromTemplate = RandoriTemplatesFactory
-                .createFromTemplate(dir, className, fileName, templateName);
+        final PsiFile fromTemplate = null;
+        /*final PsiFile fromTemplate = RandoriTemplatesFactory
+                .createFromTemplate(dir, className, fileName, templateName);*/
 
         return fromTemplate;
     }
@@ -77,7 +79,7 @@ public class CreateActionScriptClassAction extends
             CreateFileFromTemplateDialog.Builder builder)
     {
         builder.setTitle("Create new Class").addKind("Class",
-                RandoriModuleType.RANDORI_ICON_SMALL, "RandoriClass.as");
+                RandoriIcons.Randori16, "RandoriClass.as");
 
         for (FileTemplate template : FileTemplateManager.getInstance()
                 .getAllTemplates())
@@ -89,7 +91,7 @@ public class CreateActionScriptClassAction extends
                     .getInstance().getPackage(directory) != null)
             {
                 builder.addKind(template.getName(),
-                        RandoriModuleType.RANDORI_ICON_SMALL,
+                        RandoriIcons.Randori16,
                         template.getName());
             }
         }

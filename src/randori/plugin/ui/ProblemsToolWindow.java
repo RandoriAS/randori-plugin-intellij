@@ -39,6 +39,7 @@ import org.apache.flex.compiler.problems.ICompilerProblem;
 import org.apache.flex.compiler.problems.annotations.DefaultSeverity;
 
 import randori.plugin.components.RandoriProjectComponent;
+import randori.plugin.icons.RandoriIcons;
 import randori.plugin.service.ProblemsService;
 import randori.plugin.service.ProblemsService.OnProblemServiceListener;
 import randori.plugin.utils.ProjectUtils;
@@ -208,8 +209,7 @@ public class ProblemsToolWindow
                 }
             };
             JMenuItem item;
-            popupMenu.add(item = new JMenuItem(menuTitle, IconLoader
-                    .getIcon("/icons/jumpto.png")));
+            popupMenu.add(item = new JMenuItem(menuTitle, RandoriIcons.JumpToArrow));
             item.setHorizontalTextPosition(JMenuItem.RIGHT);
             item.addActionListener(menuListener);
             return popupMenu;

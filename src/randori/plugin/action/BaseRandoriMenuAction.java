@@ -3,6 +3,7 @@ package randori.plugin.action;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.util.IconLoader;
+import randori.plugin.icons.RandoriIcons;
 import randori.plugin.utils.ProjectUtils;
 
 /**
@@ -13,8 +14,7 @@ public class BaseRandoriMenuAction extends AnAction
 
     public BaseRandoriMenuAction()
     {
-        super(IconLoader
-                .getIcon("/icons/randori.png"));
+        super(RandoriIcons.Randori16);
     }
 
     @Override

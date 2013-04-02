@@ -33,6 +33,7 @@ import javax.xml.stream.XMLStreamException;
 import randori.compiler.bundle.*;
 import randori.compiler.bundle.io.StAXManifestReader;
 import randori.plugin.components.RandoriProjectComponent;
+import randori.plugin.icons.RandoriIcons;
 import randori.plugin.module.RandoriModuleType;
 
 import com.intellij.openapi.project.Project;
@@ -129,13 +130,13 @@ public class RandoriSdk extends SdkType
     @Override
     public Icon getIconForAddAction()
     {
-        return RandoriModuleType.RANDORI_ICON_SMALL;
+        return RandoriIcons.Randori16;
     }
 
     @Override
     public Icon getIcon()
     {
-        return RandoriModuleType.RANDORI_ICON_SMALL;
+        return RandoriIcons.Randori16;
     }
 
     @Override

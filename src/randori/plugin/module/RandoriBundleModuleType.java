@@ -7,6 +7,7 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.IconLoader;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
+import randori.plugin.icons.RandoriIcons;
 
 import javax.swing.*;
 
@@ -18,12 +19,6 @@ import javax.swing.*;
  * To change this template use File | Settings | File Templates.
  */
 public class RandoriBundleModuleType extends ModuleType<RandoriBundleModuleBuilder> {
-
-    public static final Icon RANDORI_ICON_SMALL = IconLoader
-            .getIcon("/randori/plugin/module/randori.png");
-
-    public static final Icon RANDORI_ICON_LARGE = IconLoader
-            .getIcon("/randori/plugin/module/randorix2.png");
 
     @NonNls
     private static final String MODULE_ID = "RANDORI_BUNDLE_MODULE";
@@ -66,13 +61,13 @@ public class RandoriBundleModuleType extends ModuleType<RandoriBundleModuleBuild
     @Override
     public Icon getBigIcon()
     {
-        return RANDORI_ICON_LARGE;
+        return RandoriIcons.Randori24;
     }
 
     @Override
     public Icon getNodeIcon(boolean isOpened)
     {
-        return RANDORI_ICON_SMALL;
+        return RandoriIcons.Randori16;
     }
 
     @Override
