@@ -16,8 +16,9 @@
         <![CDATA[
          <h3>0.2.2 changes:</h3>
             <ul>
-                <li>[plugin-enhancement] TODO</li>
-         </ul>
+                <li>[compiler-bug] fixed bug with function call and JavaScript(name) transform.</li>
+                <li>[compiler-bug] fixed issue with global static function not reducing correctly.</li>
+            </ul>
          <h3>0.2.1 changes:</h3>
             <ul>
                 <li>[compiler-bug] getClassDependencies() now tracks Type arguments as dependencies.</li>
