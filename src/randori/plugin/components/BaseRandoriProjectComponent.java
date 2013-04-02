@@ -117,7 +117,7 @@ public class BaseRandoriProjectComponent {
             String builtin = ProjectUtils.getPlayerGloablPath(project);
             if (builtin == null || !new File(builtin).exists())
             {
-               throw new RuntimeException("builtin.swc not found, please check you SDK setup " + builtin);
+               throw new RuntimeException("builtin.swc not found, please check your SDK setup " + builtin);
             }
             arguments.addLibraryPath(builtin);
         }
