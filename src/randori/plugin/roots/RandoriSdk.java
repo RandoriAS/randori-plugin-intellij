@@ -285,6 +285,7 @@ public class RandoriSdk extends SdkType
         if (libraryDir == null)
         {
             new File(baseDir.getPath(), libPath).mkdirs();
+            baseDir.refresh(false, true);
             libraryDir = baseDir.findFileByRelativePath(libPath);
         }
         copyJSFilesFromBundle(libraryDir, sdkRoot, sdkBundle);
