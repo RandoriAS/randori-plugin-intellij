@@ -1,6 +1,6 @@
 package randori.plugin.action;
 
-import randori.plugin.icons.RandoriIcons;
+import icons.RandoriIcons;
 import randori.plugin.utils.ProjectUtils;
 
 import com.intellij.openapi.actionSystem.AnAction;

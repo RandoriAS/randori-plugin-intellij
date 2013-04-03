@@ -38,7 +38,6 @@ import org.apache.flex.compiler.problems.ICompilerProblem;
 import org.apache.flex.compiler.problems.annotations.DefaultSeverity;
 
 import randori.plugin.components.RandoriProjectComponent;
-import randori.plugin.icons.RandoriIcons;
 import randori.plugin.service.ProblemsService;
 import randori.plugin.service.ProblemsService.OnProblemServiceListener;
 import randori.plugin.utils.ProjectUtils;
@@ -49,6 +48,7 @@ import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.ui.content.ContentManager;
 import com.intellij.ui.table.JBTable;
+import icons.RandoriIcons;
 
 // TODO added an error log to the ProblemsService, the collection should not
 //      contain null File instances on CompilerProblems, left null checks in

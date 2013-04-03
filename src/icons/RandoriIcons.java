@@ -1,4 +1,4 @@
-package randori.plugin.icons;
+package icons;
 
 import com.intellij.openapi.util.IconLoader;
 

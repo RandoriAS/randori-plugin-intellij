@@ -20,20 +20,7 @@
 package randori.plugin.action;
 
 import com.intellij.ide.fileTemplates.*;
-import com.intellij.openapi.fileTypes.FileTypeManager;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiFileFactory;
-import com.intellij.util.ArrayUtil;
-import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import randori.plugin.icons.RandoriIcons;
-import randori.plugin.module.RandoriModuleType;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Properties;
+import icons.RandoriIcons;
 
 /**
  * @author Roland Zwaga <roland@stackandheap.com>

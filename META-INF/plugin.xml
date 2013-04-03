@@ -86,8 +86,6 @@
 
     <extensions defaultExtensionNs="com.intellij">
 
-        <!--<fileTemplateGroup implementation="randori.plugin.action.RandoriTemplatesFactory"/>-->
-
         <sdkType implementation="randori.plugin.roots.RandoriSdk"/>
 
         <moduleType id="RANDORI_MODULE"
@@ -113,6 +111,8 @@
                 serviceImplementation="randori.plugin.service.RandoriProjectPreferences"/>
         <projectService
                 serviceImplementation="randori.plugin.service.ProblemsService"/>
+
+        <!--fileTemplateGroup implementation="randori.plugin.action.RandoriTemplatesFactory"/-->
 
     </extensions>
 

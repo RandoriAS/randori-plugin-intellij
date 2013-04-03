@@ -24,7 +24,7 @@ import javax.swing.*;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 
-import randori.plugin.icons.RandoriIcons;
+import icons.RandoriIcons;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
@@ -72,7 +72,7 @@ public class RandoriModuleType extends ModuleType<RandoriModuleBuilder>
     @Override
     public String getDescription()
     {
-        return "This module type is used to create Randori AS3 projects using the JavaScript cross compiler";
+        return "This module type is used to create Randori AS3 projects using the Randori JavaScript cross compiler";
     }
 
     @Override

@@ -62,8 +62,6 @@ public class RandoriProjectComponent extends BaseRandoriProjectComponent
     {
         if (!ProjectUtils.hasRandoriModuleType(getProject()))
             return;
-
-        System.out.println("projectOpened()");
         //parse();
         build(false);
     }

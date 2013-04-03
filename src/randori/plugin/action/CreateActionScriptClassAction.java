@@ -34,8 +34,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import randori.plugin.icons.RandoriIcons;
-import randori.plugin.module.RandoriModuleType;
+import icons.RandoriIcons;
 
 /**
  * @author Michael Schmalle

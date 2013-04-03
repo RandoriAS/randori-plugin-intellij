@@ -32,7 +32,7 @@ import javax.xml.stream.XMLStreamException;
 import randori.compiler.bundle.*;
 import randori.compiler.bundle.io.StAXManifestReader;
 import randori.plugin.components.RandoriProjectComponent;
-import randori.plugin.icons.RandoriIcons;
+import icons.RandoriIcons;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
@@ -358,7 +358,7 @@ public class RandoriSdk extends SdkType
         }
         catch(IOException e)
         {
-            logger.error(LogUtils.dumpStackTrace(e.getStackTrace()));
+            logger.error(LogUtils.dumpStackTrace(Thread.currentThread().getStackTrace()));
             e.printStackTrace();
         }
     }
@@ -385,12 +385,12 @@ public class RandoriSdk extends SdkType
         }
         catch(IOException e)
         {
-            logger.error(LogUtils.dumpStackTrace(e.getStackTrace()));
+            logger.error(LogUtils.dumpStackTrace(Thread.currentThread().getStackTrace()));
             e.printStackTrace();
         }
         catch(XMLStreamException e)
         {
-            logger.error(LogUtils.dumpStackTrace(e.getStackTrace()));
+            logger.error(LogUtils.dumpStackTrace(Thread.currentThread().getStackTrace()));
             e.printStackTrace();
         }
         finally
@@ -403,7 +403,7 @@ public class RandoriSdk extends SdkType
                 }
                 catch(IOException e)
                 {
-                    logger.error(LogUtils.dumpStackTrace(e.getStackTrace()));
+                    logger.error(LogUtils.dumpStackTrace(Thread.currentThread().getStackTrace()));
                     e.printStackTrace();
                 }
             }

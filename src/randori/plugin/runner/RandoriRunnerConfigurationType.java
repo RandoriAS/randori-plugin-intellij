@@ -23,7 +23,7 @@ import javax.swing.*;
 
 import org.jetbrains.annotations.NotNull;
 
-import randori.plugin.icons.RandoriIcons;
+import icons.RandoriIcons;
 
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationType;

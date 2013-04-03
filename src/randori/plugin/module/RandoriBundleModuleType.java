@@ -5,7 +5,7 @@ import javax.swing.*;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 
-import randori.plugin.icons.RandoriIcons;
+import icons.RandoriIcons;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
