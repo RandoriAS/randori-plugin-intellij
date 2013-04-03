@@ -44,6 +44,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import randori.plugin.utils.LogUtils;
 
 /**
  * @author Michael Schmalle
@@ -94,7 +95,7 @@ public class RandoriSdk extends SdkType
 
             // setup project SDK and Module SDKs
             setupDependentSdks(sdk);
-            logger.debug("SDK paths setup succesfully");
+            logger.debug("SDK paths setup successfully");
         }
         else
         {
@@ -357,6 +358,7 @@ public class RandoriSdk extends SdkType
         }
         catch(IOException e)
         {
+            logger.error(LogUtils.dumpStackTrace(e.getStackTrace()));
             e.printStackTrace();
         }
     }
@@ -383,10 +385,12 @@ public class RandoriSdk extends SdkType
         }
         catch(IOException e)
         {
+            logger.error(LogUtils.dumpStackTrace(e.getStackTrace()));
             e.printStackTrace();
         }
         catch(XMLStreamException e)
         {
+            logger.error(LogUtils.dumpStackTrace(e.getStackTrace()));
             e.printStackTrace();
         }
         finally
@@ -399,6 +403,7 @@ public class RandoriSdk extends SdkType
                 }
                 catch(IOException e)
                 {
+                    logger.error(LogUtils.dumpStackTrace(e.getStackTrace()));
                     e.printStackTrace();
                 }
             }
