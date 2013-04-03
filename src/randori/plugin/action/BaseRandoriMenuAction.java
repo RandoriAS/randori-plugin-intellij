@@ -1,10 +1,10 @@
 package randori.plugin.action;
 
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.util.IconLoader;
 import randori.plugin.icons.RandoriIcons;
 import randori.plugin.utils.ProjectUtils;
+
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
 
 /**
  * @author Roland Zwaga <roland@stackandheap.com>

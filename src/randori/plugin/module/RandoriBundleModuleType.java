@@ -1,15 +1,16 @@
 package randori.plugin.module;
 
+import javax.swing.*;
+
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.Nullable;
+
+import randori.plugin.icons.RandoriIcons;
+
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.ModuleTypeManager;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.util.IconLoader;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.Nullable;
-import randori.plugin.icons.RandoriIcons;
-
-import javax.swing.*;
 
 /**
  * Created with IntelliJ IDEA.
