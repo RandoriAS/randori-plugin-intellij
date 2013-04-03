@@ -48,6 +48,9 @@
 
     <project-components>
         <component>
+            <implementation-class>randori.plugin.compiler.RandoriCompilerLoader</implementation-class>
+        </component>
+        <component>
             <implementation-class>randori.plugin.components.RandoriProjectComponent</implementation-class>
         </component>
         <!-- component>
@@ -66,23 +69,6 @@
         <!--<implementation-class>randori.plugin.components.RandoriModuleComponent</implementation-class>-->
         <!--</component>-->
     </module-components>
-
-    <actions>
-        <action id="RandoriPlugin.BuildClean" class="randori.plugin.action.RunBuildCleanAction"
-                text="Build and Clean Randori..."
-                description="Build and Cleans a Randori project">
-            <add-to-group group-id="BuildMenu" anchor="last"/>
-            <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl alt C"/>
-        </action>
-        <action id="RandoriPlugin.Build" class="randori.plugin.action.RunBuildAction" text="Build Randori..."
-                description="Builds a Randori project">
-            <add-to-group group-id="BuildMenu" anchor="last"/>
-            <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl alt R"/>
-        </action>
-        <!--<action class="randori.plugin.action.CreateActionScriptClassAction" text="AS Class" id="NewASClass">-->
-        <!--<add-to-group anchor="last" group-id="NewGroup"/>-->
-        <!--</action>-->
-    </actions>
 
     <extensions defaultExtensionNs="com.intellij">
 
@@ -113,6 +99,12 @@
                 serviceImplementation="randori.plugin.service.RandoriProjectPreferences"/>
         <projectService
                 serviceImplementation="randori.plugin.service.ProblemsService"/>
+
+        <projectService serviceInterface="randori.plugin.compiler.RandoriCompilerConfiguration"
+                        serviceImplementation="randori.plugin.compiler.RandoriCompilerConfiguration"/>
+
+        <projectConfigurable instance="randori.plugin.compiler.RandoriCompilerConfigurable" id="Randori compiler"
+                             displayName="Randori Compiler" parentId="project.propCompiler"/>
 
     </extensions>
 
