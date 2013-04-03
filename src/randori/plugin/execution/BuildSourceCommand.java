@@ -19,10 +19,19 @@
 
 package randori.plugin.execution;
 
-import java.io.IOException;
+import java.io.*;
 
 import org.jetbrains.annotations.NotNull;
 
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.progress.Task;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.VirtualFile;
+
+import randori.compiler.clients.CompilerArguments;
 import randori.compiler.clients.Randori;
 import randori.compiler.driver.IBackend;
 import randori.compiler.internal.driver.RandoriBackend;
@@ -33,81 +42,53 @@ import randori.plugin.ui.ProblemsToolWindowFactory;
 import randori.plugin.utils.NotificationUtils;
 import randori.plugin.utils.ProjectUtils;
 
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.progress.Task;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-
 /**
  * @author Michael Schmalle
  */
-public class BuildSourceCommand
-{
+public class BuildSourceCommand {
 
-    public void parse(final Project project, final CompilerArguments arguments)
-    {
+    public void parse(final Project project, final CompilerArguments arguments) {
         // final String name = project.getName();
         final ProblemsService service = ProblemsService.getInstance(project);
 
         // clear the problems for the next parse
         service.clearProblems();
 
-        ProgressManager.getInstance().run(
-                new Task.Backgroundable(project,
-                        "Randori compiler building project", true, null) {
-                    @Override
-                    public void run(@NotNull ProgressIndicator indicator)
-                    {
-                        //problems.clear();
+        ProgressManager.getInstance().run(new Task.Backgroundable(project, "Randori compiler building project", true, null) {
+            @Override
+            public void run(@NotNull ProgressIndicator indicator) {
+                //problems.clear();
 
-                        RandoriBackend backend = new RandoriBackend();
-                        backend.parseOnly(true);
-                        final Randori randori = new Randori(backend);
+                RandoriBackend backend = new RandoriBackend();
+                backend.parseOnly(true);
+                final Randori randori = new Randori(backend);
 
-                        // need to only parse not generate
-                        final int code = randori.mainNoExit(
-                                arguments.toArguments(), service.getProblems());
+                // need to only parse not generate
+                final int code = randori.mainNoExit(arguments.toArguments(), service.getProblems());
 
-                        if (code == 0)
-                        {
-                            service.clearProblems();
+                if (code == 0) {
+                    service.clearProblems();
+                } else {
+                    // all this needs to be run on the UI thread
+                    ApplicationManager.getApplication().invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            service.filter();
+
+                            if (service.hasErrors()) {
+                                NotificationUtils.sendRandoriError("Error",
+                                                                   "Error(s) in project, Check the <a href='" + ProblemsToolWindowFactory.WINDOW_ID + "'>"
+                                                                           + ProblemsToolWindowFactory.WINDOW_ID + "</a> for more information '" + toErrorCode(
+                                                                           code) + "'", project);
+                            }
                         }
-                        else
-                        {
-                            // all this needs to be run on the UI thread
-                            ApplicationManager.getApplication().invokeLater(
-                                    new Runnable() {
-                                        @Override
-                                        public void run()
-                                        {
-                                            service.filter();
-
-                                            if (service.hasErrors())
-                                            {
-                                                NotificationUtils
-                                                        .sendRandoriError(
-                                                                "Error",
-                                                                "Error(s) in project, Check the <a href='"
-                                                                        + ProblemsToolWindowFactory.WINDOW_ID
-                                                                        + "'>"
-                                                                        + ProblemsToolWindowFactory.WINDOW_ID
-                                                                        + "</a> for more information '"
-                                                                        + toErrorCode(code)
-                                                                        + "'",
-                                                                project);
-                                            }
-                                        }
-                                    });
-                        }
-                    }
-                });
+                    });
+                }
+            }
+        });
     }
 
-    public void build(final Project project, boolean doClean,
-            final CompilerArguments arguments)
-    {
+    public void build(final Project project, boolean doClean, final CompilerArguments arguments) {
         final String name = project.getName();
         // final VirtualFile file = project.getBaseDir();
 
@@ -116,117 +97,138 @@ public class BuildSourceCommand
         // clear the problems for the next parse
         service.clearProblems();
 
-        if (doClean)
+        if (doClean) {
             clean(project);
+        }
 
-        ProgressManager.getInstance().run(
-                new Task.Backgroundable(project,
-                        "Randori compiler building project", true, null) {
-                    @Override
-                    public void run(@NotNull ProgressIndicator indicator)
-                    {
-                        IBackend backend = new RandoriBackend();
-                        final Randori randori = new Randori(backend);
-                        final int code = randori.mainNoExit(
-                                arguments.toArguments(), service.getProblems());
-
-                        if (code == 0)
-                        {
-                            NotificationUtils.sendRandoriInformation("Success",
-                                    "Successfully compiled and built project '"
-                                            + name + "'", project);
-                        }
-                        else
-                        {
-                            // all this needs to be run on the UI thread
-                            ApplicationManager.getApplication().invokeLater(
-                                    new Runnable() {
-                                        @Override
-                                        public void run()
-                                        {
-                                            service.filter();
-
-                                            if (service.hasErrors())
-                                            {
-                                                NotificationUtils
-                                                        .sendRandoriError(
-                                                                "Error",
-                                                                "Error(s) in project, Check the <a href='"
-                                                                        + ProblemsToolWindowFactory.WINDOW_ID
-                                                                        + "'>"
-                                                                        + ProblemsToolWindowFactory.WINDOW_ID
-                                                                        + "</a> for more information '"
-                                                                        + toErrorCode(code)
-                                                                        + "'",
-                                                                project);
-                                            }
-                                            else
-                                            {
-                                                // XXX This is temp until I get the ProblemQuery
-                                                // yanked out of the compiler
-                                                // this would hit here if there are still
-                                                // Warnings but the build passed
-                                                NotificationUtils
-                                                        .sendRandoriWarning(
-                                                                "Success",
-                                                                "Successfully compiled and built project with warnings '"
-                                                                        + name
-                                                                        + "'",
-                                                                project);
-                                            }
-                                        }
-                                    });
-
-                        }
-
-                        RandoriSdk.copySdkLibraries(project);
-                    }
-                });
-    }
-
-    private void clean(Project project)
-    {
-        final VirtualFile file = project.getBaseDir();
-        final RandoriProjectComponent component = ProjectUtils
-                .getProjectComponent(project);
-
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+        ProgressManager.getInstance().run(new Task.Backgroundable(project, "Randori compiler building project", true, null) {
             @Override
-            public void run()
-            {
-                // wipe the generated directory
-                VirtualFile virtualFile = file.findFileByRelativePath(component
-                        .getModel().getBasePath());
-                try
-                {
-                    if (virtualFile != null && virtualFile.exists())
-                    {
-                        virtualFile.delete(this);
-                    }
+            public void run(@NotNull ProgressIndicator indicator) {
+                IBackend backend = new RandoriBackend();
+                final Randori randori = new Randori(backend);
+                final int code = randori.mainNoExit(arguments.toArguments(), service.getProblems());
+
+                if (code == 0) {
+                    NotificationUtils.sendRandoriInformation("Success", "Successfully compiled and built project '" + name + "'", project);
+                } else {
+                    // all this needs to be run on the UI thread
+                    ApplicationManager.getApplication().invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            service.filter();
+
+                            if (service.hasErrors()) {
+                                NotificationUtils.sendRandoriError("Error",
+                                                                   "Error(s) in project, Check the <a href='" + ProblemsToolWindowFactory.WINDOW_ID + "'>"
+                                                                           + ProblemsToolWindowFactory.WINDOW_ID + "</a> for more information '" + toErrorCode(
+                                                                           code) + "'", project);
+                            } else {
+                                // XXX This is temp until I get the ProblemQuery
+                                // yanked out of the compiler
+                                // this would hit here if there are still
+                                // Warnings but the build passed
+                                NotificationUtils
+                                        .sendRandoriWarning("Success", "Successfully compiled and built project with warnings '" + name + "'", project);
+                            }
+                        }
+                    });
                 }
-                catch (IOException e)
-                {
-                    e.printStackTrace();
-                }
+
+                RandoriSdk.copySdkLibraries(project);
             }
         });
     }
 
-    private String toErrorCode(int code)
-    {
-        switch (code)
-        {
-        case 1:
-            return "Unknown";
-        case 2:
-            return "Compiler problems";
-        case 3:
-            return "Compiler Exceptions";
-        case 4:
-            return "Configuration Problems";
+    private void clean(Project project) {
+        final VirtualFile baseDir = project.getBaseDir();
+        final RandoriProjectComponent component = ProjectUtils.getProjectComponent(project);
+
+        // wipe the generated directory
+        VirtualFile virtualFile = baseDir.findFileByRelativePath(component.getModel().getBasePath());
+        if (virtualFile != null && virtualFile.exists()) {
+            File fsFile = new File(virtualFile.getPath());
+            FileUtil.asyncDelete(fsFile);
+        }
+    }
+
+    public void parseSync(final Project project, final CompilerArguments arguments) {
+        // final String name = project.getName();
+        final ProblemsService service = ProblemsService.getInstance(project);
+
+        // clear the problems for the next parse
+        service.clearProblems();
+
+        //problems.clear();
+
+        RandoriBackend backend = new RandoriBackend();
+        backend.parseOnly(true);
+        final Randori randori = new Randori(backend);
+
+        // need to only parse not generate
+        final int code = randori.mainNoExit(arguments.toArguments(), service.getProblems());
+
+        if (code == 0) {
+            service.clearProblems();
+        } else {
+            service.filter();
+
+            if (service.hasErrors()) {
+                NotificationUtils.sendRandoriError("Error", "Error(s) in project, Check the <a href='" + ProblemsToolWindowFactory.WINDOW_ID + "'>"
+                        + ProblemsToolWindowFactory.WINDOW_ID + "</a> for more information '" + toErrorCode(code) + "'", project);
+            }
+        }
+    }
+
+    public void buildSync(final Project project, boolean doClean, final CompilerArguments arguments) {
+        final String name = project.getName();
+        // final VirtualFile file = project.getBaseDir();
+
+        final ProblemsService service = ProblemsService.getInstance(project);
+
+        // clear the problems for the next parse
+        service.clearProblems();
+
+        if (doClean) {
+            clean(project);
+        }
+
+        IBackend backend = new RandoriBackend();
+        final Randori randori = new Randori(backend);
+        final int code = randori.mainNoExit(arguments.toArguments(), service.getProblems());
+
+        if (code == 0) {
+            NotificationUtils.sendRandoriInformation("Success", "Successfully compiled and built project '" + name + "'", project);
+        } else {
+
+            service.filter();
+
+            if (service.hasErrors()) {
+                NotificationUtils.sendRandoriError("Error", "Error(s) in project, Check the <a href='" + ProblemsToolWindowFactory.WINDOW_ID + "'>"
+                        + ProblemsToolWindowFactory.WINDOW_ID + "</a> for more information '" + toErrorCode(code) + "'", project);
+            } else {
+                // XXX This is temp until I get the ProblemQuery
+                // yanked out of the compiler
+                // this would hit here if there are still
+                // Warnings but the build passed
+                NotificationUtils.sendRandoriWarning("Success", "Successfully compiled and built project with warnings '" + name + "'", project);
+            }
+        }
+
+        RandoriSdk.copySdkLibraries(project);
+    }
+
+    private String toErrorCode(int code) {
+        switch (code) {
+            case 1:
+                return "Unknown";
+            case 2:
+                return "Compiler problems";
+            case 3:
+                return "Compiler Exceptions";
+            case 4:
+                return "Configuration Problems";
         }
 
         return "Unknown error code";
     }
-
 }
