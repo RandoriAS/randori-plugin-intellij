@@ -37,7 +37,6 @@ import randori.compiler.clients.Randori;
 import randori.compiler.driver.IBackend;
 import randori.compiler.internal.driver.RandoriBackend;
 import randori.plugin.builder.FileChangeListener;
-import randori.plugin.components.IWorkspaceApplication;
 import randori.plugin.components.RandoriProjectComponent;
 import randori.plugin.roots.RandoriSdk;
 import randori.plugin.service.ProblemsService;

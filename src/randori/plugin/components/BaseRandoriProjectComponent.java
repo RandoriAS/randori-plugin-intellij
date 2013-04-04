@@ -10,6 +10,7 @@ import randori.plugin.runner.RandoriServerComponent;
 import randori.plugin.service.ProblemsService;
 import randori.plugin.utils.ProjectUtils;
 import randori.plugin.utils.VFileUtils;
+import randori.plugin.workspaces.IWorkspaceApplication;
 
 import com.intellij.openapi.compiler.CompileScope;
 import com.intellij.openapi.editor.Editor;

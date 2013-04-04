@@ -24,6 +24,8 @@ import com.intellij.openapi.project.Project;
 import org.apache.flex.compiler.internal.projects.FlexProject;
 import org.jetbrains.annotations.NotNull;
 
+import randori.plugin.workspaces.IWorkspaceApplication;
+
 /**
  * @author Michael Schmalle
  */
