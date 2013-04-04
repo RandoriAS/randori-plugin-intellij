@@ -19,19 +19,17 @@
 
 package randori.plugin.compiler;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 
-import randori.plugin.AsFileType;
 import randori.plugin.workspaces.RandoriApplicationComponent;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompileScope;
 import com.intellij.openapi.compiler.TranslatingCompiler;
-import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
@@ -46,20 +44,15 @@ import com.intellij.util.Chunk;
 public class RandoriCompiler implements TranslatingCompiler
 {
 
-    //private static final Logger LOG = Logger
-    //        .getInstance("#randori.compiler.RandoriCompiler");
-
-    protected final Project myProject;
-
-    private FileDocumentManager documentManager;
-
-    private RandoriApplicationComponent projectComponent;
-
-    private List<VirtualFile> unsavedFiles;
+    private static final Logger LOG = Logger
+            .getInstance("#randori.compiler.RandoriCompiler");
+    protected final Project project;
+    private final FileDocumentManager documentManager;
+    private final RandoriApplicationComponent projectComponent;
 
     public RandoriCompiler(Project project)
     {
-        myProject = project;
+        this.project = project;
 
         projectComponent = project
                 .getComponent(RandoriApplicationComponent.class);
@@ -70,10 +63,8 @@ public class RandoriCompiler implements TranslatingCompiler
     @Override
     public boolean isCompilableFile(VirtualFile file, CompileContext context)
     {
-        //FileType fileType = file.getFileType();
-        //FileType asFileType = AsFileType.AS_FILE_TYPE;
-        boolean b = file.getPath().endsWith('.' + AsFileType.DEFAULT_EXTENSION);
-        return b;
+        return file != null && file.getExtension() != null
+                && file.getExtension().equals("as");
     }
 
     @Override
@@ -83,17 +74,21 @@ public class RandoriCompiler implements TranslatingCompiler
         context.getProgressIndicator().checkCanceled();
         context.getProgressIndicator().setText("Starting Randori compiler...");
 
-        if (context.isMake() && unsavedFiles != null && unsavedFiles.size() > 0)
+        final List<VirtualFile> modifiedFiles = projectComponent
+                .getModifiedFiles();
+
+        if (context.isMake() && modifiedFiles.size() > 0)
         {
-            projectComponent
-                    .build((unsavedFiles.toArray(new VirtualFile[unsavedFiles
-                            .size()])), false, true);
-            unsavedFiles = null;
+            projectComponent.build((modifiedFiles
+                    .toArray(new VirtualFile[modifiedFiles.size()])), false,
+                    true);
         }
         else
         {
             projectComponent.build(null, !context.isMake(), true);
         }
+
+        modifiedFiles.removeAll(modifiedFiles);
     }
 
     @NotNull
@@ -106,30 +101,6 @@ public class RandoriCompiler implements TranslatingCompiler
     @Override
     public boolean validateConfiguration(CompileScope scope)
     {
-        boolean isConfigurationValidated = projectComponent
-                .validateConfiguration(scope);
-
-        if (isConfigurationValidated)
-        {
-            final Document[] unsavedDocuments = documentManager
-                    .getUnsavedDocuments();
-
-            if (unsavedDocuments.length > 0)
-            {
-                unsavedFiles = new ArrayList<VirtualFile>();
-
-                for (Document unsavedDocument : unsavedDocuments)
-                {
-                    VirtualFile file = documentManager.getFile(unsavedDocument);
-                    if (file.getPath().endsWith(
-                            '.' + AsFileType.DEFAULT_EXTENSION))
-                    {
-                        unsavedFiles.add(file);
-                    }
-                }
-            }
-        }
-
-        return isConfigurationValidated;
+        return projectComponent.validateConfiguration(scope);
     }
 }

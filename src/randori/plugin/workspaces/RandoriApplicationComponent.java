@@ -20,6 +20,8 @@
 package randori.plugin.workspaces;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -70,11 +72,19 @@ public class RandoriApplicationComponent implements ProjectComponent
 
     private IRandoriApplicationProject randoriApplication;
 
+    private final List<VirtualFile> modifiedFiles;
+
     public RandoriApplicationComponent(Project project,
             IWorkspaceApplication workspaceApplication)
     {
         this.project = project;
         this.workspaceApplication = workspaceApplication;
+        modifiedFiles = new ArrayList<VirtualFile>();
+    }
+
+    public List<VirtualFile> getModifiedFiles()
+    {
+        return modifiedFiles;
     }
 
     @Override
@@ -106,7 +116,7 @@ public class RandoriApplicationComponent implements ProjectComponent
 
         randoriApplication = (IRandoriApplicationProject) workspaceApplication
                 .addProject(project);
-        
+
         // XXX Fred; should we do this or not?
         // we need to parse, not build
         build(null, false, false);

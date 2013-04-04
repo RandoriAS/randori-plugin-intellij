@@ -23,12 +23,7 @@ import randori.plugin.utils.ProjectUtils;
 import randori.plugin.workspaces.RandoriApplicationComponent;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileCopyEvent;
-import com.intellij.openapi.vfs.VirtualFileEvent;
-import com.intellij.openapi.vfs.VirtualFileListener;
-import com.intellij.openapi.vfs.VirtualFileMoveEvent;
-import com.intellij.openapi.vfs.VirtualFilePropertyEvent;
+import com.intellij.openapi.vfs.*;
 
 /**
  * @author Michael Schmalle
@@ -49,10 +44,14 @@ public class FileChangeListener implements VirtualFileListener
         {
             Project project = ProjectUtils.getProject();
             if (project == null)
-                return; // throw error, this dosn't seem right
-            
+                return; // throw error, this doesn't seem right
+
             RandoriApplicationComponent component = project
                     .getComponent(RandoriApplicationComponent.class);
+
+            if (!component.getModifiedFiles().contains(file))
+                component.getModifiedFiles().add(file);
+
             component.parse(false);
         }
     }
