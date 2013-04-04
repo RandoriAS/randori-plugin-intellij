@@ -39,7 +39,7 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
 
 @State(name = RandoriProjectComponent.COMPONENT_NAME, storages = { @Storage(id = "randoriproject", file = "$PROJECT_FILE$") })
-// TODO Need to get the state out of this component and into a Model class
+
 /**
  * @author Michael Schmalle
  */
@@ -51,10 +51,9 @@ public class RandoriProjectComponent extends BaseRandoriProjectComponent
 
     private RandoriProjectConfigurationForm form;
 
-    public RandoriProjectComponent(Project project,
-            RandoriApplicationComponent applicationComponent)
+    public RandoriProjectComponent(Project project)
     {
-        super(project, applicationComponent);
+        super(project);
     }
 
     @Override

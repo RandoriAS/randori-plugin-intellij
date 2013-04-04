@@ -39,10 +39,8 @@
             <implementation-class>randori.plugin.runner.RandoriRunnerConfigurationType</implementation-class>
         </component>
         <component>
-            <implementation-class>randori.plugin.components.RandoriApplicationComponent</implementation-class>
-        </component>
-        <component>
-            <implementation-class>randori.plugin.components.WorkspaceApplicationComponent</implementation-class>
+            <interface-class>randori.plugin.components.IWorkspaceApplication</interface-class>
+            <implementation-class>randori.plugin.workspaces.WorkspaceApplicationComponent</implementation-class>
         </component>
     </application-components>
 
