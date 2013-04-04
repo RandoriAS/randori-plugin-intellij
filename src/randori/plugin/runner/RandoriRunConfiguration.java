@@ -25,7 +25,7 @@ import java.util.Collection;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-import randori.plugin.components.RandoriProjectComponent;
+import randori.plugin.workspaces.RandoriApplicationComponent;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
@@ -125,8 +125,6 @@ public class RandoriRunConfiguration extends
             @NotNull ExecutionEnvironment environment)
             throws ExecutionException
     {
-        //        return new RandoriCommandLineState(new RandoriConsoleProperties(this,
-        //                executor), env);
         myEnvironment = environment;
 
         RunProfileState state = new ApplicationServerRunState();
@@ -163,33 +161,9 @@ public class RandoriRunConfiguration extends
         public ExecutionResult execute(Executor executor, ProgramRunner runner)
                 throws ExecutionException
         {
-            RandoriProjectComponent component = getProject().getComponent(
-                    RandoriProjectComponent.class);
+            RandoriApplicationComponent component = getProject().getComponent(
+                    RandoriApplicationComponent.class);
             component.run(RandoriRunConfiguration.this);
-
-            //            ExecutionResult result = new ExecutionResult() {
-            //
-            //                @Override
-            //                public ProcessHandler getProcessHandler()
-            //                {
-            //                    // TODO Auto-generated method stub
-            //                    return null;
-            //                }
-            //
-            //                @Override
-            //                public ExecutionConsole getExecutionConsole()
-            //                {
-            //                    // TODO Auto-generated method stub
-            //                    return null;
-            //                }
-            //
-            //                @Override
-            //                public AnAction[] getActions()
-            //                {
-            //                    // TODO Auto-generated method stub
-            //                    return null;
-            //                }
-            //            };
             return null;
         }
 

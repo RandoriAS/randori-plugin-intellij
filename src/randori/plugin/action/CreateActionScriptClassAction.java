@@ -65,7 +65,7 @@ public class CreateActionScriptClassAction extends
         // className = 'as'
         // templateName 'template'
 
-        final String fileName = className + ".as";
+        //final String fileName = className + ".as";
         final PsiFile fromTemplate = null;
         /*final PsiFile fromTemplate = RandoriTemplatesFactory
                 .createFromTemplate(dir, className, fileName, templateName);*/

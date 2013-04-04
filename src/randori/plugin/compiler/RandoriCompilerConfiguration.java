@@ -26,7 +26,7 @@ public class RandoriCompilerConfiguration extends CompilerConfiguration implemen
     private String myHeapSize;
 
     public static RandoriCompilerConfiguration getInstance(Project project) {
-        return (RandoriCompilerConfiguration) ServiceManager.getService(project, RandoriCompilerConfiguration.class);
+        return ServiceManager.getService(project, RandoriCompilerConfiguration.class);
     }
 
     @Override

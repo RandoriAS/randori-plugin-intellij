@@ -1,3 +1,22 @@
+/***
+ * Copyright 2013 Teoti Graphix, LLC.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ * 
+ * 
+ * @author Michael Schmalle <mschmalle@teotigraphix.com>
+ */
+
 package randori.plugin.workspaces;
 
 import java.io.File;
@@ -10,6 +29,8 @@ import randori.plugin.components.RandoriProjectComponent;
 import randori.plugin.components.RandoriProjectModel;
 import randori.plugin.module.RandoriModuleType;
 import randori.plugin.roots.RandoriSdk;
+import randori.plugin.runner.RandoriRunConfiguration;
+import randori.plugin.runner.RandoriServerComponent;
 import randori.plugin.service.ProblemsService;
 import randori.plugin.ui.ProblemsToolWindowFactory;
 import randori.plugin.utils.NotificationUtils;
@@ -33,6 +54,12 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 
 /**
+ * The {@link RandoriApplicationComponent} wraps the single
+ * {@link IRandoriApplicationProject} instance registered with the compiler.
+ * <p>
+ * This component manages the parse, compile and build of a randori application
+ * module.
+ * 
  * @author Michael Schmalle
  */
 public class RandoriApplicationComponent implements ProjectComponent
@@ -50,10 +77,12 @@ public class RandoriApplicationComponent implements ProjectComponent
         this.workspaceApplication = workspaceApplication;
     }
 
+    @Override
     public void initComponent()
     {
     }
 
+    @Override
     public void disposeComponent()
     {
         if (!ProjectUtils.hasRandoriModuleType(project))
@@ -62,12 +91,14 @@ public class RandoriApplicationComponent implements ProjectComponent
         randoriApplication = null;
     }
 
+    @Override
     @NotNull
     public String getComponentName()
     {
         return "RandoriApplicationComponent";
     }
 
+    @Override
     public void projectOpened()
     {
         if (!ProjectUtils.hasRandoriModuleType(project))
@@ -75,13 +106,15 @@ public class RandoriApplicationComponent implements ProjectComponent
 
         randoriApplication = (IRandoriApplicationProject) workspaceApplication
                 .addProject(project);
-
+        
+        // XXX Fred; should we do this or not?
+        // we need to parse, not build
         build(null, false, false);
     }
 
+    @Override
     public void projectClosed()
     {
-        // called when project is being closed
     }
 
     public void build(VirtualFile[] files, boolean doClean, boolean sync)
@@ -112,6 +145,15 @@ public class RandoriApplicationComponent implements ProjectComponent
         {
             parse(project, arguments);
         }
+    }
+
+    public void run(RandoriRunConfiguration configuration)
+    {
+        RandoriServerComponent component = project
+                .getComponent(RandoriServerComponent.class);
+        String explicitWebroot = (configuration.useExplicitWebroot) ? configuration.explicitWebroot
+                : "";
+        component.openURL(configuration.indexRoot, explicitWebroot);
     }
 
     //--------------------------------------------------------------------------
@@ -225,7 +267,7 @@ public class RandoriApplicationComponent implements ProjectComponent
 
         arguments.clear();
 
-        configure(project, component.getModel(), arguments);
+        configure(project, component.getState(), arguments);
 
         for (String library : ProjectUtils.getAllProjectSWCs(project))
         {
@@ -296,7 +338,7 @@ public class RandoriApplicationComponent implements ProjectComponent
 
         // wipe the generated directory
         VirtualFile virtualFile = baseDir.findFileByRelativePath(component
-                .getModel().getBasePath());
+                .getState().getBasePath());
         if (virtualFile != null && virtualFile.exists())
         {
             File fsFile = new File(virtualFile.getPath());

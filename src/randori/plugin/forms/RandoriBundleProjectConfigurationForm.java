@@ -7,8 +7,9 @@ import randori.plugin.components.RandoriProjectModel;
 
 import javax.swing.*;
 
-public class RandoriBundleProjectConfigurationForm  extends
-        SettingsEditor<RandoriBundleProjectConfigurationForm> {
+public class RandoriBundleProjectConfigurationForm extends
+        SettingsEditor<RandoriBundleProjectConfigurationForm>
+{
     private JPanel panel;
 
     private JCheckBox exportAsFiles;
@@ -59,7 +60,6 @@ public class RandoriBundleProjectConfigurationForm  extends
         return false;
     }
 
-    @SuppressWarnings("unused")
     private boolean isOpposite(JCheckBox component, boolean selected)
     {
         return component.isSelected() != selected;

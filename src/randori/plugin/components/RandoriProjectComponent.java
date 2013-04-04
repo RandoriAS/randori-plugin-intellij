@@ -21,37 +21,95 @@ package randori.plugin.components;
 
 import javax.swing.JComponent;
 
+import org.apache.flex.compiler.problems.ICompilerProblem;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 import randori.plugin.forms.RandoriProjectConfigurationForm;
+import randori.plugin.service.ProblemsService;
 import randori.plugin.ui.ProblemsToolWindowFactory;
+import randori.plugin.utils.VFileUtils;
 
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.LogicalPosition;
+import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
 
 @State(name = RandoriProjectComponent.COMPONENT_NAME, storages = { @Storage(id = "randoriproject", file = "$PROJECT_FILE$") })
 /**
+ * The project component manages the global state of the current project.
+ * 
  * @author Michael Schmalle
  */
-public class RandoriProjectComponent extends BaseRandoriProjectComponent
-        implements ProjectComponent, Configurable,
+public class RandoriProjectComponent implements ProjectComponent, Configurable,
         PersistentStateComponent<RandoriProjectModel>
 {
     public static final String COMPONENT_NAME = "RandoriProject";
 
     private RandoriProjectConfigurationForm form;
 
+    private Project project;
+
+    private RandoriProjectModel state;
+
+    /**
+     * Returns the {@link Project} instance open.
+     */
+    public Project getProject()
+    {
+        return project;
+    }
+
+    /**
+     * Returns the {@link ProblemsService} that manages {@link ICompilerProblem}
+     * s from the compiler.
+     */
+    public ProblemsService getProblemsService()
+    {
+        return ProblemsService.getInstance(project);
+    }
+
     public RandoriProjectComponent(Project project)
     {
-        super(project);
+        this.project = project;
+        this.state = new RandoriProjectModel();
+    }
+
+    /**
+     * Opens a ICompilerProblem in a new editor, or opens the editor and places
+     * the caret a the specific problem.
+     * 
+     * @param problem The ICompilerProblem to focus.
+     */
+    public void openFileForProblem(ICompilerProblem problem)
+    {
+        VirtualFile virtualFile = VFileUtils.getFile(problem.getSourcePath());
+        if (virtualFile != null)
+        {
+            OpenFileDescriptor descriptor = new OpenFileDescriptor(project,
+                    virtualFile);
+            if (descriptor != null)
+            {
+                Editor editor = FileEditorManager.getInstance(project)
+                        .openTextEditor(descriptor, true);
+                if (editor != null)
+                {
+                    LogicalPosition position = new LogicalPosition(
+                            problem.getLine(), problem.getColumn());
+                    editor.getCaretModel().moveToLogicalPosition(position);
+                }
+            }
+        }
     }
 
     @Override
@@ -62,7 +120,7 @@ public class RandoriProjectComponent extends BaseRandoriProjectComponent
     @Override
     public void projectClosed()
     {
-        ToolWindow toolWindow = ToolWindowManager.getInstance(getProject())
+        ToolWindow toolWindow = ToolWindowManager.getInstance(project)
                 .getToolWindow(ProblemsToolWindowFactory.WINDOW_ID);
         if (toolWindow != null)
         {
@@ -70,7 +128,6 @@ public class RandoriProjectComponent extends BaseRandoriProjectComponent
                 @Override
                 public void run()
                 {
-
                 }
             });
         }
@@ -109,7 +166,7 @@ public class RandoriProjectComponent extends BaseRandoriProjectComponent
     @Override
     public RandoriProjectModel getState()
     {
-        return getModel();
+        return state;
     }
 
     @Override
@@ -141,9 +198,6 @@ public class RandoriProjectComponent extends BaseRandoriProjectComponent
             form.getData(getState());
         }
     }
-
-    //------------------------------------------------------
-    // TODO get the below in a Model
 
     @Override
     public void reset()

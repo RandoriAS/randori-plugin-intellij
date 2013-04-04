@@ -164,6 +164,7 @@ public class ProblemsToolWindow
             }
         });
         table.addHierarchyListener(new HierarchyListener() {
+            @Override
             public void hierarchyChanged(HierarchyEvent e)
             {
                 if (e.getID() == HierarchyEvent.HIERARCHY_CHANGED
@@ -203,13 +204,14 @@ public class ProblemsToolWindow
         {
             JPopupMenu popupMenu = new JPopupMenu();
             ActionListener menuListener = new ActionListener() {
+                @Override
                 public void actionPerformed(ActionEvent event) {
                     jumpToProblemInFile(rowIndex);
                 }
             };
             JMenuItem item;
             popupMenu.add(item = new JMenuItem(menuTitle, RandoriIcons.JumpToArrow));
-            item.setHorizontalTextPosition(JMenuItem.RIGHT);
+            item.setHorizontalTextPosition(SwingConstants.RIGHT);
             item.addActionListener(menuListener);
             return popupMenu;
         }

@@ -31,10 +31,8 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompileScope;
 import com.intellij.openapi.compiler.TranslatingCompiler;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -48,8 +46,8 @@ import com.intellij.util.Chunk;
 public class RandoriCompiler implements TranslatingCompiler
 {
 
-    private static final Logger LOG = Logger
-            .getInstance("#randori.compiler.RandoriCompiler");
+    //private static final Logger LOG = Logger
+    //        .getInstance("#randori.compiler.RandoriCompiler");
 
     protected final Project myProject;
 
@@ -72,8 +70,8 @@ public class RandoriCompiler implements TranslatingCompiler
     @Override
     public boolean isCompilableFile(VirtualFile file, CompileContext context)
     {
-        FileType fileType = file.getFileType();
-        FileType asFileType = AsFileType.AS_FILE_TYPE;
+        //FileType fileType = file.getFileType();
+        //FileType asFileType = AsFileType.AS_FILE_TYPE;
         boolean b = file.getPath().endsWith('.' + AsFileType.DEFAULT_EXTENSION);
         return b;
     }

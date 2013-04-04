@@ -108,6 +108,7 @@ public class RandoriRunConfigurationEditor extends
         return panel;
     }
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         webRoot.setEnabled(e.getActionCommand() == "EXISTING");
     }

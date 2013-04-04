@@ -24,7 +24,6 @@ public class RandoriProjectConfigurationForm extends
     private JTextField basePath;
 
     private JTextField libraryPath;
-    private JTextField webRoot;
 
     //private JCheckBox exportAsFiles;
 

@@ -22,8 +22,10 @@ public class RandoriBundleProjectComponent implements ProjectComponent, Configur
 
     public static final String COMPONENT_NAME = "RandoriBundleProject";
 
+    @SuppressWarnings("unused")
     private Project project;
 
+    @SuppressWarnings("unused")
     private RandoriBundleProjectConfigurationForm form;
 
     private RandoriProjectModel model;
