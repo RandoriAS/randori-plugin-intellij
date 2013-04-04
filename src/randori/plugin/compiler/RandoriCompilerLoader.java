@@ -1,34 +1,37 @@
 package randori.plugin.compiler;
 
 import org.jetbrains.annotations.NotNull;
+
 import com.intellij.openapi.compiler.CompilerManager;
 import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.project.Project;
-import randori.plugin.AsFileType;
 
 /**
  * @author Frédéric THOMAS
  */
-public class RandoriCompilerLoader extends AbstractProjectComponent {
+public class RandoriCompilerLoader extends AbstractProjectComponent
+{
 
     public static final String COMPONENT_NAME = "RandoriCompilerLoader";
 
-    public RandoriCompilerLoader(Project project) {
+    public RandoriCompilerLoader(Project project)
+    {
         super(project);
     }
 
     @Override
-    public void projectOpened() {
-        CompilerManager compilerManager = CompilerManager.getInstance(this.myProject);
+    public void projectOpened()
+    {
+        CompilerManager compilerManager = CompilerManager
+                .getInstance(this.myProject);
 
         compilerManager.addCompiler(new RandoriCompiler(this.myProject));
-
-        compilerManager.addCompilableFileType(AsFileType.AS_FILE_TYPE);
     }
 
     @NotNull
     @Override
-    public String getComponentName() {
+    public String getComponentName()
+    {
         return COMPONENT_NAME;
     }
 }
