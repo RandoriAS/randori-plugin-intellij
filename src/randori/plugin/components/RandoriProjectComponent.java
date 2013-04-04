@@ -24,9 +24,13 @@ import javax.swing.JComponent;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
+import randori.compiler.clients.CompilerArguments;
+import randori.compiler.projects.IRandoriApplicationProject;
 import randori.plugin.forms.RandoriProjectConfigurationForm;
 import randori.plugin.ui.ProblemsToolWindowFactory;
 import randori.plugin.utils.ProjectUtils;
+import randori.plugin.workspaces.IWorkspaceApplication;
+import randori.plugin.workspaces.RandoriApplicationComponent;
 
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ProjectComponent;
@@ -35,11 +39,11 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
 
 @State(name = RandoriProjectComponent.COMPONENT_NAME, storages = { @Storage(id = "randoriproject", file = "$PROJECT_FILE$") })
-
 /**
  * @author Michael Schmalle
  */
@@ -51,9 +55,13 @@ public class RandoriProjectComponent extends BaseRandoriProjectComponent
 
     private RandoriProjectConfigurationForm form;
 
-    public RandoriProjectComponent(Project project)
+    private IWorkspaceApplication workspaceApplication;
+
+    public RandoriProjectComponent(Project project,
+            IWorkspaceApplication workspaceApplication)
     {
         super(project);
+        this.workspaceApplication = workspaceApplication;
     }
 
     @Override
@@ -61,8 +69,42 @@ public class RandoriProjectComponent extends BaseRandoriProjectComponent
     {
         if (!ProjectUtils.hasRandoriModuleType(getProject()))
             return;
-        //parse();
-        build(false);
+
+        System.out.println("projectOpened()");
+        build(null, false, true);
+    }
+
+    public void build(VirtualFile[] files, boolean doClean, boolean sync)
+    {
+        CompilerArguments arguments = new CompilerArguments();
+        configureDependencies(getProject(), arguments, files);
+
+        if (sync)
+        {
+            workspaceApplication.buildSync(getProject(), doClean, arguments);
+        }
+        else
+        {
+            workspaceApplication.build(getProject(), doClean, arguments);
+        }
+    }
+
+    public void parse(boolean sync)
+    {
+        CompilerArguments arguments = new CompilerArguments();
+        configureDependencies(getProject(), arguments);
+
+        RandoriApplicationComponent component = getProject().getComponent(
+                RandoriApplicationComponent.class);
+
+        if (sync)
+        {
+            component.parseSync(getProject(), arguments);
+        }
+        else
+        {
+            component.parse(getProject(), arguments);
+        }
     }
 
     @Override

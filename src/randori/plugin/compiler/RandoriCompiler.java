@@ -39,26 +39,31 @@ import randori.plugin.utils.ProjectUtils;
 
 /**
  * IDEA Compiler class for calling the internal compiler API.
- *
+ * 
  * @author Frédéric THOMAS
  */
-public class RandoriCompiler implements TranslatingCompiler {
+public class RandoriCompiler implements TranslatingCompiler
+{
 
-    private static final Logger LOG = Logger.getInstance("#randori.compiler.RandoriCompiler");
+    private static final Logger LOG = Logger
+            .getInstance("#randori.compiler.RandoriCompiler");
     protected final Project myProject;
     private FileDocumentManager m_documentManager;
     private RandoriProjectComponent m_projectComponent;
     private List<VirtualFile> m_unsavedFiles;
 
-    public RandoriCompiler(Project project) {
+    public RandoriCompiler(Project project)
+    {
         myProject = project;
 
         m_projectComponent = ProjectUtils.getProjectComponent(project);
-        m_documentManager = ApplicationManager.getApplication().getComponent(FileDocumentManager.class);
+        m_documentManager = ApplicationManager.getApplication().getComponent(
+                FileDocumentManager.class);
     }
 
     @Override
-    public boolean isCompilableFile(VirtualFile file, CompileContext context) {
+    public boolean isCompilableFile(VirtualFile file, CompileContext context)
+    {
         FileType fileType = file.getFileType();
         FileType asFileType = AsFileType.AS_FILE_TYPE;
         boolean b = file.getPath().endsWith('.' + AsFileType.DEFAULT_EXTENSION);
@@ -66,37 +71,55 @@ public class RandoriCompiler implements TranslatingCompiler {
     }
 
     @Override
-    public void compile(CompileContext context, Chunk<Module> moduleChunk, VirtualFile[] files, OutputSink sink) {
+    public void compile(CompileContext context, Chunk<Module> moduleChunk,
+            VirtualFile[] files, OutputSink sink)
+    {
         context.getProgressIndicator().checkCanceled();
         context.getProgressIndicator().setText("Starting Randori compiler...");
 
-        if (context.isMake() && m_unsavedFiles != null && m_unsavedFiles.size() > 0) {
-            m_projectComponent.build((m_unsavedFiles.toArray(new VirtualFile[m_unsavedFiles.size()])), false, true);
+        if (context.isMake() && m_unsavedFiles != null
+                && m_unsavedFiles.size() > 0)
+        {
+            m_projectComponent.build((m_unsavedFiles
+                    .toArray(new VirtualFile[m_unsavedFiles.size()])), false,
+                    true);
             m_unsavedFiles = null;
-        } else {
-            m_projectComponent.build(!context.isMake());
+        }
+        else
+        {
+            m_projectComponent.build(null, !context.isMake(), true);
         }
     }
 
     @NotNull
     @Override
-    public String getDescription() {
+    public String getDescription()
+    {
         return "Randori Compiler";
     }
 
     @Override
-    public boolean validateConfiguration(CompileScope scope) {
-        boolean isConfigurationValidated = m_projectComponent.validateConfiguration(scope);
+    public boolean validateConfiguration(CompileScope scope)
+    {
+        boolean isConfigurationValidated = m_projectComponent
+                .validateConfiguration(scope);
 
-        if (isConfigurationValidated) {
-            final Document[] unsavedDocuments = m_documentManager.getUnsavedDocuments();
+        if (isConfigurationValidated)
+        {
+            final Document[] unsavedDocuments = m_documentManager
+                    .getUnsavedDocuments();
 
-            if (unsavedDocuments.length > 0) {
+            if (unsavedDocuments.length > 0)
+            {
                 m_unsavedFiles = new ArrayList<VirtualFile>();
 
-                for (Document unsavedDocument : unsavedDocuments) {
-                    VirtualFile file = m_documentManager.getFile(unsavedDocument);
-                    if (file.getPath().endsWith('.' + AsFileType.DEFAULT_EXTENSION)) {
+                for (Document unsavedDocument : unsavedDocuments)
+                {
+                    VirtualFile file = m_documentManager
+                            .getFile(unsavedDocument);
+                    if (file.getPath().endsWith(
+                            '.' + AsFileType.DEFAULT_EXTENSION))
+                    {
                         m_unsavedFiles.add(file);
                     }
                 }

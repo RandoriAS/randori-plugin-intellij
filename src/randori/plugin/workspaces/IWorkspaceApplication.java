@@ -55,7 +55,4 @@ public interface IWorkspaceApplication
 
     void build(Project project, boolean doClean, CompilerArguments arguments);
 
-    void parseSync(Project project, CompilerArguments arguments);
-
-    void parse(Project project, CompilerArguments arguments);
 }

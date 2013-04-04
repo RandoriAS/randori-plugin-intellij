@@ -39,7 +39,7 @@
             <implementation-class>randori.plugin.runner.RandoriRunnerConfigurationType</implementation-class>
         </component>
         <component>
-            <interface-class>randori.plugin.components.IWorkspaceApplication</interface-class>
+            <interface-class>randori.plugin.workspaces.IWorkspaceApplication</interface-class>
             <implementation-class>randori.plugin.workspaces.WorkspaceApplicationComponent</implementation-class>
         </component>
     </application-components>
@@ -60,6 +60,9 @@
         <!--<component>-->
         <!--<implementation-class>randori.plugin.components.ASProjectComponent</implementation-class>-->
         <!--</component>-->
+        <component>
+            <implementation-class>randori.plugin.workspaces.RandoriApplicationComponent</implementation-class>
+        </component>
     </project-components>
 
     <module-components>
