@@ -76,7 +76,6 @@ public class RandoriApplicationComponent implements ProjectComponent
         randoriApplication = (IRandoriApplicationProject) workspaceApplication
                 .addProject(project);
 
-        System.out.println("projectOpened()");
         build(null, false, false);
     }
 
@@ -117,13 +116,9 @@ public class RandoriApplicationComponent implements ProjectComponent
 
     //--------------------------------------------------------------------------
 
-    public void parseSync(final Project project,
-            final CompilerArguments arguments)
+    void parseSync(final Project project, final CompilerArguments arguments)
     {
-        final ProblemsService service = ProblemsService.getInstance(project);
-
-        // clear the problems for the next parse
-        service.clearProblems();
+        clearProblems();
 
         randoriApplication.configure(arguments.toArguments());
         boolean success = randoriApplication.compile(false);
@@ -132,11 +127,9 @@ public class RandoriApplicationComponent implements ProjectComponent
                 new ProblemRunnable(success, randoriApplication));
     }
 
-    public void parse(final Project project, final CompilerArguments arguments)
+    void parse(final Project project, final CompilerArguments arguments)
     {
-        final ProblemsService service = ProblemsService.getInstance(project);
-
-        service.clearProblems();
+        clearProblems();
 
         ProgressManager.getInstance().run(
                 new Task.Backgroundable(project,
@@ -157,14 +150,9 @@ public class RandoriApplicationComponent implements ProjectComponent
 
     //--------------------------------------------------------------------------
 
-    public void buildSync(final Project project, boolean doClean,
+    void buildSync(final Project project, boolean doClean,
             final CompilerArguments arguments)
     {
-        final String name = project.getName();
-        // final VirtualFile file = project.getBaseDir();
-
-        final ProblemsService service = ProblemsService.getInstance(project);
-
         if (doClean)
         {
             clean(project);
@@ -176,41 +164,22 @@ public class RandoriApplicationComponent implements ProjectComponent
         ApplicationManager.getApplication().invokeLater(
                 new ProblemUpdateRunnable(randoriApplication));
 
+        // only run if success, the compile will return false
+        // with any errors or mis configurations
         if (success)
         {
-            NotificationUtils.sendRandoriInformation("Success",
-                    "Successfully compiled and built project '" + name + "'",
-                    project);
-        }
-        else
-        {
-            if (service.hasErrors())
-            {
-                NotificationUtils.sendRandoriError("Error",
-                        "Error(s) in project, Check the <a href='"
-                                + ProblemsToolWindowFactory.WINDOW_ID + "'>"
-                                + ProblemsToolWindowFactory.WINDOW_ID
-                                + "</a> for more information", project);
-            }
-            else
-            {
-                NotificationUtils.sendRandoriWarning("Success",
-                        "Successfully compiled and built project with warnings '"
-                                + name + "'", project);
-            }
+            buildComplete();
         }
 
-        RandoriSdk.copySdkLibraries(project);
+        // this will take care of success and failure notices
+        ApplicationManager.getApplication().invokeLater(
+                new ProblemBuildRunnable(project, randoriApplication));
     }
 
-    public void build(final Project project, boolean doClean,
+    void build(final Project project, boolean doClean,
             final CompilerArguments arguments)
     {
-        final String name = project.getName();
-        final ProblemsService service = ProblemsService.getInstance(project);
-
-        // clear the problems for the next parse
-        service.clearProblems();
+        clearProblems();
 
         if (doClean)
         {
@@ -226,69 +195,30 @@ public class RandoriApplicationComponent implements ProjectComponent
                         randoriApplication.configure(arguments.toArguments());
                         boolean success = randoriApplication.compile(true);
 
+                        // only run if success, the compile will return false
+                        // with any errors or mis configurations
                         if (success)
                         {
-                            NotificationUtils.sendRandoriInformation("Success",
-                                    "Successfully compiled and built project '"
-                                            + name + "'", project);
-                        }
-                        else
-                        {
-                            // all this needs to be run on the UI thread
-                            ApplicationManager.getApplication().invokeLater(
-                                    new Runnable() {
-                                        @Override
-                                        public void run()
-                                        {
-                                            service.addAll(randoriApplication
-                                                    .getProblemQuery()
-                                                    .getProblems());
-
-                                            if (service.hasErrors())
-                                            {
-                                                NotificationUtils
-                                                        .sendRandoriError(
-                                                                "Error",
-                                                                "Error(s) in project, Check the <a href='"
-                                                                        + ProblemsToolWindowFactory.WINDOW_ID
-                                                                        + "'>"
-                                                                        + ProblemsToolWindowFactory.WINDOW_ID
-                                                                        + "</a> for more information",
-                                                                project);
-                                            }
-                                            else
-                                            {
-                                                // XXX This is temp until I get the ProblemQuery
-                                                // yanked out of the compiler
-                                                // this would hit here if there are still
-                                                // Warnings but the build passed
-                                                NotificationUtils
-                                                        .sendRandoriWarning(
-                                                                "Success",
-                                                                "Successfully compiled and built project with warnings '"
-                                                                        + name
-                                                                        + "'",
-                                                                project);
-                                            }
-                                        }
-                                    });
+                            buildComplete();
                         }
 
-                        RandoriSdk.copySdkLibraries(project);
+                        // this will take care of success and failure notices
+                        ApplicationManager.getApplication().invokeLater(
+                                new ProblemBuildRunnable(project,
+                                        randoriApplication));
                     }
                 });
     }
 
     //--------------------------------------------------------------------------
 
-    public void configureDependencies(Project project,
-            CompilerArguments arguments)
+    void configureDependencies(Project project, CompilerArguments arguments)
     {
         configureDependencies(project, arguments, null);
     }
 
-    public void configureDependencies(Project project,
-            CompilerArguments arguments, VirtualFile[] virtualFiles)
+    void configureDependencies(Project project, CompilerArguments arguments,
+            VirtualFile[] virtualFiles)
     {
         RandoriProjectComponent component = project
                 .getComponent(RandoriProjectComponent.class);
@@ -326,7 +256,7 @@ public class RandoriApplicationComponent implements ProjectComponent
         }
     }
 
-    public void configure(Project project, RandoriProjectModel model,
+    void configure(Project project, RandoriProjectModel model,
             CompilerArguments arguments)
     {
         arguments.setAppName(project.getName());
@@ -371,6 +301,27 @@ public class RandoriApplicationComponent implements ProjectComponent
         {
             File fsFile = new File(virtualFile.getPath());
             FileUtil.asyncDelete(fsFile);
+        }
+    }
+
+    protected void buildComplete()
+    {
+        RandoriSdk.copySdkLibraries(project);
+    }
+
+    protected void clearProblems()
+    {
+        ApplicationManager.getApplication().invokeLater(
+                new ProblemClearRunnable());
+    }
+
+    class ProblemClearRunnable implements Runnable
+    {
+        @Override
+        public void run()
+        {
+            ProblemsService service = ProblemsService.getInstance(project);
+            service.clearProblems();
         }
     }
 
@@ -430,6 +381,43 @@ public class RandoriApplicationComponent implements ProjectComponent
         }
     }
 
+    class ProblemBuildRunnable implements Runnable
+    {
+        private final IRandoriApplicationProject application;
+        private final Project project;
+
+        ProblemBuildRunnable(Project project,
+                IRandoriApplicationProject application)
+        {
+            this.project = project;
+            this.application = application;
+        }
+
+        @Override
+        public void run()
+        {
+            ProblemsService service = ProblemsService.getInstance(project);
+
+            service.addAll(application.getProblemQuery().getProblems());
+
+            if (service.hasErrors())
+            {
+                NotificationUtils.sendRandoriError("Error",
+                        "Error(s) in project, Check the <a href='"
+                                + ProblemsToolWindowFactory.WINDOW_ID + "'>"
+                                + ProblemsToolWindowFactory.WINDOW_ID
+                                + "</a> for more information", project);
+            }
+            else
+            {
+                NotificationUtils.sendRandoriInformation("Success",
+                        "Successfully compiled and built project", project);
+            }
+        }
+
+    }
+
+    @SuppressWarnings("unused")
     private String toErrorCode(int code)
     {
         switch (code)
