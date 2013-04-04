@@ -1,6 +1,16 @@
 package randori.plugin.components;
 
+import com.intellij.openapi.application.ApplicationManager;
 import org.apache.flex.compiler.problems.ICompilerProblem;
+
+import randori.compiler.clients.CompilerArguments;
+import randori.plugin.module.RandoriModuleType;
+import randori.plugin.runner.RandoriRunConfiguration;
+import randori.plugin.runner.RandoriServerComponent;
+import randori.plugin.service.ProblemsService;
+import randori.plugin.utils.ProjectUtils;
+import randori.plugin.utils.VFileUtils;
+
 import com.intellij.openapi.compiler.CompileScope;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.LogicalPosition;
@@ -15,22 +25,14 @@ import com.intellij.openapi.roots.ui.configuration.ClasspathEditor;
 import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
-import randori.compiler.clients.CompilerArguments;
-import randori.plugin.module.RandoriModuleType;
-import randori.plugin.runner.RandoriRunConfiguration;
-import randori.plugin.runner.RandoriServerComponent;
-import randori.plugin.service.ProblemsService;
-import randori.plugin.utils.ProjectUtils;
-import randori.plugin.utils.VFileUtils;
 
 public class BaseRandoriProjectComponent {
-    private final RandoriBundleApplicationComponent applicationComponent;
+
     protected RandoriProjectModel model;
     private Project project;
 
-    public BaseRandoriProjectComponent(Project project, RandoriBundleApplicationComponent applicationComponent) {
+    public BaseRandoriProjectComponent(Project project) {
         this.project = project;
-        this.applicationComponent = applicationComponent;
         this.model = new RandoriProjectModel();
     }
 
@@ -58,10 +60,13 @@ public class BaseRandoriProjectComponent {
         CompilerArguments arguments = new CompilerArguments();
         configureDependencies(project, arguments);
 
+        IWorkspaceApplication component = ApplicationManager.getApplication().getComponent(
+                IWorkspaceApplication.class);
+        
         if (sync) {
-            applicationComponent.getBuildSourceCommand().parseSync(project, arguments);
+            component.parseSync(project, arguments);
         } else {
-            applicationComponent.getBuildSourceCommand().parse(project, arguments);
+            component.parse(project, arguments);
         }
     }
 
@@ -78,10 +83,13 @@ public class BaseRandoriProjectComponent {
         CompilerArguments arguments = new CompilerArguments();
         configureDependencies(project, arguments, files);
 
+        IWorkspaceApplication component = ApplicationManager.getApplication().getComponent(
+                        IWorkspaceApplication.class);
+
         if (sync) {
-            applicationComponent.getBuildSourceCommand().buildSync(project, doClean, arguments);
+            component.buildSync(project, doClean, arguments);
         } else {
-            applicationComponent.getBuildSourceCommand().build(project, doClean, arguments);
+            component.build(project, doClean, arguments);
         }
     }
 

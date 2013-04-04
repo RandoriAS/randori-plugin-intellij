@@ -22,6 +22,9 @@ package randori.plugin.components;
 import com.intellij.openapi.project.Project;
 import org.apache.flex.compiler.internal.workspaces.Workspace;
 import org.apache.flex.compiler.projects.ICompilerProject;
+import org.apache.flex.compiler.workspaces.IWorkspace;
+
+import randori.compiler.clients.CompilerArguments;
 
 /**
  * The single instance of the IWorkspace in the IDE that manages compilation
@@ -32,7 +35,27 @@ import org.apache.flex.compiler.projects.ICompilerProject;
 public interface IWorkspaceApplication
 {
 
+    /**
+     * Returns the workspace of the application.
+     */
     Workspace getWorkspace();
 
+    /**
+     * Adds a project to the workspace, returns the Randori project that was
+     * added to the workspace.
+     * <p>
+     * Note; adding a project to the {@link IWorkspace} will not make a
+     * dependency of other projects until explicitly added.
+     * 
+     * @param project The project to add.
+     */
     ICompilerProject addProject(Project project);
+
+    void buildSync(Project project, boolean doClean, CompilerArguments arguments);
+
+    void build(Project project, boolean doClean, CompilerArguments arguments);
+
+    void parseSync(Project project, CompilerArguments arguments);
+
+    void parse(Project project, CompilerArguments arguments);
 }

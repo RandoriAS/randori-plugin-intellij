@@ -23,25 +23,23 @@ import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.intellij.openapi.module.ModuleType;
 import org.jetbrains.annotations.Nullable;
 
-import randori.plugin.components.RandoriApplicationComponent;
 import randori.plugin.components.RandoriProjectComponent;
+import randori.plugin.module.RandoriModuleType;
 
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.roots.libraries.LibraryUtil;
 import com.intellij.openapi.util.AsyncResult;
 import com.intellij.openapi.vfs.VirtualFile;
-import randori.plugin.module.RandoriModuleType;
 
 /**
  * A set of utilities for working with Projects and Modules.
@@ -50,14 +48,6 @@ import randori.plugin.module.RandoriModuleType;
  */
 public class ProjectUtils
 {
-    public static RandoriApplicationComponent getApplicationComponent()
-    {
-        RandoriApplicationComponent component = ApplicationManager
-                .getApplication().getComponent(
-                        RandoriApplicationComponent.class);
-        return component;
-    }
-
     public static RandoriProjectComponent getProjectComponent(Project project)
     {
         RandoriProjectComponent component = project
@@ -208,22 +198,3 @@ public class ProjectUtils
         return false;
     }
 }
-
-/*
-
-Get current project, when many frames could be open;
-
-DataContext dataContext = DataManager.getInstance().getDataContext();
-Project project = DataKeys.PROJECT.getData(dataContext);
-
-Folder of currently selected file;
-
-VirtualFile file = (VirtualFile) e.getDataContext().getData(DataConstants.VIRTUAL_FILE);
-VirtualFile folder = file.getParent();
-
-Add custom components to statusbar
-
-StatusBar.addCustomIndicationComponent()
-
-*/
-
