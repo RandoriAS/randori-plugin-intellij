@@ -3,8 +3,6 @@ package randori.plugin.workspaces;
 import org.jetbrains.annotations.NotNull;
 
 import randori.compiler.clients.CompilerArguments;
-import randori.compiler.clients.Randori;
-import randori.compiler.internal.driver.RandoriBackend;
 import randori.compiler.projects.IRandoriApplicationProject;
 import randori.plugin.service.ProblemsService;
 import randori.plugin.ui.ProblemsToolWindowFactory;
@@ -38,11 +36,6 @@ public class RandoriApplicationComponent implements ProjectComponent
 
     public void initComponent()
     {
-        if (!ProjectUtils.hasRandoriModuleType(project))
-            return;
-
-        randoriApplication = (IRandoriApplicationProject) workspaceApplication
-                .addProject(project);
     }
 
     public void disposeComponent()
@@ -61,7 +54,11 @@ public class RandoriApplicationComponent implements ProjectComponent
 
     public void projectOpened()
     {
-        // called when project is opened
+        if (!ProjectUtils.hasRandoriModuleType(project))
+            return;
+
+        randoriApplication = (IRandoriApplicationProject) workspaceApplication
+                .addProject(project);
     }
 
     public void projectClosed()
@@ -74,7 +71,6 @@ public class RandoriApplicationComponent implements ProjectComponent
     public void parseSync(final Project project,
             final CompilerArguments arguments)
     {
-        // final String name = project.getName();
         final ProblemsService service = ProblemsService.getInstance(project);
 
         // clear the problems for the next parse
@@ -83,31 +79,14 @@ public class RandoriApplicationComponent implements ProjectComponent
         randoriApplication.configure(arguments.toArguments());
         boolean success = randoriApplication.compile(false);
 
-        service.addAll(randoriApplication.getProblemQuery().getProblems());
-
-        if (success)
-        {
-            service.clearProblems();
-        }
-        else
-        {
-            if (service.hasErrors())
-            {
-                NotificationUtils.sendRandoriError("Error",
-                        "Error(s) in project, Check the <a href='"
-                                + ProblemsToolWindowFactory.WINDOW_ID + "'>"
-                                + ProblemsToolWindowFactory.WINDOW_ID
-                                + "</a> for more information", project);
-            }
-        }
+        ApplicationManager.getApplication().invokeLater(
+                new ProblemRunnable(success, randoriApplication));
     }
 
     public void parse(final Project project, final CompilerArguments arguments)
     {
-        // final String name = project.getName();
         final ProblemsService service = ProblemsService.getInstance(project);
 
-        // clear the problems for the next parse
         service.clearProblems();
 
         ProgressManager.getInstance().run(
@@ -116,49 +95,53 @@ public class RandoriApplicationComponent implements ProjectComponent
                     @Override
                     public void run(@NotNull ProgressIndicator indicator)
                     {
-                        //problems.clear();
+                        randoriApplication.configure(arguments.toArguments());
+                        boolean success = randoriApplication.compile(false);
 
-                        RandoriBackend backend = new RandoriBackend();
-                        backend.parseOnly(true);
-                        final Randori randori = new Randori(backend);
-
-                        // need to only parse not generate
-                        final int code = randori.mainNoExit(
-                                arguments.toArguments(), service.getProblems());
-
-                        if (code == 0)
-                        {
-                            service.clearProblems();
-                        }
-                        else
-                        {
-                            // all this needs to be run on the UI thread
-                            ApplicationManager.getApplication().invokeLater(
-                                    new Runnable() {
-                                        @Override
-                                        public void run()
-                                        {
-                                            service.filter();
-
-                                            if (service.hasErrors())
-                                            {
-                                                NotificationUtils
-                                                        .sendRandoriError(
-                                                                "Error",
-                                                                "Error(s) in project, Check the <a href='"
-                                                                        + ProblemsToolWindowFactory.WINDOW_ID
-                                                                        + "'>"
-                                                                        + ProblemsToolWindowFactory.WINDOW_ID
-                                                                        + "</a> for more information '"
-                                                                        + toErrorCode(code)
-                                                                        + "'",
-                                                                project);
-                                            }
-                                        }
-                                    });
-                        }
+                        ApplicationManager.getApplication()
+                                .invokeLater(
+                                        new ProblemRunnable(success,
+                                                randoriApplication));
                     }
                 });
+    }
+
+    class ProblemRunnable implements Runnable
+    {
+        private final boolean success;
+
+        private final IRandoriApplicationProject application;
+
+        ProblemRunnable(boolean success, IRandoriApplicationProject application)
+        {
+            this.success = success;
+            this.application = application;
+        }
+
+        @Override
+        public void run()
+        {
+            ProblemsService service = ProblemsService.getInstance(project);
+
+            service.addAll(application.getProblemQuery().getProblems());
+
+            if (success)
+            {
+                service.clearProblems();
+            }
+            else
+            {
+                if (service.hasErrors())
+                {
+                    NotificationUtils.sendRandoriError("Error",
+                            "Error(s) in project, Check the <a href='"
+                                    + ProblemsToolWindowFactory.WINDOW_ID
+                                    + "'>"
+                                    + ProblemsToolWindowFactory.WINDOW_ID
+                                    + "</a> for more information", project);
+                }
+            }
+        }
     }
 
     private String toErrorCode(int code)

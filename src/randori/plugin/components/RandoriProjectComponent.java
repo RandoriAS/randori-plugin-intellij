@@ -25,7 +25,6 @@ import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 import randori.compiler.clients.CompilerArguments;
-import randori.compiler.projects.IRandoriApplicationProject;
 import randori.plugin.forms.RandoriProjectConfigurationForm;
 import randori.plugin.ui.ProblemsToolWindowFactory;
 import randori.plugin.utils.ProjectUtils;

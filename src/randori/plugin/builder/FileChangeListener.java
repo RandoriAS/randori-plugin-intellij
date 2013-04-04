@@ -44,7 +44,6 @@ public class FileChangeListener implements VirtualFileListener
             RandoriProjectComponent component = ProjectUtils
                     .getProjectComponent(ProjectUtils.getProject());
 
-            // XXX This makes no sense
             component.parse(false);
         }
     }

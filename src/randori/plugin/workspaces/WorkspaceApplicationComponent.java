@@ -32,6 +32,7 @@ import randori.compiler.clients.CompilerArguments;
 import randori.compiler.clients.Randori;
 import randori.compiler.driver.IBackend;
 import randori.compiler.internal.driver.RandoriBackend;
+import randori.compiler.internal.projects.RandoriApplicationProject;
 import randori.plugin.builder.FileChangeListener;
 import randori.plugin.components.RandoriProjectComponent;
 import randori.plugin.roots.RandoriSdk;
@@ -85,8 +86,9 @@ public class WorkspaceApplicationComponent implements ApplicationComponent,
     {
         if (map.containsKey(project.getName()))
             return null;
-
-        FlexProject result = new FlexProject(workspace);
+        
+        // XXX temp, we will need to create specific instances of module type
+        RandoriApplicationProject result = new RandoriApplicationProject(workspace);
         map.put(project.getName(), result);
         return result;
     }
