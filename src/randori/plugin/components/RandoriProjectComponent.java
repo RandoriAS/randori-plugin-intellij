@@ -25,10 +25,12 @@ import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 import randori.compiler.clients.CompilerArguments;
+import randori.compiler.projects.IRandoriApplicationProject;
 import randori.plugin.forms.RandoriProjectConfigurationForm;
 import randori.plugin.ui.ProblemsToolWindowFactory;
 import randori.plugin.utils.ProjectUtils;
 import randori.plugin.workspaces.IWorkspaceApplication;
+import randori.plugin.workspaces.RandoriApplicationComponent;
 
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ProjectComponent;
@@ -92,13 +94,16 @@ public class RandoriProjectComponent extends BaseRandoriProjectComponent
         CompilerArguments arguments = new CompilerArguments();
         configureDependencies(getProject(), arguments);
 
+        RandoriApplicationComponent component = getProject().getComponent(
+                RandoriApplicationComponent.class);
+
         if (sync)
         {
-            workspaceApplication.parseSync(getProject(), arguments);
+            component.parseSync(getProject(), arguments);
         }
         else
         {
-            workspaceApplication.parse(getProject(), arguments);
+            component.parse(getProject(), arguments);
         }
     }
 

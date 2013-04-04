@@ -23,10 +23,6 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileListener;
-import com.intellij.openapi.vfs.VirtualFileManager;
 import org.apache.flex.compiler.internal.projects.FlexProject;
 import org.apache.flex.compiler.internal.workspaces.Workspace;
 import org.apache.flex.compiler.projects.ICompilerProject;
@@ -50,6 +46,10 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileListener;
+import com.intellij.openapi.vfs.VirtualFileManager;
 
 /**
  * XXX I am really thinking this needs to be a service and only be instantiated
@@ -135,65 +135,6 @@ public class WorkspaceApplicationComponent implements ApplicationComponent,
     //--------------------------------------------------------------------------
     // TEMP UNTIL the build refactor
     //--------------------------------------------------------------------------
-
-    public void parse(final Project project, final CompilerArguments arguments)
-    {
-        // final String name = project.getName();
-        final ProblemsService service = ProblemsService.getInstance(project);
-
-        // clear the problems for the next parse
-        service.clearProblems();
-
-        ProgressManager.getInstance().run(
-                new Task.Backgroundable(project,
-                        "Randori compiler building project", true, null) {
-                    @Override
-                    public void run(@NotNull ProgressIndicator indicator)
-                    {
-                        //problems.clear();
-
-                        RandoriBackend backend = new RandoriBackend();
-                        backend.parseOnly(true);
-                        final Randori randori = new Randori(backend);
-
-                        // need to only parse not generate
-                        final int code = randori.mainNoExit(
-                                arguments.toArguments(), service.getProblems());
-
-                        if (code == 0)
-                        {
-                            service.clearProblems();
-                        }
-                        else
-                        {
-                            // all this needs to be run on the UI thread
-                            ApplicationManager.getApplication().invokeLater(
-                                    new Runnable() {
-                                        @Override
-                                        public void run()
-                                        {
-                                            service.filter();
-
-                                            if (service.hasErrors())
-                                            {
-                                                NotificationUtils
-                                                        .sendRandoriError(
-                                                                "Error",
-                                                                "Error(s) in project, Check the <a href='"
-                                                                        + ProblemsToolWindowFactory.WINDOW_ID
-                                                                        + "'>"
-                                                                        + ProblemsToolWindowFactory.WINDOW_ID
-                                                                        + "</a> for more information '"
-                                                                        + toErrorCode(code)
-                                                                        + "'",
-                                                                project);
-                                            }
-                                        }
-                                    });
-                        }
-                    }
-                });
-    }
 
     public void build(final Project project, boolean doClean,
             final CompilerArguments arguments)
@@ -288,45 +229,6 @@ public class WorkspaceApplicationComponent implements ApplicationComponent,
         {
             File fsFile = new File(virtualFile.getPath());
             FileUtil.asyncDelete(fsFile);
-        }
-    }
-
-    public void parseSync(final Project project,
-            final CompilerArguments arguments)
-    {
-        // final String name = project.getName();
-        final ProblemsService service = ProblemsService.getInstance(project);
-
-        // clear the problems for the next parse
-        service.clearProblems();
-
-        //problems.clear();
-
-        RandoriBackend backend = new RandoriBackend();
-        backend.parseOnly(true);
-        final Randori randori = new Randori(backend);
-
-        // need to only parse not generate
-        final int code = randori.mainNoExit(arguments.toArguments(),
-                service.getProblems());
-
-        if (code == 0)
-        {
-            service.clearProblems();
-        }
-        else
-        {
-            service.filter();
-
-            if (service.hasErrors())
-            {
-                NotificationUtils.sendRandoriError("Error",
-                        "Error(s) in project, Check the <a href='"
-                                + ProblemsToolWindowFactory.WINDOW_ID + "'>"
-                                + ProblemsToolWindowFactory.WINDOW_ID
-                                + "</a> for more information '"
-                                + toErrorCode(code) + "'", project);
-            }
         }
     }
 

@@ -60,6 +60,9 @@
         <!--<component>-->
         <!--<implementation-class>randori.plugin.components.ASProjectComponent</implementation-class>-->
         <!--</component>-->
+        <component>
+            <implementation-class>randori.plugin.workspaces.RandoriApplicationComponent</implementation-class>
+        </component>
     </project-components>
 
     <module-components>
