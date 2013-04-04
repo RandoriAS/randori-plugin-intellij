@@ -17,7 +17,7 @@
  * @author Michael Schmalle <mschmalle@teotigraphix.com>
  */
 
-package randori.plugin.components;
+package randori.plugin.workspaces;
 
 import com.intellij.openapi.project.Project;
 import org.apache.flex.compiler.internal.workspaces.Workspace;
