@@ -19,8 +19,14 @@
 
 package randori.plugin.compiler;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jetbrains.annotations.NotNull;
+
+import randori.plugin.AsFileType;
+import randori.plugin.workspaces.RandoriApplicationComponent;
+
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompileScope;
@@ -33,9 +39,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Chunk;
-import randori.plugin.AsFileType;
-import randori.plugin.components.RandoriProjectComponent;
-import randori.plugin.utils.ProjectUtils;
 
 /**
  * IDEA Compiler class for calling the internal compiler API.
@@ -47,17 +50,22 @@ public class RandoriCompiler implements TranslatingCompiler
 
     private static final Logger LOG = Logger
             .getInstance("#randori.compiler.RandoriCompiler");
+
     protected final Project myProject;
-    private FileDocumentManager m_documentManager;
-    private RandoriProjectComponent m_projectComponent;
-    private List<VirtualFile> m_unsavedFiles;
+
+    private FileDocumentManager documentManager;
+
+    private RandoriApplicationComponent projectComponent;
+
+    private List<VirtualFile> unsavedFiles;
 
     public RandoriCompiler(Project project)
     {
         myProject = project;
 
-        m_projectComponent = ProjectUtils.getProjectComponent(project);
-        m_documentManager = ApplicationManager.getApplication().getComponent(
+        projectComponent = project
+                .getComponent(RandoriApplicationComponent.class);
+        documentManager = ApplicationManager.getApplication().getComponent(
                 FileDocumentManager.class);
     }
 
@@ -77,17 +85,16 @@ public class RandoriCompiler implements TranslatingCompiler
         context.getProgressIndicator().checkCanceled();
         context.getProgressIndicator().setText("Starting Randori compiler...");
 
-        if (context.isMake() && m_unsavedFiles != null
-                && m_unsavedFiles.size() > 0)
+        if (context.isMake() && unsavedFiles != null && unsavedFiles.size() > 0)
         {
-            m_projectComponent.build((m_unsavedFiles
-                    .toArray(new VirtualFile[m_unsavedFiles.size()])), false,
-                    true);
-            m_unsavedFiles = null;
+            projectComponent
+                    .build((unsavedFiles.toArray(new VirtualFile[unsavedFiles
+                            .size()])), false, true);
+            unsavedFiles = null;
         }
         else
         {
-            m_projectComponent.build(null, !context.isMake(), true);
+            projectComponent.build(null, !context.isMake(), true);
         }
     }
 
@@ -101,26 +108,25 @@ public class RandoriCompiler implements TranslatingCompiler
     @Override
     public boolean validateConfiguration(CompileScope scope)
     {
-        boolean isConfigurationValidated = m_projectComponent
+        boolean isConfigurationValidated = projectComponent
                 .validateConfiguration(scope);
 
         if (isConfigurationValidated)
         {
-            final Document[] unsavedDocuments = m_documentManager
+            final Document[] unsavedDocuments = documentManager
                     .getUnsavedDocuments();
 
             if (unsavedDocuments.length > 0)
             {
-                m_unsavedFiles = new ArrayList<VirtualFile>();
+                unsavedFiles = new ArrayList<VirtualFile>();
 
                 for (Document unsavedDocument : unsavedDocuments)
                 {
-                    VirtualFile file = m_documentManager
-                            .getFile(unsavedDocument);
+                    VirtualFile file = documentManager.getFile(unsavedDocument);
                     if (file.getPath().endsWith(
                             '.' + AsFileType.DEFAULT_EXTENSION))
                     {
-                        m_unsavedFiles.add(file);
+                        unsavedFiles.add(file);
                     }
                 }
             }

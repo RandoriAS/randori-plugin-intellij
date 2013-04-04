@@ -2,27 +2,16 @@ package randori.plugin.components;
 
 import org.apache.flex.compiler.problems.ICompilerProblem;
 
-import randori.compiler.clients.CompilerArguments;
-import randori.plugin.module.RandoriModuleType;
 import randori.plugin.runner.RandoriRunConfiguration;
 import randori.plugin.runner.RandoriServerComponent;
 import randori.plugin.service.ProblemsService;
-import randori.plugin.utils.ProjectUtils;
 import randori.plugin.utils.VFileUtils;
 
-import com.intellij.openapi.compiler.CompileScope;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.LogicalPosition;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.roots.ui.configuration.ClasspathEditor;
-import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 
 public class BaseRandoriProjectComponent
@@ -83,85 +72,9 @@ public class BaseRandoriProjectComponent
         }
     }
 
-    public void configureDependencies(Project project,
-            CompilerArguments arguments)
-    {
-        configureDependencies(project, arguments, null);
-    }
-
-    public void configureDependencies(Project project,
-            CompilerArguments arguments, VirtualFile[] virtualFiles)
-    {
-        arguments.clear();
-
-        configure(project, getModel(), arguments);
-
-        for (String library : ProjectUtils.getAllProjectSWCs(project))
-        {
-            arguments.addLibraryPath(library);
-        }
-
-        for (String library : ProjectUtils.getAllProjectSourcePaths(project))
-        {
-            arguments.addSourcepath(library);
-        }
-
-        Module[] modules = ModuleManager.getInstance(project).getModules();
-        for (Module module : modules)
-        {
-            // RandoriFlash/src
-            for (VirtualFile sourceRoot : ModuleRootManager.getInstance(module)
-                    .getSourceRoots())
-            {
-                arguments.addSourcepath(sourceRoot.getPath());
-            }
-            if (virtualFiles != null)
-            {
-                for (VirtualFile virtualFile : virtualFiles)
-                {
-                    arguments.addIncludedSources(virtualFile.getPath());
-                }
-            }
-        }
-    }
-
     public RandoriProjectModel getModel()
     {
         return model;
     }
 
-    public boolean validateConfiguration(CompileScope scope)
-    {
-
-        if (!ProjectUtils.isSDKInstalled(project))
-        {
-            return false;
-        }
-
-        // TODO Implement the Randori facet for modules.
-        for (final Module module : scope.getAffectedModules())
-        {
-            if (ModuleType.get(module) != RandoriModuleType.getInstance())
-            {
-                Messages.showErrorDialog(module.getProject(),
-                        "This module is not a Randori module",
-                        "Can not compile");
-                ModulesConfigurator.showDialog(module.getProject(),
-                        module.getName(), ClasspathEditor.NAME);
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    public void configure(Project project, RandoriProjectModel model,
-            CompilerArguments arguments)
-    {
-        arguments.setAppName(project.getName());
-        arguments.setJsBasePath(model.getBasePath());
-        arguments.setJsLibraryPath(model.getLibraryPath());
-        arguments.setJsOutputAsFiles(model.isClassesAsFile());
-        arguments.setOutput(project.getBasePath());
-    }
 }
