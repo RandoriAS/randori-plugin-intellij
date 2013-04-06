@@ -117,9 +117,7 @@ public class RandoriApplicationComponent implements ProjectComponent
         randoriApplication = (IRandoriApplicationProject) workspaceApplication
                 .addProject(project);
 
-        // XXX Fred; should we do this or not?
-        // we need to parse, not build
-        build(null, false, false);
+        parse(false);
     }
 
     @Override
