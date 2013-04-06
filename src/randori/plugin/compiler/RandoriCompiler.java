@@ -85,7 +85,7 @@ public class RandoriCompiler implements TranslatingCompiler
         }
         else
         {
-            projectComponent.build(null, !context.isMake(), true);
+            projectComponent.build(null, true, true);
         }
 
         modifiedFiles.removeAll(modifiedFiles);
