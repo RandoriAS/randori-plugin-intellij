@@ -21,6 +21,7 @@ package randori.plugin.compiler;
 
 import java.util.List;
 
+import com.intellij.openapi.util.io.FileUtilRt;
 import org.jetbrains.annotations.NotNull;
 
 import randori.plugin.workspaces.RandoriApplicationComponent;
@@ -63,8 +64,7 @@ public class RandoriCompiler implements TranslatingCompiler
     @Override
     public boolean isCompilableFile(VirtualFile file, CompileContext context)
     {
-        return file != null && file.getExtension() != null
-                && file.getExtension().equals("as");
+        return FileUtilRt.extensionEquals(file.getPath(), "as");
     }
 
     @Override
