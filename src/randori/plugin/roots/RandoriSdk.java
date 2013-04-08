@@ -333,7 +333,7 @@ public class RandoriSdk extends SdkType
    }
 
     private static void copyJSFilesFromContainer(VirtualFile destinationDir, VirtualFile sdkRoot, IBundleContainer container) {
-        IBundleCategory category = container.getCategory(IBundleCategory.Type.MONO);
+        IBundleCategory category = container.getCategory(IBundleCategory.Type.MONOLITHIC);
         if (category != null)
         {
             copyJSFilesFromCategory(destinationDir, sdkRoot, category);
