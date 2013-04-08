@@ -21,6 +21,7 @@ package randori.plugin.builder;
 
 import com.intellij.openapi.util.io.FileUtilRt;
 import randori.plugin.utils.ProjectUtils;
+import randori.plugin.utils.VFileUtils;
 import randori.plugin.workspaces.RandoriApplicationComponent;
 
 import com.intellij.openapi.project.Project;
@@ -40,7 +41,7 @@ public class FileChangeListener implements VirtualFileListener
     public void contentsChanged(VirtualFileEvent event)
     {
         VirtualFile file = event.getFile();
-        if (FileUtilRt.extensionEquals(file.getPath(), "as"))
+        if (VFileUtils.extensionEquals(file.getPath(), "as"))
         {
             Project project = ProjectUtils.getProject();
             if (project == null)

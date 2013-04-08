@@ -57,11 +57,18 @@ public class ProjectUtils
 
     public static Project getProject()
     {
-        AsyncResult<DataContext> dataContext = DataManager.getInstance()
-                .getDataContextFromFocus();
-        Project project = PlatformDataKeys.PROJECT.getData(dataContext
-                .getResult());
-        return project;
+        // TODO: Temporary try catch to remove once dealt with project/module instead of application setup.
+        try {
+            AsyncResult<DataContext> dataContext = DataManager.getInstance()
+                    .getDataContextFromFocus();
+            Project project = PlatformDataKeys.PROJECT.getData(dataContext
+                    .getResult());
+            return project;
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     public static Project getProject(Component component)
