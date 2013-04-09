@@ -37,6 +37,7 @@ import com.intellij.util.IncorrectOperationException;
 import icons.RandoriIcons;
 
 /**
+ * @author Roland Zwaga <roland@stackandheap.com>
  * @author Frédéric THOMAS
  */
 public class RandoriTemplatesFactory implements

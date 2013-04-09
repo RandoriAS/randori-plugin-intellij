@@ -40,6 +40,7 @@ import org.jetbrains.annotations.Nullable;
 import randori.plugin.util.ProjectUtils;
 
 /**
+ * @author Michael Schmalle
  * @author Frédéric THOMAS
  */
 public class NewActionScriptClassAction extends
