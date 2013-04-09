@@ -17,13 +17,12 @@
  * @author Michael Schmalle <mschmalle@teotigraphix.com>
  */
 
-package randori.plugin.workspaces;
+package randori.plugin.workspace;
 
+import com.intellij.openapi.project.Project;
 import org.apache.flex.compiler.internal.workspaces.Workspace;
 import org.apache.flex.compiler.projects.ICompilerProject;
 import org.apache.flex.compiler.workspaces.IWorkspace;
-
-import com.intellij.openapi.project.Project;
 
 /**
  * The single instance of the IWorkspace in the IDE that manages compilation
@@ -31,7 +30,7 @@ import com.intellij.openapi.project.Project;
  * 
  * @author Michael Schmalle
  */
-public interface IWorkspaceApplication
+public interface IRandoriWorkspace
 {
 
     /**
@@ -48,6 +47,6 @@ public interface IWorkspaceApplication
      * 
      * @param project The project to add.
      */
-    ICompilerProject addProject(Project project);
+    ICompilerProject addProjectCompiler(Project project);
 
-    }
+}

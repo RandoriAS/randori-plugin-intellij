@@ -17,14 +17,15 @@
  * @author Michael Schmalle <mschmalle@teotigraphix.com>
  */
 
-package randori.plugin.utils;
+package randori.plugin.util;
+
+import java.io.File;
+
+import org.jetbrains.annotations.NotNull;
 
 import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NotNull;
-
-import java.io.File;
 
 /**
  * @author Michael Schmalle
@@ -46,19 +47,25 @@ public class VFileUtils
 
     /**
      * @deprecated Use FileUtilRt.extensionEquals from IntelliJ 12.1
-     *
+     * 
      * @param fileName
      * @param extension
      * @return
      */
-    public static boolean extensionEquals(@NotNull String fileName, @NotNull String extension) {
+    public static boolean extensionEquals(@NotNull String fileName,
+            @NotNull String extension)
+    {
         int extLen = extension.length();
-        if (extLen == 0) {
+        if (extLen == 0)
+        {
             return fileName.indexOf('.') == -1;
         }
         int extStart = fileName.length() - extLen;
-        return extStart >= 1 && fileName.charAt(extStart-1) == '.'
-                && fileName.regionMatches(!SystemInfoRt.isFileSystemCaseSensitive, extStart, extension, 0, extLen);
+        return extStart >= 1
+                && fileName.charAt(extStart - 1) == '.'
+                && fileName.regionMatches(
+                        !SystemInfoRt.isFileSystemCaseSensitive, extStart,
+                        extension, 0, extLen);
     }
 
 }

@@ -1,9 +1,10 @@
-package randori.plugin.utils;
+package randori.plugin.util;
 
 /**
  * @author Roland Zwaga <roland@stackandheap.com>
  */
-public final class LogUtils {
+public final class LogUtils
+{
 
     public static String dumpStackTrace(StackTraceElement[] elements)
     {

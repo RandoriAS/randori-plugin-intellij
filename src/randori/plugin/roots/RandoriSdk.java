@@ -19,21 +19,6 @@
 
 package randori.plugin.roots;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import javax.swing.*;
-import javax.xml.stream.XMLStreamException;
-
-import randori.compiler.bundle.*;
-import randori.compiler.bundle.io.StAXManifestReader;
-import randori.plugin.components.RandoriProjectComponent;
-import icons.RandoriIcons;
-
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.*;
@@ -44,7 +29,20 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import randori.plugin.utils.LogUtils;
+import icons.RandoriIcons;
+import randori.compiler.bundle.*;
+import randori.compiler.bundle.io.StAXManifestReader;
+import randori.plugin.components.RandoriProjectComponent;
+import randori.plugin.util.LogUtils;
+
+import javax.swing.*;
+import javax.xml.stream.XMLStreamException;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * @author Michael Schmalle
@@ -53,7 +51,6 @@ import randori.plugin.utils.LogUtils;
 public class RandoriSdk extends SdkType
 {
     private static final Logger logger = Logger.getInstance(RandoriSdk.class);
-
     private IBundleVersion sdkVersion;
     private IBundle sdkBundle;
 
@@ -65,6 +62,119 @@ public class RandoriSdk extends SdkType
     public static SdkType getInstance()
     {
         return findInstance(RandoriSdk.class);
+    }
+
+    public static void copySdkLibraries(Project project)
+    {
+        // only copy the SDK js libraries if the SWCs exist in the SDK
+        final VirtualFile baseDir = project.getBaseDir();
+
+        final Sdk sdk = ProjectRootManager.getInstance(project).getProjectSdk();
+
+        if (sdk == null)
+            throw new RuntimeException(
+                    "Tried to copy libraries but SDK was null");
+
+        RandoriSdk randoriSdk = (RandoriSdk) sdk.getSdkType();
+
+        VirtualFile sdkRoot = sdk.getHomeDirectory();
+        if (sdkRoot == null || !sdkRoot.exists())
+            throw new RuntimeException(
+                    "SDK home directory not found, please check your Project and Module SDK settings.");
+
+        if (randoriSdk.sdkBundle == null)
+        {
+            randoriSdk.sdkBundle = randoriSdk.getBundle(sdkRoot);
+        }
+        IBundle sdkBundle = randoriSdk.sdkBundle;
+        if (sdkBundle == null)
+        {
+            throw new RuntimeException("SDK bundle is invalid.");
+        }
+
+        String libPath = project.getComponent(RandoriProjectComponent.class)
+                .getState().getLibraryPath();
+
+        VirtualFile libraryDir = baseDir.findFileByRelativePath(libPath);
+        if (libraryDir == null)
+        {
+            logger.debug("The library path '" + libPath
+                    + "' doesn't exist, creating it now.");
+            new File(baseDir.getPath(), libPath).mkdirs();
+            baseDir.refresh(false, true);
+            libraryDir = baseDir.findFileByRelativePath(libPath);
+        }
+        copyJSFilesFromBundle(libraryDir, sdkRoot, sdkBundle);
+        logger.debug("Finished copying JS files from SDK to library path: "
+                + libPath);
+
+        // TODO figure out the correct way to refresh the generated dir
+        // says this should only be called in a writeAction
+        baseDir.refresh(true, true);
+    }
+
+    private static void copyJSFilesFromBundle(VirtualFile destinationDir,
+            VirtualFile sdkRoot, IBundle sdkBundle)
+    {
+        Collection<IBundleLibrary> libraries = sdkBundle.getLibraries();
+        for (IBundleLibrary library : libraries)
+        {
+            copyJSFilesFromLibrary(destinationDir, sdkRoot, library);
+        }
+    }
+
+    private static void copyJSFilesFromLibrary(VirtualFile destinationDir,
+            VirtualFile sdkRoot, IBundleLibrary library)
+    {
+
+        IBundleContainer container = library
+                .getContainer(IBundleContainer.Type.JS);
+        if (container != null)
+        {
+            copyJSFilesFromContainer(destinationDir, sdkRoot, container);
+        }
+    }
+
+    private static void copyJSFilesFromContainer(VirtualFile destinationDir,
+            VirtualFile sdkRoot, IBundleContainer container)
+    {
+        IBundleCategory category = container
+                .getCategory(IBundleCategory.Type.MONOLITHIC);
+        if (category != null)
+        {
+            copyJSFilesFromCategory(destinationDir, sdkRoot, category);
+        }
+    }
+
+    private static void copyJSFilesFromCategory(VirtualFile destinationDir,
+            VirtualFile sdkRoot, IBundleCategory category)
+    {
+        Collection<IBundleEntry> entries = category.getEntries();
+        for (IBundleEntry entry : entries)
+        {
+            copyJSEntry(destinationDir, sdkRoot, entry);
+        }
+    }
+
+    private static void copyJSEntry(VirtualFile destinationDir,
+            VirtualFile sdkRoot, IBundleEntry entry)
+    {
+        File sourceFile = new File(sdkRoot.getPath() + File.separator
+                + entry.getPath());
+        File destinationFile = new File(destinationDir.getPath()
+                + File.separator + sourceFile.getName());
+        try
+        {
+            FileUtil.copy(sourceFile, destinationFile);
+            logger.debug("Copied JS file " + sourceFile.getName()
+                    + " to library path " + destinationDir.getPath());
+        }
+        catch (IOException e)
+        {
+            logger.error(LogUtils.dumpStackTrace(Thread.currentThread()
+                    .getStackTrace()));
+            e.printStackTrace();
+        }
     }
 
     // called by SdkType.setupSdkPaths()
@@ -165,7 +275,8 @@ public class RandoriSdk extends SdkType
         {
             sdkVersion = sdkBundle.getVersion();
         }
-        return (sdkVersion != null) ? sdkVersion.getRandoriVersion().toString() : null;
+        return (sdkVersion != null) ? sdkVersion.getRandoriVersion().toString()
+                : null;
     }
 
     @Override
@@ -203,16 +314,19 @@ public class RandoriSdk extends SdkType
     {
         ArrayList<VirtualFile> result = new ArrayList<VirtualFile>();
         Collection<IBundleLibrary> libraries = bundle.getLibraries();
-        for(IBundleLibrary library : libraries)
+        for (IBundleLibrary library : libraries)
         {
             result.addAll(getSWCPathsFromBundleLibrary(library, sdkRoot));
         }
         return result;
     }
 
-    private Collection<VirtualFile> getSWCPathsFromBundleLibrary(IBundleLibrary bundleLibrary, VirtualFile sdkRoot) {
+    private Collection<VirtualFile> getSWCPathsFromBundleLibrary(
+            IBundleLibrary bundleLibrary, VirtualFile sdkRoot)
+    {
         ArrayList<VirtualFile> result = new ArrayList<VirtualFile>();
-        IBundleContainer container = bundleLibrary.getContainer(IBundleContainer.Type.BIN);
+        IBundleContainer container = bundleLibrary
+                .getContainer(IBundleContainer.Type.BIN);
         if (container != null)
         {
             getEntriesFromCategories(sdkRoot, result, container);
@@ -220,17 +334,22 @@ public class RandoriSdk extends SdkType
         return result;
     }
 
-    private void getEntriesFromCategories(VirtualFile sdkRoot, ArrayList<VirtualFile> result, IBundleContainer container) {
-        IBundleCategory category = container.getCategory(IBundleCategory.Type.SWC);
+    private void getEntriesFromCategories(VirtualFile sdkRoot,
+            ArrayList<VirtualFile> result, IBundleContainer container)
+    {
+        IBundleCategory category = container
+                .getCategory(IBundleCategory.Type.SWC);
         if (category != null)
         {
             getSWCEntries(sdkRoot, result, category);
         }
     }
 
-    private void getSWCEntries(VirtualFile sdkRoot, ArrayList<VirtualFile> result, IBundleCategory category) {
+    private void getSWCEntries(VirtualFile sdkRoot,
+            ArrayList<VirtualFile> result, IBundleCategory category)
+    {
         Collection<IBundleEntry> entries = category.getEntries();
-        for(IBundleEntry entry : entries)
+        for (IBundleEntry entry : entries)
         {
             result.add(getSWC(sdkRoot, entry.getPath()));
         }
@@ -238,10 +357,10 @@ public class RandoriSdk extends SdkType
 
     private VirtualFile getSWC(VirtualFile root, String relativePath)
     {
-        VirtualFile swc = root
-                .findFileByRelativePath(relativePath);
+        VirtualFile swc = root.findFileByRelativePath(relativePath);
         if (swc == null || !swc.exists())
-            throw new RuntimeException("The SWC " + relativePath + " does not exist");
+            throw new RuntimeException("The SWC " + relativePath
+                    + " does not exist");
         return swc;
     }
 
@@ -265,110 +384,14 @@ public class RandoriSdk extends SdkType
         // on the project and modules.
     }
 
-    public static void copySdkLibraries(Project project)
-    {
-        // only copy the SDK js libraries if the SWCs exist in the SDK
-        final VirtualFile baseDir = project.getBaseDir();
-
-        final Sdk sdk = ProjectRootManager.getInstance(project).getProjectSdk();
-
-        if (sdk == null)
-            throw new RuntimeException(
-                    "Tried to copy libraries but SDK was null");
-
-        RandoriSdk randoriSdk = (RandoriSdk) sdk.getSdkType();
-
-
-        VirtualFile sdkRoot = sdk.getHomeDirectory();
-        if (sdkRoot == null || !sdkRoot.exists())
-            throw new RuntimeException(
-                    "SDK home directory not found, please check your Project and Module SDK settings.");
-
-        if (randoriSdk.sdkBundle == null)
-        {
-            randoriSdk.sdkBundle = randoriSdk.getBundle(sdkRoot);
-        }
-        IBundle sdkBundle = randoriSdk.sdkBundle;
-        if (sdkBundle == null)
-        {
-            throw new RuntimeException(
-                    "SDK bundle is invalid.");
-        }
-
-        String libPath = project
-                .getComponent(RandoriProjectComponent.class).getState()
-                .getLibraryPath();
-
-        VirtualFile libraryDir = baseDir.findFileByRelativePath(libPath);
-        if (libraryDir == null)
-        {
-            logger.debug("The library path '" + libPath + "' doesn't exist, creating it now.");
-            new File(baseDir.getPath(), libPath).mkdirs();
-            baseDir.refresh(false, true);
-            libraryDir = baseDir.findFileByRelativePath(libPath);
-        }
-        copyJSFilesFromBundle(libraryDir, sdkRoot, sdkBundle);
-        logger.debug("Finished copying JS files from SDK to library path: " + libPath);
-
-        // TODO figure out the correct way to refresh the generated dir
-        // says this should only be called in a writeAction
-        baseDir.refresh(true, true);
-    }
-
-    private static void copyJSFilesFromBundle(VirtualFile destinationDir, VirtualFile sdkRoot, IBundle sdkBundle) {
-        Collection<IBundleLibrary> libraries = sdkBundle.getLibraries();
-        for(IBundleLibrary library : libraries)
-        {
-            copyJSFilesFromLibrary(destinationDir, sdkRoot, library);
-        }
-    }
-
-    private static void copyJSFilesFromLibrary(VirtualFile destinationDir, VirtualFile sdkRoot, IBundleLibrary library) {
-
-        IBundleContainer container = library.getContainer(IBundleContainer.Type.JS);
-        if (container != null)
-        {
-            copyJSFilesFromContainer(destinationDir, sdkRoot, container);
-        }
-   }
-
-    private static void copyJSFilesFromContainer(VirtualFile destinationDir, VirtualFile sdkRoot, IBundleContainer container) {
-        IBundleCategory category = container.getCategory(IBundleCategory.Type.MONO);
-        if (category != null)
-        {
-            copyJSFilesFromCategory(destinationDir, sdkRoot, category);
-        }
-    }
-
-    private static void copyJSFilesFromCategory(VirtualFile destinationDir, VirtualFile sdkRoot, IBundleCategory category) {
-        Collection<IBundleEntry> entries = category.getEntries();
-        for(IBundleEntry entry : entries)
-        {
-            copyJSEntry(destinationDir, sdkRoot, entry);
-        }
-    }
-
-    private static void copyJSEntry(VirtualFile destinationDir, VirtualFile sdkRoot, IBundleEntry entry) {
-        File sourceFile = new File(sdkRoot.getPath() + File.separator + entry.getPath());
-        File destinationFile = new File(destinationDir.getPath() + File.separator + sourceFile.getName());
-        try
-        {
-            FileUtil.copy(sourceFile, destinationFile);
-            logger.debug("Copied JS file " + sourceFile.getName() + " to library path " + destinationDir.getPath());
-        }
-        catch(IOException e)
-        {
-            logger.error(LogUtils.dumpStackTrace(Thread.currentThread().getStackTrace()));
-            e.printStackTrace();
-        }
-    }
-
     public IBundle getBundle(VirtualFile sdkRoot)
     {
-        VirtualFile manifestFile = sdkRoot.findFileByRelativePath("manifest.xml");
+        VirtualFile manifestFile = sdkRoot
+                .findFileByRelativePath("manifest.xml");
         if (manifestFile == null)
         {
-            logger.error("manifest.xml does not exist in SDK path:" + sdkRoot.getPath());
+            logger.error("manifest.xml does not exist in SDK path:"
+                    + sdkRoot.getPath());
             return null;
         }
         IMutableBundle bundle = new Bundle(null);
@@ -376,21 +399,25 @@ public class RandoriSdk extends SdkType
         return bundle;
     }
 
-    private void populateBundle(VirtualFile manifestFile, IMutableBundle bundle) {
+    private void populateBundle(VirtualFile manifestFile, IMutableBundle bundle)
+    {
         StAXManifestReader manifestReader = null;
         try
         {
-            manifestReader = new StAXManifestReader(new BufferedInputStream(manifestFile.getInputStream()), bundle);
+            manifestReader = new StAXManifestReader(new BufferedInputStream(
+                    manifestFile.getInputStream()), bundle);
             manifestReader.parse();
         }
-        catch(IOException e)
+        catch (IOException e)
         {
-            logger.error(LogUtils.dumpStackTrace(Thread.currentThread().getStackTrace()));
+            logger.error(LogUtils.dumpStackTrace(Thread.currentThread()
+                    .getStackTrace()));
             e.printStackTrace();
         }
-        catch(XMLStreamException e)
+        catch (XMLStreamException e)
         {
-            logger.error(LogUtils.dumpStackTrace(Thread.currentThread().getStackTrace()));
+            logger.error(LogUtils.dumpStackTrace(Thread.currentThread()
+                    .getStackTrace()));
             e.printStackTrace();
         }
         finally
@@ -401,9 +428,10 @@ public class RandoriSdk extends SdkType
                 {
                     manifestReader.close();
                 }
-                catch(IOException e)
+                catch (IOException e)
                 {
-                    logger.error(LogUtils.dumpStackTrace(Thread.currentThread().getStackTrace()));
+                    logger.error(LogUtils.dumpStackTrace(Thread.currentThread()
+                            .getStackTrace()));
                     e.printStackTrace();
                 }
             }

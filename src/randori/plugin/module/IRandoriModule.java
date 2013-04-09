@@ -17,22 +17,21 @@
  * @author Michael Schmalle <mschmalle@teotigraphix.com>
  */
 
-package randori.plugin.workspaces;
-
-import randori.compiler.clients.CompilerArguments;
+package randori.plugin.module;
 
 import com.intellij.openapi.project.Project;
+import randori.compiler.clients.CompilerArguments;
 
 /**
  * @author Michael Schmalle
  */
-public interface IRandoriApplicationModule
+public interface IRandoriModule
 {
     void parseSync(Project project, CompilerArguments arguments);
 
     void parse(Project project, CompilerArguments arguments);
-    
+
     void buildSync(Project project, boolean doClean, CompilerArguments arguments);
-    
+
     void build(Project project, boolean doClean, CompilerArguments arguments);
 }
