@@ -130,7 +130,7 @@ public class RandoriProjectComponent implements ProjectComponent, Configurable,
         if (!ProjectUtils.hasRandoriModuleType(project))
             return null;
 
-        return new RandoriProjectCompiler(getWorkspace());
+        return new RandoriProjectCompiler(new Workspace());
     }
 
     @Override
