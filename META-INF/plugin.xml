@@ -61,9 +61,16 @@
         <!--</component>-->
     </module-components>
 
+    <actions>
+        <action id="Randori.NewClass" class="randori.plugin.action.NewActionScriptClassAction"
+                text="Randori Class" description="Create new ActionScript class">
+            <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewGroup1"/>
+        </action>
+    </actions>
+
     <extensions defaultExtensionNs="com.intellij">
 
-        <!--<fileTemplateGroup implementation="randori.plugin.action.RandoriTemplatesFactory"/>-->
+        <fileTemplateGroup implementation="randori.plugin.action.RandoriTemplatesFactory"/>
 
         <sdkType implementation="randori.plugin.roots.RandoriSdk"/>
 
