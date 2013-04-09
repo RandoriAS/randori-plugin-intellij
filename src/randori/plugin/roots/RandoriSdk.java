@@ -45,7 +45,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * @author Michael Schmalle
+ * @author Michael Schmalle•
  * @author Roland Zwaga
  */
 public class RandoriSdk extends SdkType
