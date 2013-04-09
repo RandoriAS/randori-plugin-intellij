@@ -21,11 +21,10 @@ package randori.plugin.compiler;
 
 import java.util.List;
 
-import com.intellij.openapi.util.io.FileUtilRt;
 import org.jetbrains.annotations.NotNull;
 
-import randori.plugin.utils.VFileUtils;
-import randori.plugin.workspaces.RandoriApplicationComponent;
+import randori.plugin.components.RandoriProjectComponent;
+import randori.plugin.util.VFileUtils;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.CompileContext;
@@ -50,14 +49,13 @@ public class RandoriCompiler implements TranslatingCompiler
             .getInstance("#randori.compiler.RandoriCompiler");
     protected final Project project;
     private final FileDocumentManager documentManager;
-    private final RandoriApplicationComponent projectComponent;
+    private final RandoriProjectComponent projectComponent;
 
     public RandoriCompiler(Project project)
     {
         this.project = project;
 
-        projectComponent = project
-                .getComponent(RandoriApplicationComponent.class);
+        projectComponent = project.getComponent(RandoriProjectComponent.class);
         documentManager = ApplicationManager.getApplication().getComponent(
                 FileDocumentManager.class);
     }
@@ -75,18 +73,15 @@ public class RandoriCompiler implements TranslatingCompiler
         context.getProgressIndicator().checkCanceled();
         context.getProgressIndicator().setText("Starting Randori compiler...");
 
-        final List<VirtualFile> modifiedFiles = projectComponent
-                .getModifiedFiles();
+        List<VirtualFile> modifiedFiles = projectComponent.getModifiedFiles();
 
         if (context.isMake() && modifiedFiles.size() > 0)
         {
-            projectComponent.build((modifiedFiles
-                    .toArray(new VirtualFile[modifiedFiles.size()])), false,
-                    true);
+            projectComponent.build(false, true);
         }
         else
         {
-            projectComponent.build(null, true, true);
+            projectComponent.build(true, true);
         }
 
         modifiedFiles.removeAll(modifiedFiles);

@@ -19,41 +19,35 @@
 
 package randori.plugin.runner;
 
-import java.net.ServerSocket;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
+import com.intellij.ide.BrowserUtil;
+import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.project.Project;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.DefaultHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.server.nio.NetworkTrafficSelectChannelConnector;
-
 import randori.plugin.components.RandoriProjectComponent;
 import randori.plugin.components.RandoriProjectModel;
+import randori.plugin.util.ProjectUtils;
 
-import com.intellij.ide.BrowserUtil;
-import com.intellij.openapi.components.ProjectComponent;
-import com.intellij.openapi.project.Project;
-import randori.plugin.utils.ProjectUtils;
+import java.net.ServerSocket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @author Michael Schmalle
  */
 public class RandoriServerComponent implements ProjectComponent
 {
-    private static final Logger log = Logger.getInstance(RandoriServerComponent.class);
-
+    private static final Logger log = Logger
+            .getInstance(RandoriServerComponent.class);
     private static final String DEFAULT_INDEX_HTML = "index.html";
-
     private Server server;
-
     private ExecutorService execService;
-
     private Project project;
-
     private RandoriProjectComponent component;
 
     public RandoriServerComponent(Project project,
@@ -61,6 +55,22 @@ public class RandoriServerComponent implements ProjectComponent
     {
         this.project = project;
         this.component = component;
+    }
+
+    private static int findFreePort()
+    {
+        int port = -1;
+        try
+        {
+            ServerSocket server = new ServerSocket(0);
+            port = server.getLocalPort();
+            server.close();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return port;
     }
 
     @Override
@@ -107,7 +117,6 @@ public class RandoriServerComponent implements ProjectComponent
         connector.setPort(portNr);
 
         server.addConnector(connector);
-
 
         startServer(component.getState());
     }
@@ -187,7 +196,7 @@ public class RandoriServerComponent implements ProjectComponent
 
     public String getURL(String index, String explicitWebRoot)
     {
-        String url  = explicitWebRoot;
+        String url = explicitWebRoot;
         if (url.length() == 0)
         {
             int port = component.getState().getPort();
@@ -202,22 +211,6 @@ public class RandoriServerComponent implements ProjectComponent
             url = url + index;
         }
         return url;
-    }
-
-    private static int findFreePort()
-    {
-        int port = -1;
-        try
-        {
-            ServerSocket server = new ServerSocket(0);
-            port = server.getLocalPort();
-            server.close();
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-        return port;
     }
 
     private void updateHandlers()

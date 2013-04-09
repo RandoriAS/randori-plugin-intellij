@@ -17,16 +17,7 @@
  * @author Michael Schmalle <mschmalle@teotigraphix.com>
  */
 
-package randori.plugin.utils;
-
-import java.awt.Component;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.jetbrains.annotations.Nullable;
-
-import randori.plugin.components.RandoriProjectComponent;
-import randori.plugin.module.RandoriModuleType;
+package randori.plugin.util;
 
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.DataContext;
@@ -40,6 +31,13 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.roots.libraries.LibraryUtil;
 import com.intellij.openapi.util.AsyncResult;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.Nullable;
+import randori.plugin.components.RandoriProjectComponent;
+import randori.plugin.module.RandoriModuleType;
+
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A set of utilities for working with Projects and Modules.
@@ -58,14 +56,17 @@ public class ProjectUtils
     public static Project getProject()
     {
         // TODO: Temporary try catch to remove once dealt with project/module instead of application setup.
-        try {
+        try
+        {
             AsyncResult<DataContext> dataContext = DataManager.getInstance()
                     .getDataContextFromFocus();
             Project project = PlatformDataKeys.PROJECT.getData(dataContext
                     .getResult());
             return project;
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
+        }
+        catch (IllegalArgumentException e)
+        {
+            // Happens when the project is closing.
         }
 
         return null;
@@ -177,6 +178,9 @@ public class ProjectUtils
 
     public static boolean hasRandoriModuleType(Project project)
     {
+        if (project == null)
+            return false;
+
         Module[] modules = ModuleManager.getInstance(project).getModules();
         for (Module module : modules)
         {

@@ -19,11 +19,14 @@
 
 package randori.plugin.builder;
 
-import com.intellij.openapi.util.io.FileUtilRt;
-import randori.plugin.utils.ProjectUtils;
-import randori.plugin.utils.VFileUtils;
-import randori.plugin.workspaces.RandoriApplicationComponent;
+import java.util.List;
 
+import randori.plugin.components.RandoriProjectComponent;
+import randori.plugin.util.ProjectUtils;
+import randori.plugin.util.VFileUtils;
+
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.*;
 
@@ -32,49 +35,111 @@ import com.intellij.openapi.vfs.*;
  */
 public class FileChangeListener implements VirtualFileListener
 {
+
+    private final Project project;
+    private final RandoriProjectComponent projectComponent;
+
+    public FileChangeListener(Project project)
+    {
+        this.project = project;
+        projectComponent = project.getComponent(RandoriProjectComponent.class);
+    }
+
+    protected boolean isValidFile(VirtualFile file)
+    {
+
+        if (project == ProjectUtils.getProject()
+                && VFileUtils.extensionEquals(file.getPath(), "as"))
+            return true;
+
+        return false;
+    }
+
     @Override
     public void propertyChanged(VirtualFilePropertyEvent event)
     {
+        VirtualFile file = event.getFile();
+
+        if (isValidFile(file)
+                && event.getPropertyName() == VirtualFile.PROP_NAME
+                && !projectComponent.getModifiedFiles().contains(file))
+        {
+            projectComponent.getModifiedFiles().add(file);
+        }
     }
 
     @Override
     public void contentsChanged(VirtualFileEvent event)
     {
+
         VirtualFile file = event.getFile();
-        if (VFileUtils.extensionEquals(file.getPath(), "as"))
+
+        if (isValidFile(file))
         {
-            Project project = ProjectUtils.getProject();
-            if (project == null)
-                return; // throw error, this doesn't seem right
+            List<VirtualFile> modifiedFiles = projectComponent
+                    .getModifiedFiles();
 
-            RandoriApplicationComponent component = project
-                    .getComponent(RandoriApplicationComponent.class);
+            if (!modifiedFiles.contains(file))
+                modifiedFiles.add(file);
 
-            if (!component.getModifiedFiles().contains(file))
-                component.getModifiedFiles().add(file);
+            Document[] unsavedDocuments = (Document[]) FileDocumentManager
+                    .getInstance().getUnsavedDocuments();
 
-            component.parse(false);
+            if (unsavedDocuments.length == 1)
+            {
+                projectComponent.parse(false);
+                modifiedFiles.removeAll(modifiedFiles);
+            }
         }
     }
 
     @Override
     public void fileCreated(VirtualFileEvent event)
     {
+
+        VirtualFile file = event.getFile();
+
+        if (isValidFile(file)
+                && !projectComponent.getModifiedFiles().contains(file))
+        {
+            projectComponent.getModifiedFiles().add(file);
+        }
     }
 
     @Override
     public void fileDeleted(VirtualFileEvent event)
     {
+        VirtualFile file = event.getFile();
+
+        if (isValidFile(file)
+                && projectComponent.getModifiedFiles().contains(file))
+        {
+            projectComponent.getModifiedFiles().remove(file);
+        }
     }
 
     @Override
     public void fileMoved(VirtualFileMoveEvent event)
     {
+        VirtualFile file = event.getFile();
+
+        if (isValidFile(file)
+                && !projectComponent.getModifiedFiles().contains(file))
+        {
+            projectComponent.getModifiedFiles().add(file);
+        }
     }
 
     @Override
     public void fileCopied(VirtualFileCopyEvent event)
     {
+        VirtualFile file = event.getFile();
+
+        if (isValidFile(file)
+                && !projectComponent.getModifiedFiles().contains(file))
+        {
+            projectComponent.getModifiedFiles().add(file);
+        }
     }
 
     @Override
