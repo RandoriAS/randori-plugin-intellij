@@ -100,9 +100,6 @@ public class RandoriProjectComponent implements ProjectComponent, Configurable,
     @Override
     public void initComponent()
     {
-
-        if (!ProjectUtils.hasRandoriModuleType(project))
-            return;
     }
 
     @Override
