@@ -12,8 +12,6 @@
     <p>Please visit <strong>http://randoriframework.com</strong> for more information.</p>
     ]]></description>
 
-    <depends>com.intellij.css</depends>
-
     <change-notes>
         <![CDATA[
          <h3>0.2.2 changes:</h3>
@@ -63,11 +61,25 @@
         <!--</component>-->
     </module-components>
 
+    <actions>
+        <action id="Randori.NewClass" class="randori.plugin.action.NewActionScriptClassAction"
+                text="Randori Class" description="Create new ActionScript class">
+            <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewGroup1"/>
+        </action>
+
+        <action id="RandoriPlugin.Parse" class="randori.plugin.action.ParseAction"
+                text="Parse Randori..."
+                description="Parse Randori files for errors">
+            <add-to-group group-id="BuildMenu" anchor="last"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl P"/>
+        </action>
+    </actions>
+
     <extensions defaultExtensionNs="com.intellij">
 
         <completion.contributor language="CSS" implementationClass="randori.plugin.lang.css.RandoriCSSSCompletionContributor" id="randoriCSS"/>
 
-        <!--<fileTemplateGroup implementation="randori.plugin.action.RandoriTemplatesFactory"/>-->
+        <fileTemplateGroup implementation="randori.plugin.action.RandoriTemplatesFactory"/>
 
         <sdkType implementation="randori.plugin.roots.RandoriSdk"/>
 
