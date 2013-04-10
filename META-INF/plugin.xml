@@ -66,6 +66,13 @@
                 text="Randori Class" description="Create new ActionScript class">
             <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewGroup1"/>
         </action>
+
+        <action id="RandoriPlugin.Parse" class="randori.plugin.action.ParseAction"
+                text="Parse Randori..."
+                description="Parse Randori files for errors">
+            <add-to-group group-id="BuildMenu" anchor="last"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl P"/>
+        </action>
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">

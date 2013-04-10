@@ -97,21 +97,25 @@ public class ProblemsService
             return;
 
         final String path = problem.getSourcePath();
-        if (path == null)
-        {
-            log.error("Problem SourcePath does not exist for "
-                    + problem.toString());
-            return;
-        }
+        try {
+            if (path == null)
+            {
+                log.error("Problem SourcePath does not exist for "
+                        + problem.toString());
+                return;
+            }
 
-        if (!new File(path).exists())
-        {
-            log.error("Problem File does not exist for "
-                    + problem.getSourcePath());
-            return;
+            if (!new File(path).exists())
+            {
+                log.error("Problem File does not exist for "
+                        + problem.getSourcePath());
+                return;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            problems.add(problem);
         }
-
-        problems.add(problem);
     }
 
     public ProblemsService()
