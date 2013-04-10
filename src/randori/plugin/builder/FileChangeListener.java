@@ -21,6 +21,12 @@ package randori.plugin.builder;
 
 import java.util.List;
 
+import com.intellij.codeInsight.actions.OptimizeImportsAction;
+import com.intellij.codeInsight.actions.OptimizeImportsProcessor;
+import com.intellij.codeInsight.actions.ReformatCodeAction;
+import com.intellij.ide.DataManager;
+import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.util.AsyncResult;
 import randori.plugin.components.RandoriProjectComponent;
 import randori.plugin.util.ProjectUtils;
 import randori.plugin.util.VFileUtils;
@@ -55,91 +61,68 @@ public class FileChangeListener implements VirtualFileListener
         return false;
     }
 
+    protected void validateAndParse(final VirtualFile file, final boolean add, final boolean remove) {
+
+        if (isValidFile(file))
+        {
+            List<VirtualFile> modifiedFiles = projectComponent.getModifiedFiles();
+
+            if (add && !modifiedFiles.contains(file))
+                modifiedFiles.add(file);
+
+            if (remove && modifiedFiles.contains(file))
+                modifiedFiles.remove(file);
+
+            final ReadonlyStatusHandler.OperationStatus operationStatus = ReadonlyStatusHandler.getInstance(project).ensureFilesWritable(modifiedFiles);
+            if (!operationStatus.hasReadonlyFiles()) {
+                new OptimizeImportsProcessor(project, ReformatCodeAction.convertToPsiFiles(modifiedFiles.toArray(new VirtualFile[modifiedFiles.size()]), project), null).run();
+            }
+
+            /*projectComponent.parse(false);
+            modifiedFiles.removeAll(modifiedFiles);*/
+        }
+    }
+
     @Override
     public void propertyChanged(VirtualFilePropertyEvent event)
     {
         VirtualFile file = event.getFile();
 
-        if (isValidFile(file)
-                && event.getPropertyName() == VirtualFile.PROP_NAME
+        if (event.getPropertyName() == VirtualFile.PROP_NAME
                 && !projectComponent.getModifiedFiles().contains(file))
         {
-            projectComponent.getModifiedFiles().add(file);
+            validateAndParse(file, true, false);
         }
     }
 
     @Override
     public void contentsChanged(VirtualFileEvent event)
     {
-
-        VirtualFile file = event.getFile();
-
-        if (isValidFile(file))
-        {
-            List<VirtualFile> modifiedFiles = projectComponent
-                    .getModifiedFiles();
-
-            if (!modifiedFiles.contains(file))
-                modifiedFiles.add(file);
-
-            Document[] unsavedDocuments = (Document[]) FileDocumentManager
-                    .getInstance().getUnsavedDocuments();
-
-            if (unsavedDocuments.length == 1)
-            {
-                projectComponent.parse(false);
-                modifiedFiles.removeAll(modifiedFiles);
-            }
-        }
+        validateAndParse(event.getFile(), true, false);
     }
 
     @Override
     public void fileCreated(VirtualFileEvent event)
     {
-
-        VirtualFile file = event.getFile();
-
-        if (isValidFile(file)
-                && !projectComponent.getModifiedFiles().contains(file))
-        {
-            projectComponent.getModifiedFiles().add(file);
-        }
+        validateAndParse(event.getFile(), true, false);
     }
 
     @Override
     public void fileDeleted(VirtualFileEvent event)
     {
-        VirtualFile file = event.getFile();
-
-        if (isValidFile(file)
-                && projectComponent.getModifiedFiles().contains(file))
-        {
-            projectComponent.getModifiedFiles().remove(file);
-        }
+        validateAndParse(event.getFile(), false, true);
     }
 
     @Override
     public void fileMoved(VirtualFileMoveEvent event)
     {
-        VirtualFile file = event.getFile();
-
-        if (isValidFile(file)
-                && !projectComponent.getModifiedFiles().contains(file))
-        {
-            projectComponent.getModifiedFiles().add(file);
-        }
+        validateAndParse(event.getFile(), false, false);
     }
 
     @Override
     public void fileCopied(VirtualFileCopyEvent event)
     {
-        VirtualFile file = event.getFile();
-
-        if (isValidFile(file)
-                && !projectComponent.getModifiedFiles().contains(file))
-        {
-            projectComponent.getModifiedFiles().add(file);
-        }
+        validateAndParse(event.getFile(), true, false);
     }
 
     @Override
