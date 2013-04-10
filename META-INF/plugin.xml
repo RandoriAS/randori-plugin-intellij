@@ -12,6 +12,8 @@
     <p>Please visit <strong>http://randoriframework.com</strong> for more information.</p>
     ]]></description>
 
+    <depends>com.intellij.css</depends>
+
     <change-notes>
         <![CDATA[
          <h3>0.2.2 changes:</h3>
