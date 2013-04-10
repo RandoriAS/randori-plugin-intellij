@@ -2,14 +2,13 @@ package randori.plugin.lang.css;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 
-import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.psi.css.CssDeclaration;
 import org.jetbrains.annotations.NotNull;
 
 import com.intellij.codeInsight.completion.*;
+import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.patterns.ElementPattern;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.css.CssTermList;
+import com.intellij.psi.css.CssDeclaration;
 import com.intellij.util.ProcessingContext;
 
 /**
