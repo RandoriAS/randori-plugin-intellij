@@ -21,7 +21,10 @@ package randori.plugin.builder;
 
 import com.intellij.codeInsight.actions.OptimizeImportsProcessor;
 import com.intellij.codeInsight.actions.ReformatCodeAction;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.*;
 import randori.plugin.components.RandoriProjectComponent;
 import randori.plugin.util.ProjectUtils;
@@ -47,18 +50,19 @@ public class FileChangeListener implements VirtualFileListener
 
     protected boolean isValidFile(VirtualFile file)
     {
-        if (project == ProjectUtils.getProject())
+        if (project == ProjectUtils.getProject()
+                && VFileUtils.extensionEquals(file.getPath(), "as"))
         {
-            List<String> projectSourcePaths = ProjectUtils
-                    .getAllProjectSourcePaths(project);
+            Module rootModule = (Module) ModuleManager.getInstance(project)
+                    .getSortedModules()[0];
 
-            for (String sourcePath : projectSourcePaths)
+            VirtualFile[] sourceRoots = ModuleRootManager.getInstance(
+                    rootModule).getSourceRoots();
+
+            for (VirtualFile sourceRoot : sourceRoots)
             {
-                if (VFileUtils.extensionEquals(file.getPath(), "as")
-                        && file.getPath().startsWith(sourcePath))
-                {
+                if (file.getPath().startsWith(sourceRoot.getPath()))
                     return true;
-                }
             }
         }
 
@@ -82,6 +86,7 @@ public class FileChangeListener implements VirtualFileListener
 
             final ReadonlyStatusHandler.OperationStatus operationStatus = ReadonlyStatusHandler
                     .getInstance(project).ensureFilesWritable(modifiedFiles);
+
             if (!operationStatus.hasReadonlyFiles())
             {
                 new OptimizeImportsProcessor(project,
@@ -91,9 +96,6 @@ public class FileChangeListener implements VirtualFileListener
                                                 .size()]), project), null)
                         .run();
             }
-
-            /*projectComponent.parse(false);
-            modifiedFiles.removeAll(modifiedFiles);*/
         }
     }
 
