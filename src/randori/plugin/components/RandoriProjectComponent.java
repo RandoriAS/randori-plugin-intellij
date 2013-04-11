@@ -19,6 +19,32 @@
 
 package randori.plugin.components;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.*;
+
+import org.apache.flex.compiler.internal.workspaces.Workspace;
+import org.apache.flex.compiler.problems.ICompilerProblem;
+import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NotNull;
+
+import randori.compiler.clients.CompilerArguments;
+import randori.plugin.builder.FileChangeListener;
+import randori.plugin.compiler.RandoriProjectCompiler;
+import randori.plugin.forms.RandoriProjectConfigurationForm;
+import randori.plugin.module.RandoriModuleType;
+import randori.plugin.roots.RandoriSdk;
+import randori.plugin.runner.RandoriRunConfiguration;
+import randori.plugin.runner.RandoriServerComponent;
+import randori.plugin.service.ProblemsService;
+import randori.plugin.ui.ProblemsToolWindowFactory;
+import randori.plugin.util.NotificationUtils;
+import randori.plugin.util.ProjectUtils;
+import randori.plugin.util.VFileUtils;
+import randori.plugin.workspace.IRandoriWorkspace;
+
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.CompileScope;
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -48,29 +74,6 @@ import com.intellij.openapi.vfs.VirtualFileListener;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
-import org.apache.flex.compiler.internal.workspaces.Workspace;
-import org.apache.flex.compiler.problems.ICompilerProblem;
-import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
-import randori.compiler.clients.CompilerArguments;
-import randori.plugin.builder.FileChangeListener;
-import randori.plugin.compiler.RandoriProjectCompiler;
-import randori.plugin.forms.RandoriProjectConfigurationForm;
-import randori.plugin.module.RandoriModuleType;
-import randori.plugin.roots.RandoriSdk;
-import randori.plugin.runner.RandoriRunConfiguration;
-import randori.plugin.runner.RandoriServerComponent;
-import randori.plugin.service.ProblemsService;
-import randori.plugin.ui.ProblemsToolWindowFactory;
-import randori.plugin.util.NotificationUtils;
-import randori.plugin.util.ProjectUtils;
-import randori.plugin.util.VFileUtils;
-import randori.plugin.workspace.IRandoriWorkspace;
-
-import javax.swing.*;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 @State(name = RandoriProjectComponent.COMPONENT_NAME, storages = { @Storage(id = "randoriProject", file = "$PROJECT_FILE$") })
 /**
@@ -83,7 +86,7 @@ public class RandoriProjectComponent implements ProjectComponent, Configurable,
 {
 
     public static final String COMPONENT_NAME = "RandoriProject";
-    private final List<VirtualFile> modifiedFiles;
+    private List<VirtualFile> modifiedFiles;
     private Workspace workspace;
     private RandoriProjectConfigurationForm form;
     private Project project;
@@ -94,7 +97,6 @@ public class RandoriProjectComponent implements ProjectComponent, Configurable,
     public RandoriProjectComponent(Project project)
     {
         this.project = project;
-        modifiedFiles = new ArrayList<VirtualFile>();
     }
 
     @Override
@@ -112,6 +114,7 @@ public class RandoriProjectComponent implements ProjectComponent, Configurable,
         workspace = new Workspace();
         compiler = addProjectCompiler(this.project);
         state = new RandoriProjectModel();
+        modifiedFiles = new ArrayList<VirtualFile>();
 
         fileChangeListener = new FileChangeListener(project);
         VirtualFileManager.getInstance().addVirtualFileListener(

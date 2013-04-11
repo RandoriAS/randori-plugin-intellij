@@ -164,10 +164,10 @@ public class ProjectUtils
         ArrayList<String> result = new ArrayList<String>();
         // Randori/src, RandoriGuice/src, RandorFlash, RandoriFlash
         VirtualFile[] roots = ProjectRootManager.getInstance(project)
-                .getContentRoots();
+                .getContentSourceRoots();
         for (VirtualFile virtualFile : roots)
         {
-            if (!isModuleRoot(project, virtualFile.getName()))
+            if (isModuleRoot(project, virtualFile.getName()))
             {
                 //String name = virtualFile.getName();
                 result.add(virtualFile.getPath());

@@ -19,26 +19,6 @@
 
 package randori.plugin.ui;
 
-import com.intellij.openapi.wm.ToolWindow;
-import com.intellij.ui.components.JBScrollPane;
-import com.intellij.ui.content.Content;
-import com.intellij.ui.content.ContentFactory;
-import com.intellij.ui.content.ContentManager;
-import com.intellij.ui.table.JBTable;
-import icons.RandoriIcons;
-import org.apache.flex.compiler.problems.ICompilerProblem;
-import org.apache.flex.compiler.problems.annotations.DefaultSeverity;
-import randori.plugin.components.RandoriProjectComponent;
-import randori.plugin.service.ProblemsService;
-import randori.plugin.service.ProblemsService.OnProblemServiceListener;
-import randori.plugin.util.ProjectUtils;
-
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
@@ -46,6 +26,29 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableColumn;
+
+import org.apache.flex.compiler.problems.ICompilerProblem;
+import org.apache.flex.compiler.problems.annotations.DefaultSeverity;
+
+import randori.plugin.components.RandoriProjectComponent;
+import randori.plugin.service.ProblemsService;
+import randori.plugin.service.ProblemsService.OnProblemServiceListener;
+import randori.plugin.util.ProjectUtils;
+
+import com.intellij.openapi.wm.ToolWindow;
+import com.intellij.ui.components.JBScrollPane;
+import com.intellij.ui.content.Content;
+import com.intellij.ui.content.ContentFactory;
+import com.intellij.ui.content.ContentManager;
+import com.intellij.ui.table.JBTable;
+import icons.RandoriIcons;
 
 // TODO added an error log to the ProblemsService, the collection should not
 //      contain null File instances on CompilerProblems, left null checks in
@@ -405,21 +408,31 @@ public class ProblemsToolWindow
 
         private String getPath(ICompilerProblem problem)
         {
-            if (problem == null)
-                return "";
+            String result = "";
 
-            File file = new File(problem.getSourcePath());
-            String result = file.getParent();
+            if (problem != null)
+            {
+                File file = new File(problem.getSourcePath());
+
+                if (file != null)
+                    result = file.getParent();
+            }
+
             return result;
         }
 
         public String getName(ICompilerProblem problem)
         {
-            if (problem == null)
-                return "";
+            String result = "";
 
-            File file = new File(problem.getSourcePath());
-            String result = file.getName();
+            if (problem != null)
+            {
+                File file = new File(problem.getSourcePath());
+
+                if (file != null)
+                    result = file.getName();
+            }
+
             return result;
         }
 
