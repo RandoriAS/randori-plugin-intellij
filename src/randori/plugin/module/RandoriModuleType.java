@@ -19,27 +19,23 @@
 
 package randori.plugin.module;
 
+import javax.swing.*;
+
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.Nullable;
+
+import icons.RandoriIcons;
+
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.ModuleTypeManager;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.util.IconLoader;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
 
 /**
  * @author Michael Schmalle
  */
 public class RandoriModuleType extends ModuleType<RandoriModuleBuilder>
 {
-
-    public static final Icon RANDORI_ICON_SMALL = IconLoader
-            .getIcon("/randori/plugin/module/randori.png");
-
-    public static final Icon RANDORI_ICON_LARGE = IconLoader
-            .getIcon("/randori/plugin/module/randorix2.png");
 
     @NonNls
     private static final String MODULE_ID = "RANDORI_MODULE";
@@ -76,19 +72,19 @@ public class RandoriModuleType extends ModuleType<RandoriModuleBuilder>
     @Override
     public String getDescription()
     {
-        return "This module type is used to create Randori AS3 projects using the JavaScript cross compiler";
+        return "This module type is used to create Randori AS3 projects using the Randori JavaScript cross compiler";
     }
 
     @Override
     public Icon getBigIcon()
     {
-        return RANDORI_ICON_LARGE;
+        return RandoriIcons.Randori24;
     }
 
     @Override
     public Icon getNodeIcon(boolean isOpened)
     {
-        return RANDORI_ICON_SMALL;
+        return RandoriIcons.Randori16;
     }
 
     @Override

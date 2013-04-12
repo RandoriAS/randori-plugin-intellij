@@ -20,7 +20,10 @@
 package randori.plugin.components;
 
 /**
+ * The serialized state for the {@link RandoriProjectComponent}.
+ * 
  * @author Michael Schmalle
+ * @see RandoriProjectComponent#getState()
  */
 public class RandoriProjectModel {
 

@@ -17,11 +17,7 @@
  * @author Michael Schmalle <mschmalle@teotigraphix.com>
  */
 
-package randori.plugin.utils;
-
-import javax.swing.event.HyperlinkEvent;
-
-import org.jetbrains.annotations.NotNull;
+package randori.plugin.util;
 
 import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
@@ -30,6 +26,9 @@ import com.intellij.notification.Notifications;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.event.HyperlinkEvent;
 
 /**
  * @author Michael Schmalle
@@ -75,7 +74,7 @@ public class NotificationUtils
                     };
                 });
         notification.hideBalloon();
-        Notifications.Bus.notify(notification);
+        Notifications.Bus.notify(notification, project);
     }
 
     private static void openAssociatedWindow(HyperlinkEvent event,

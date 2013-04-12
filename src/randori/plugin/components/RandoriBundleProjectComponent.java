@@ -1,5 +1,13 @@
 package randori.plugin.components;
 
+import javax.swing.JComponent;
+
+import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import randori.plugin.forms.RandoriBundleProjectConfigurationForm;
+
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.components.State;
@@ -7,12 +15,6 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import randori.plugin.forms.RandoriBundleProjectConfigurationForm;
-
-import javax.swing.*;
 
 @State(name = RandoriBundleProjectComponent.COMPONENT_NAME, storages = { @Storage(id = "randoribundleproject", file = "$PROJECT_FILE$") })
 public class RandoriBundleProjectComponent implements ProjectComponent, Configurable,
@@ -20,19 +22,18 @@ public class RandoriBundleProjectComponent implements ProjectComponent, Configur
 
     public static final String COMPONENT_NAME = "RandoriBundleProject";
 
+    @SuppressWarnings("unused")
     private Project project;
 
+    @SuppressWarnings("unused")
     private RandoriBundleProjectConfigurationForm form;
 
     private RandoriProjectModel model;
 
-    private final RandoriBundleApplicationComponent applicationComponent;
 
-    public RandoriBundleProjectComponent(Project project,
-                                   RandoriBundleApplicationComponent applicationComponent)
+    public RandoriBundleProjectComponent(Project project)
     {
         this.project = project;
-        this.applicationComponent = applicationComponent;
         this.model = new RandoriProjectModel();
     }
 

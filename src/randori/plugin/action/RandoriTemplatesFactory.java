@@ -19,118 +19,114 @@
 
 package randori.plugin.action;
 
-import com.intellij.ide.fileTemplates.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Properties;
+
 import com.intellij.openapi.fileTypes.FileTypeManager;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+
+import com.intellij.ide.fileTemplates.*;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import randori.plugin.module.RandoriModuleType;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Properties;
+import icons.RandoriIcons;
 
 /**
- * @author Michael Schmalle
+ * @author Roland Zwaga <roland@stackandheap.com>
+ * @author Frédéric THOMAS
  */
 public class RandoriTemplatesFactory implements
-        FileTemplateGroupDescriptorFactory
-{
+        FileTemplateGroupDescriptorFactory {
 
     @NonNls
-    public static final String[] TEMPLATES = { RandoriTemplates.RANDORI_CLASS,
-            RandoriTemplates.RANDORI_INTERFACE };
+    public static final String[] TEMPLATES = {RandoriTemplates.RANDORI_CLASS, RandoriTemplates.RANDORI_INTERFACE,
+            RandoriTemplates.RANDORI_BEHAVIOUR, RandoriTemplates.RANDORI_CONTEXT, RandoriTemplates.RANDORI_MEDIATOR};
+    private final ArrayList<String> customTemplates = new ArrayList<String>();
 
-    @NonNls
-    static final String NAME_TEMPLATE_PROPERTY = "NAME";
+    public static RandoriTemplatesFactory getInstance() {
+        return RandoriTemplatesFactoryHolder.INSTANCE;
+    }
 
-    static final String LOW_CASE_NAME_TEMPLATE_PROPERTY = "lowCaseName";
+    public static PsiFile createFromTemplate(@NotNull PsiDirectory directory,
+                                             @NotNull String name, @NotNull String fileName,
+                                             @NotNull String templateName, @NonNls String... parameters)
+            throws IncorrectOperationException {
+        if (directory == null)
+            throw new IllegalArgumentException(
+                    "Argument 0 for @NotNull parameter of randori/plugin/action/RandoriTemplatesFactory.createFromTemplate must not be null");
+        if (name == null)
+            throw new IllegalArgumentException(
+                    "Argument 1 for @NotNull parameter of randori/plugin/action/RandoriTemplatesFactory.createFromTemplate must not be null");
+        if (fileName == null)
+            throw new IllegalArgumentException(
+                    "Argument 2 for @NotNull parameter of randori/plugin/action/RandoriTemplatesFactory.createFromTemplate must not be null");
+        if (templateName == null)
+            throw new IllegalArgumentException(
+                    "Argument 3 for @NotNull parameter of randori/plugin/action/RandoriTemplatesFactory.createFromTemplate must not be null");
 
-    private final ArrayList<String> myCustomTemplates = new ArrayList<String>();
+        FileTemplateManager templateManager = FileTemplateManager.getInstance();
 
-    public static PsiFile createFromTemplate(
-            @NotNull final PsiDirectory directory, @NotNull final String name,
-            @NotNull String fileName, @NotNull String templateName,
-            @NonNls String... parameters) throws IncorrectOperationException
-    {
-        final FileTemplate template = FileTemplateManager.getInstance()
-                .getTemplate(templateName);
+        FileTemplate template = templateManager.getJ2eeTemplate(templateName);
 
-        Properties properties = new Properties(FileTemplateManager
-                .getInstance().getDefaultProperties(directory.getProject()));
+        Properties properties = new Properties(templateManager.getDefaultProperties(directory.getProject()));
         JavaTemplateUtil.setPackageNameAttribute(properties, directory);
-        properties.setProperty(NAME_TEMPLATE_PROPERTY, name);
-        properties.setProperty(LOW_CASE_NAME_TEMPLATE_PROPERTY,
-                name.substring(0, 1).toLowerCase() + name.substring(1));
+
+        properties.setProperty("NAME", name);
+        properties.setProperty("lowCaseName", name.substring(0, 1).toLowerCase() + name.substring(1));
+
         for (int i = 0; i < parameters.length; i += 2)
-        {
-            properties.setProperty(parameters[i], parameters[i + 1]);
-        }
+            properties.setProperty(parameters[i], parameters[(i + 1)]);
+
         String text;
-        try
-        {
+        try {
             text = template.getText(properties);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             throw new RuntimeException("Unable to load template for "
-                    + FileTemplateManager.getInstance()
-                            .internalTemplateToSubject(templateName), e);
+                    + templateManager
+                    .internalTemplateToSubject(templateName), e);
         }
 
-        final PsiFileFactory factory = PsiFileFactory.getInstance(directory
-                .getProject());
-        @SuppressWarnings("deprecation")
-        final PsiFile file = factory.createFileFromText(fileName, text);
+        PsiFileFactory factory = PsiFileFactory.getInstance(directory.getProject());
+        PsiFile file = factory.createFileFromText(fileName, text);
 
         return (PsiFile) directory.add(file);
     }
 
-    public static RandoriTemplatesFactory getInstance()
-    {
-        return RandoriTemplatesFactoryHolder.myInstance;
-    }
-
     @Override
-    public FileTemplateGroupDescriptor getFileTemplatesDescriptor()
-    {
-        final FileTemplateGroupDescriptor group = new FileTemplateGroupDescriptor(
-                "Templates", RandoriModuleType.RANDORI_ICON_SMALL);
-        final FileTypeManager fileTypeManager = FileTypeManager.getInstance();
-        for (String template : TEMPLATES)
-        {
-            group.addTemplate(new FileTemplateDescriptor(template,
-                    fileTypeManager.getFileTypeByFileName(template).getIcon()));
-        }
-        //        //add GSP Template
-        //        group.addTemplate(new FileTemplateDescriptor(
-        //                RandoriTemplates.GROOVY_SERVER_PAGE, fileTypeManager.getFileTypeByFileName(GroovyTemplates.GROOVY_SERVER_PAGE).getIcon()));
+    public FileTemplateGroupDescriptor getFileTemplatesDescriptor() {
+        FileTemplateGroupDescriptor group = new FileTemplateGroupDescriptor("Randori", RandoriIcons.Randori16);
 
+        final FileTypeManager fileTypeManager = FileTypeManager.getInstance();
+
+        for (String template : TEMPLATES) {
+            group.addTemplate(new FileTemplateDescriptor(template, fileTypeManager.getFileTypeByFileName(template).getIcon()));
+        }
         // register custom templates
-        for (String template : getInstance().getCustomTemplates())
-        {
-            group.addTemplate(new FileTemplateDescriptor(template,
-                    fileTypeManager.getFileTypeByFileName(template).getIcon()));
+        for (String template : getInstance().getCustomTemplates()) {
+            group.addTemplate(new FileTemplateDescriptor(template, fileTypeManager.getFileTypeByFileName(template).getIcon()));
         }
         return group;
     }
 
-    public void registerCustomTemplates(String... templates)
-    {
-        Collections.addAll(myCustomTemplates, templates);
+    private void addTemplate(FileTemplateGroupDescriptor group,
+                             String templateFileName) {
+        group.addTemplate(new FileTemplateDescriptor(templateFileName, RandoriIcons.Randori16));
     }
 
-    public String[] getCustomTemplates()
-    {
-        return ArrayUtil.toStringArray(myCustomTemplates);
+    public void registerCustomTemplates(String[] templates) {
+        Collections.addAll(this.customTemplates, templates);
     }
 
-    private static class RandoriTemplatesFactoryHolder
-    {
-        private static final RandoriTemplatesFactory myInstance = new RandoriTemplatesFactory();
+    public String[] getCustomTemplates() {
+        return ArrayUtil.toStringArray(this.customTemplates);
+    }
+
+    private static class RandoriTemplatesFactoryHolder {
+        private static final RandoriTemplatesFactory INSTANCE = new RandoriTemplatesFactory();
     }
 }

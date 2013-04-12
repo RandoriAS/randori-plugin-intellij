@@ -17,31 +17,27 @@
  * @author Michael Schmalle <mschmalle@teotigraphix.com>
  */
 
-package randori.plugin.utils;
-
-import java.awt.Component;
-import java.util.ArrayList;
-import java.util.List;
-
-import com.intellij.openapi.module.ModuleType;
-import org.jetbrains.annotations.Nullable;
-
-import randori.plugin.components.RandoriApplicationComponent;
-import randori.plugin.components.RandoriProjectComponent;
+package randori.plugin.util;
 
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.roots.libraries.LibraryUtil;
 import com.intellij.openapi.util.AsyncResult;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.Nullable;
+import randori.plugin.components.RandoriProjectComponent;
 import randori.plugin.module.RandoriModuleType;
+
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A set of utilities for working with Projects and Modules.
@@ -50,14 +46,6 @@ import randori.plugin.module.RandoriModuleType;
  */
 public class ProjectUtils
 {
-    public static RandoriApplicationComponent getApplicationComponent()
-    {
-        RandoriApplicationComponent component = ApplicationManager
-                .getApplication().getComponent(
-                        RandoriApplicationComponent.class);
-        return component;
-    }
-
     public static RandoriProjectComponent getProjectComponent(Project project)
     {
         RandoriProjectComponent component = project
@@ -67,11 +55,21 @@ public class ProjectUtils
 
     public static Project getProject()
     {
-        AsyncResult<DataContext> dataContext = DataManager.getInstance()
-                .getDataContextFromFocus();
-        Project project = PlatformDataKeys.PROJECT.getData(dataContext
-                .getResult());
-        return project;
+        // TODO: Temporary try catch to remove once dealt with project/module instead of application setup.
+        try
+        {
+            AsyncResult<DataContext> dataContext = DataManager.getInstance()
+                    .getDataContextFromFocus();
+            Project project = PlatformDataKeys.PROJECT.getData(dataContext
+                    .getResult());
+            return project;
+        }
+        catch (IllegalArgumentException e)
+        {
+            // Happens when the project is closing.
+        }
+
+        return null;
     }
 
     public static Project getProject(Component component)
@@ -134,18 +132,6 @@ public class ProjectUtils
     }
 
     /**
-     * Return the current <code>playerglobal.swc</code> for the current Sdk.
-     * 
-     * @param project The project.
-     */
-    public static final String getPlayerGloablPath(Project project)
-    {
-        String path = getSDKBasePath(project);
-        path = path + "/bin/builtin.swc";
-        return path;
-    }
-
-    /**
      * Return a List of all swcs found within the Project.
      * 
      * @param project The project.
@@ -178,10 +164,10 @@ public class ProjectUtils
         ArrayList<String> result = new ArrayList<String>();
         // Randori/src, RandoriGuice/src, RandorFlash, RandoriFlash
         VirtualFile[] roots = ProjectRootManager.getInstance(project)
-                .getContentRoots();
+                .getContentSourceRoots();
         for (VirtualFile virtualFile : roots)
         {
-            if (!isModuleRoot(project, virtualFile.getName()))
+            if (isModuleRoot(project, virtualFile.getName()))
             {
                 //String name = virtualFile.getName();
                 result.add(virtualFile.getPath());
@@ -192,6 +178,9 @@ public class ProjectUtils
 
     public static boolean hasRandoriModuleType(Project project)
     {
+        if (project == null)
+            return false;
+
         Module[] modules = ModuleManager.getInstance(project).getModules();
         for (Module module : modules)
         {
@@ -220,22 +209,3 @@ public class ProjectUtils
         return false;
     }
 }
-
-/*
-
-Get current project, when many frames could be open;
-
-DataContext dataContext = DataManager.getInstance().getDataContext();
-Project project = DataKeys.PROJECT.getData(dataContext);
-
-Folder of currently selected file;
-
-VirtualFile file = (VirtualFile) e.getDataContext().getData(DataConstants.VIRTUAL_FILE);
-VirtualFile folder = file.getParent();
-
-Add custom components to statusbar
-
-StatusBar.addCustomIndicationComponent()
-
-*/
-
