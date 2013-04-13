@@ -2,6 +2,7 @@ package randori.plugin.lang.css;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 
+import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
 import com.intellij.navigation.ItemPresentation;
@@ -113,8 +114,16 @@ public class RandoriCSSSCompletionContributor extends CompletionContributor {
                 @Override
                 public String getLookupString()
                 {
-                    return subClass.getQualifiedName();
+                    return '"' + subClass.getQualifiedName() + '"';
                 }
+
+                @NotNull
+                @Override
+                public void renderElement(LookupElementPresentation presentation) {
+                    String LookupString = getLookupString();
+                    presentation.setItemText(LookupString.substring(1, LookupString.length()-1));
+                }
+
             });
         }
     }
