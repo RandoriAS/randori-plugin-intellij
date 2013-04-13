@@ -119,9 +119,9 @@ public class RandoriCSSSCompletionContributor extends CompletionContributor {
 
                 @NotNull
                 @Override
-                public void renderElement(LookupElementPresentation presentation) {
-                    String LookupString = getLookupString();
-                    presentation.setItemText(LookupString.substring(1, LookupString.length()-1));
+                public void renderElement(LookupElementPresentation presentation)
+                {
+                    presentation.setItemText(subClass.getQualifiedName());
                 }
 
             });
