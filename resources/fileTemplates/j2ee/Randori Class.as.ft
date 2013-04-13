@@ -1,8 +1,11 @@
-package ${PACKAGE_NAME} {
+package ${PACKAGE_NAME}
+{
 
-#parse("File Header.java")
-public class ${NAME} {
-    public function ${NAME}() {
+    #parse("File Header.java")
+    public class ${NAME}
+    {
+        public function ${NAME}()
+        {
+        }
     }
-}
 }

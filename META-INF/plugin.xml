@@ -69,7 +69,7 @@
 
     <actions>
         <action id="Randori.NewClass" class="randori.plugin.action.NewActionScriptClassAction"
-                text="Randori Class" description="Create new ActionScript class">
+                text="Randori File" description="Create new Randori file">
             <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewGroup1"/>
         </action>
 
