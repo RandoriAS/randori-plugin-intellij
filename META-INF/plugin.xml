@@ -1,6 +1,6 @@
 <idea-plugin version="2" url="http://randoriframework.com">
     <name>Randori Compiler</name>
-    <version>0.2.1</version>
+    <version>0.2.3</version>
     <idea-version since-build="123.169"/>
 
     <vendor>Teoti Graphix, LLC</vendor>
@@ -16,6 +16,10 @@
 
     <change-notes>
         <![CDATA[
+         <h3>0.2.3 changes:</h3>
+            <ul>
+                <li>[plugin-bug] fixed runtime exception when builtin.swc was not found in SDK.</li>
+            </ul>
          <h3>0.2.2 changes:</h3>
             <ul>
                 <li>[compiler-bug] fixed bug with function call and JavaScript(name) transform.</li>

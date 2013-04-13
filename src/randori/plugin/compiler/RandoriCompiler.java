@@ -26,12 +26,10 @@ import org.jetbrains.annotations.NotNull;
 import randori.plugin.components.RandoriProjectComponent;
 import randori.plugin.util.VFileUtils;
 
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompileScope;
 import com.intellij.openapi.compiler.TranslatingCompiler;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -48,7 +46,6 @@ public class RandoriCompiler implements TranslatingCompiler
     private static final Logger LOG = Logger
             .getInstance("#randori.compiler.RandoriCompiler");
     protected final Project project;
-    private final FileDocumentManager documentManager;
     private final RandoriProjectComponent projectComponent;
 
     public RandoriCompiler(Project project)
@@ -56,8 +53,6 @@ public class RandoriCompiler implements TranslatingCompiler
         this.project = project;
 
         projectComponent = project.getComponent(RandoriProjectComponent.class);
-        documentManager = ApplicationManager.getApplication().getComponent(
-                FileDocumentManager.class);
     }
 
     @Override

@@ -19,25 +19,22 @@
 
 package randori.plugin.builder;
 
-import java.util.List;
-
-import com.intellij.codeInsight.actions.OptimizeImportsAction;
 import com.intellij.codeInsight.actions.OptimizeImportsProcessor;
 import com.intellij.codeInsight.actions.ReformatCodeAction;
-import com.intellij.ide.DataManager;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.util.AsyncResult;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.vfs.*;
 import randori.plugin.components.RandoriProjectComponent;
 import randori.plugin.util.ProjectUtils;
 import randori.plugin.util.VFileUtils;
 
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.*;
+import java.util.List;
 
 /**
  * @author Michael Schmalle
+ * @author Frédéric THOMAS
  */
 public class FileChangeListener implements VirtualFileListener
 {
@@ -53,19 +50,33 @@ public class FileChangeListener implements VirtualFileListener
 
     protected boolean isValidFile(VirtualFile file)
     {
-
         if (project == ProjectUtils.getProject()
                 && VFileUtils.extensionEquals(file.getPath(), "as"))
-            return true;
+        {
+            Module rootModule = (Module) ModuleManager.getInstance(project)
+                    .getSortedModules()[0];
+
+            VirtualFile[] sourceRoots = ModuleRootManager.getInstance(
+                    rootModule).getSourceRoots();
+
+            for (VirtualFile sourceRoot : sourceRoots)
+            {
+                if (file.getPath().startsWith(sourceRoot.getPath()))
+                    return true;
+            }
+        }
 
         return false;
     }
 
-    protected void validateAndParse(final VirtualFile file, final boolean add, final boolean remove) {
+    protected void validateAndParse(final VirtualFile file, final boolean add,
+            final boolean remove)
+    {
 
         if (isValidFile(file))
         {
-            List<VirtualFile> modifiedFiles = projectComponent.getModifiedFiles();
+            List<VirtualFile> modifiedFiles = projectComponent
+                    .getModifiedFiles();
 
             if (add && !modifiedFiles.contains(file))
                 modifiedFiles.add(file);
@@ -73,13 +84,18 @@ public class FileChangeListener implements VirtualFileListener
             if (remove && modifiedFiles.contains(file))
                 modifiedFiles.remove(file);
 
-            final ReadonlyStatusHandler.OperationStatus operationStatus = ReadonlyStatusHandler.getInstance(project).ensureFilesWritable(modifiedFiles);
-            if (!operationStatus.hasReadonlyFiles()) {
-                new OptimizeImportsProcessor(project, ReformatCodeAction.convertToPsiFiles(modifiedFiles.toArray(new VirtualFile[modifiedFiles.size()]), project), null).run();
-            }
+            final ReadonlyStatusHandler.OperationStatus operationStatus = ReadonlyStatusHandler
+                    .getInstance(project).ensureFilesWritable(modifiedFiles);
 
-            /*projectComponent.parse(false);
-            modifiedFiles.removeAll(modifiedFiles);*/
+            if (!operationStatus.hasReadonlyFiles())
+            {
+                new OptimizeImportsProcessor(project,
+                        ReformatCodeAction.convertToPsiFiles(
+                                modifiedFiles
+                                        .toArray(new VirtualFile[modifiedFiles
+                                                .size()]), project), null)
+                        .run();
+            }
         }
     }
 

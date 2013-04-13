@@ -29,9 +29,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.roots.libraries.LibraryUtil;
-import com.intellij.openapi.roots.ui.configuration.ClasspathEditor;
-import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.AsyncResult;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.Nullable;
@@ -167,10 +164,10 @@ public class ProjectUtils
         ArrayList<String> result = new ArrayList<String>();
         // Randori/src, RandoriGuice/src, RandorFlash, RandoriFlash
         VirtualFile[] roots = ProjectRootManager.getInstance(project)
-                .getContentRoots();
+                .getContentSourceRoots();
         for (VirtualFile virtualFile : roots)
         {
-            if (!isModuleRoot(project, virtualFile.getName()))
+            if (isModuleRoot(project, virtualFile.getName()))
             {
                 //String name = virtualFile.getName();
                 result.add(virtualFile.getPath());

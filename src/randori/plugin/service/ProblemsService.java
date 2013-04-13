@@ -19,21 +19,20 @@
 
 package randori.plugin.service;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
+import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.project.Project;
 import org.apache.flex.compiler.problems.CompilerProblemSeverity;
 import org.apache.flex.compiler.problems.ICompilerProblem;
 import org.apache.flex.compiler.problems.NoDefinitionForSWCDependencyProblem;
 import org.apache.flex.compiler.problems.annotations.DefaultSeverity;
 import org.jetbrains.annotations.NotNull;
 
-import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.Project;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author Michael Schmalle
@@ -41,10 +40,18 @@ import com.intellij.openapi.project.Project;
 public class ProblemsService
 {
     private static final Logger log = Logger.getInstance(ProblemsService.class);
-
     private Set<ICompilerProblem> problems = new HashSet<ICompilerProblem>();
-
     private ArrayList<OnProblemServiceListener> listeners = new ArrayList<OnProblemServiceListener>();
+
+    public ProblemsService()
+    {
+    }
+
+    @NotNull
+    public static ProblemsService getInstance(Project project)
+    {
+        return ServiceManager.getService(project, ProblemsService.class);
+    }
 
     // XXX this needs to be non modifiable, clients need to call addAll() and add()
     public Set<ICompilerProblem> getProblems()
@@ -97,35 +104,20 @@ public class ProblemsService
             return;
 
         final String path = problem.getSourcePath();
-        try {
-            if (path == null)
-            {
-                log.error("Problem SourcePath does not exist for "
-                        + problem.toString());
-                return;
-            }
-
-            if (!new File(path).exists())
-            {
-                log.error("Problem File does not exist for "
-                        + problem.getSourcePath());
-                return;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            problems.add(problem);
+        if (path == null)
+        {
+            log.error("Problem SourcePath does not exist for "
+                    + problem.toString());
+            return;
         }
-    }
 
-    public ProblemsService()
-    {
-    }
+        if (!new File(path).exists())
+        {
+            log.error("Problem - " + problem.toString());
+            return;
+        }
 
-    @NotNull
-    public static ProblemsService getInstance(Project project)
-    {
-        return ServiceManager.getService(project, ProblemsService.class);
+        problems.add(problem);
     }
 
     public void addListener(OnProblemServiceListener l)
@@ -166,17 +158,17 @@ public class ProblemsService
         fireOnChange();
     }
 
-    public interface OnProblemServiceListener
-    {
-        void onReset();
-
-        void onChange(Set<ICompilerProblem> problems);
-    }
-
     private CompilerProblemSeverity getSeverity(ICompilerProblem problem)
     {
         DefaultSeverity defaultSeverity = problem.getClass().getAnnotation(
                 DefaultSeverity.class);
         return defaultSeverity.value();
+    }
+
+    public interface OnProblemServiceListener
+    {
+        void onReset();
+
+        void onChange(Set<ICompilerProblem> problems);
     }
 }
