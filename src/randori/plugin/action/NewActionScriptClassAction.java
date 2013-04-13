@@ -48,7 +48,7 @@ public class NewActionScriptClassAction extends
 
 {
     public NewActionScriptClassAction() {
-        super("ActionScript Class", "Creates a new ActionScript class",
+        super("Randori File", "Creates a new Randori file",
                 RandoriIcons.Randori16, true);
     }
 
@@ -76,12 +76,12 @@ public class NewActionScriptClassAction extends
     @Override
     protected void buildDialog(Project project, PsiDirectory directory, CreateFileFromTemplateDialog.Builder builder) {
 
-        builder.setTitle("Create new Class")
-                .addKind("Class", RandoriIcons.Randori16, "Randori Class.as")
-                .addKind("Interface", RandoriIcons.Randori16, "Randori Interface.as")
-                .addKind("Behavior", RandoriIcons.Randori16, "Randori Behavior.as")
-                .addKind("Mediator", RandoriIcons.Randori16, "Randori Mediator.as")
-                .addKind("Context", RandoriIcons.Randori16, "Randori Context.as");
+        builder.setTitle("Create new Randori file")
+                .addKind("Class", RandoriIcons.Randori16, RandoriTemplates.RANDORI_CLASS)
+                //.addKind("Interface", RandoriIcons.Randori16, RandoriTemplates.RANDORI_INTERFACE)
+                .addKind("Behavior", RandoriIcons.Randori16, RandoriTemplates.RANDORI_BEHAVIOUR)
+                .addKind("Mediator", RandoriIcons.Randori16, RandoriTemplates.RANDORI_MEDIATOR)
+                .addKind("Context", RandoriIcons.Randori16, RandoriTemplates.RANDORI_CONTEXT);
 
         for (FileTemplate template : FileTemplateManager.getInstance().getAllTemplates()) {
             FileType fileType = FileTypeManagerEx.getInstanceEx().getFileTypeByExtension(template.getExtension());
@@ -95,7 +95,7 @@ public class NewActionScriptClassAction extends
     @Override
     protected String getActionName(PsiDirectory directory, String newName,
                                    String templateName) {
-        return "ActionScript Class";
+        return "Randori File";
     }
 
     @Override

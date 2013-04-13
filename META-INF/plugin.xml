@@ -12,6 +12,8 @@
     <p>Please visit <strong>http://randoriframework.com</strong> for more information.</p>
     ]]></description>
 
+    <depends>com.intellij.css</depends>
+
     <change-notes>
         <![CDATA[
          <h3>0.2.3 changes:</h3>
@@ -67,7 +69,7 @@
 
     <actions>
         <action id="Randori.NewClass" class="randori.plugin.action.NewActionScriptClassAction"
-                text="Randori Class" description="Create new ActionScript class">
+                text="Randori File" description="Create new Randori file">
             <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewGroup1"/>
         </action>
 
@@ -80,6 +82,8 @@
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
+
+        <completion.contributor language="CSS" implementationClass="randori.plugin.lang.css.RandoriCSSSCompletionContributor" id="randoriCSS"/>
 
         <fileTemplateGroup implementation="randori.plugin.action.RandoriTemplatesFactory"/>
 

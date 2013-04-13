@@ -18,24 +18,25 @@
  */
 package randori.plugin.action;
 
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
-import com.intellij.openapi.project.Project;
 import randori.plugin.components.RandoriProjectComponent;
 import randori.plugin.util.ProjectUtils;
 
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.PlatformDataKeys;
+import com.intellij.openapi.project.Project;
+
 /**
- * @author: Frédéric THOMAS
- * Date: 10/04/13
- * Time: 16:28
+ * @author: Frédéric THOMAS Date: 10/04/13 Time: 16:28
  */
-public class ParseAction extends AnAction {
+public class ParseAction extends BaseRandoriMenuAction
+{
 
     @Override
-    public void actionPerformed(AnActionEvent event) {
+    public void actionPerformed(AnActionEvent event)
+    {
         Project project = event.getData(PlatformDataKeys.PROJECT);
-        RandoriProjectComponent component = ProjectUtils.getProjectComponent(project);
+        RandoriProjectComponent component = ProjectUtils
+                .getProjectComponent(project);
 
         component.parse(false);
     }
