@@ -537,6 +537,10 @@ public class RandoriProjectComponent implements ProjectComponent, Configurable,
         return "Unknown error code";
     }
 
+    public RandoriProjectCompiler getCompiler() {
+        return compiler;
+    }
+
     class ProblemClearRunnable implements Runnable
     {
         @Override
