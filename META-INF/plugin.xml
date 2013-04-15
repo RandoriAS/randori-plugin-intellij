@@ -7,15 +7,21 @@
     <category>Framework integration</category>
 
     <description><![CDATA[
-    <p>The Randori Framework is a tool that helps making LARGE Javascript application development manageable.</p>
+    <p>The Randori Framework is a tool that helps in making LARGE Javascript application development manageable.</p>
     <p>It consists of an Actionscript cross-compiler and a client-side JavaScript framework.</p>
     <p>Please visit <strong>http://randoriframework.com</strong> for more information.</p>
     ]]></description>
 
     <depends>com.intellij.css</depends>
+    <!-- depends>com.intellij.flex</depends-->
 
     <change-notes>
         <![CDATA[
+         <h3>0.2.4 changes:</h3>
+            <ul>
+                <li>[plugin-feature] Randori specific CSS code completions.</li>
+                <li>[compiler-feature] Incremental compiles.</li>
+            </ul>
          <h3>0.2.3 changes:</h3>
             <ul>
                 <li>[plugin-bug] fixed runtime exception when builtin.swc was not found in SDK.</li>
@@ -74,7 +80,7 @@
         </action>
 
         <action id="RandoriPlugin.Parse" class="randori.plugin.action.ParseAction"
-                text="Parse Randori..."
+                text="Parse Randori"
                 description="Parse Randori files for errors">
             <add-to-group group-id="BuildMenu" anchor="last"/>
             <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl P"/>
@@ -84,6 +90,8 @@
     <extensions defaultExtensionNs="com.intellij">
 
         <completion.contributor language="CSS" implementationClass="randori.plugin.lang.css.RandoriCSSSCompletionContributor" id="randoriCSS"/>
+
+        <!--lang.importOptimizer language="ECMA Script Level 4" implementationClass="randori.plugin.lang.RandoriAnnotationsImportOptimizer" /-->
 
         <fileTemplateGroup implementation="randori.plugin.action.RandoriTemplatesFactory"/>
 

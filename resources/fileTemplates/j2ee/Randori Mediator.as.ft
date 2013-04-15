@@ -9,5 +9,11 @@ package ${PACKAGE_NAME}
         {
 
         }
+
+        override protected function onDeregister():void
+        {
+
+        }
+
     }
 }

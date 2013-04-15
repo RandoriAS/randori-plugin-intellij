@@ -31,6 +31,7 @@ import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 import randori.compiler.clients.CompilerArguments;
+import randori.compiler.plugin.IPreProcessPlugin;
 import randori.plugin.builder.FileChangeListener;
 import randori.plugin.compiler.RandoriProjectCompiler;
 import randori.plugin.forms.RandoriProjectConfigurationForm;
@@ -130,7 +131,11 @@ public class RandoriProjectComponent implements ProjectComponent, Configurable,
         if (!ProjectUtils.hasRandoriModuleType(project))
             return null;
 
-        return new RandoriProjectCompiler(new Workspace());
+        RandoriProjectCompiler compiler = new RandoriProjectCompiler(new Workspace());
+
+        compiler.getPluginFactory().registerPlugin(IPreProcessPlugin.class, DummyPreProcessPlugin.class);
+
+        return compiler;
     }
 
     @Override
