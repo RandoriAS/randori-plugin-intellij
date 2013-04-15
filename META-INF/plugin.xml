@@ -1,6 +1,6 @@
 <idea-plugin version="2" url="http://randoriframework.com">
     <name>Randori Compiler</name>
-    <version>0.2.3</version>
+    <version>0.2.4</version>
     <idea-version since-build="123.169"/>
 
     <vendor>Teoti Graphix, LLC</vendor>
