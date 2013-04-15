@@ -2,43 +2,29 @@ package randori.plugin.lang.css;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 
-import com.intellij.codeInsight.lookup.LookupElementPresentation;
-import com.intellij.lang.ASTNode;
-import com.intellij.lang.Language;
-import com.intellij.navigation.ItemPresentation;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Iconable;
-import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.*;
-import com.intellij.psi.javadoc.PsiDocComment;
-import com.intellij.psi.scope.PsiScopeProcessor;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.search.SearchScope;
-import com.intellij.psi.search.searches.ClassInheritorsSearch;
-import com.intellij.util.IncorrectOperationException;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.flex.compiler.definitions.IClassDefinition;
 import org.apache.flex.compiler.definitions.ITypeDefinition;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+
+import randori.compiler.access.IASProjectAccess;
+import randori.plugin.compiler.RandoriProjectCompiler;
+import randori.plugin.components.RandoriProjectComponent;
+import randori.plugin.util.ProjectUtils;
 
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.codeInsight.lookup.LookupElementPresentation;
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.project.Project;
 import com.intellij.patterns.ElementPattern;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.css.CssDeclaration;
 import com.intellij.util.ProcessingContext;
-import org.jetbrains.annotations.Nullable;
-import randori.compiler.access.IASProjectAccess;
-import randori.compiler.config.IRandoriTargetSettings;
-import randori.plugin.compiler.RandoriProjectCompiler;
-import randori.plugin.components.RandoriProjectComponent;
-import randori.plugin.components.RandoriProjectModel;
-import randori.plugin.util.ProjectUtils;
-
-import javax.swing.*;
-import java.util.*;
 
 /**
  * @author Roland Zwaga <roland@stackandheap.com>
@@ -61,9 +47,11 @@ public class RandoriCSSSCompletionContributor extends CompletionContributor {
     public RandoriCSSSCompletionContributor()
     {
         final Project project = ProjectUtils.getProject();
+
         if (project != null)
         {
             final RandoriProjectComponent projectComponent = ProjectUtils.getProjectComponent(project);
+
 
             extend(CompletionType.BASIC, AFTER_DOUBLE_COLON, new CompletionProvider<CompletionParameters>() {
                 @Override
@@ -88,14 +76,20 @@ public class RandoriCSSSCompletionContributor extends CompletionContributor {
                             if (superClass != null)
                             {
                                 RandoriProjectCompiler compiler = projectComponent.getCompiler();
-                                IASProjectAccess projectAccess = compiler.getTargetSettings().getProjectAccess();
-
-                                Collection<IClassDefinition> subClasses = getSubClasses(superClass, projectAccess);
-                                if (subClasses != null)
+                                if (compiler != null)
                                 {
-                                    addLookupElements(subClasses, result);
+                                    IASProjectAccess projectAccess = compiler.getProjectAccess();
+
+                                    if (projectAccess != null)
+                                    {
+                                        Collection<IClassDefinition> subClasses = getSubClasses(superClass, projectAccess);
+                                        if (subClasses != null)
+                                        {
+                                            addLookupElements(subClasses, result);
+                                        }
+                                        result.stopHere();
+                                    }
                                 }
-                                result.stopHere();
                             }
                         }
                     }
