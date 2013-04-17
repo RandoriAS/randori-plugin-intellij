@@ -19,33 +19,7 @@
 
 package randori.plugin.components;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.*;
-
-import org.apache.flex.compiler.internal.workspaces.Workspace;
-import org.apache.flex.compiler.problems.ICompilerProblem;
-import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
-
-import randori.compiler.clients.CompilerArguments;
-import randori.compiler.plugin.IPreProcessPlugin;
-import randori.plugin.builder.FileChangeListener;
-import randori.plugin.compiler.RandoriProjectCompiler;
-import randori.plugin.forms.RandoriProjectConfigurationForm;
-import randori.plugin.module.RandoriModuleType;
-import randori.plugin.roots.RandoriSdk;
-import randori.plugin.runner.RandoriRunConfiguration;
-import randori.plugin.runner.RandoriServerComponent;
-import randori.plugin.service.ProblemsService;
-import randori.plugin.ui.ProblemsToolWindowFactory;
-import randori.plugin.util.NotificationUtils;
-import randori.plugin.util.ProjectUtils;
-import randori.plugin.util.VFileUtils;
-import randori.plugin.workspace.IRandoriWorkspace;
-
+import com.intellij.compiler.CompilerWorkspaceConfiguration;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.CompileScope;
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -75,6 +49,30 @@ import com.intellij.openapi.vfs.VirtualFileListener;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
+import org.apache.flex.compiler.internal.workspaces.Workspace;
+import org.apache.flex.compiler.problems.ICompilerProblem;
+import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NotNull;
+import randori.compiler.clients.CompilerArguments;
+import randori.compiler.plugin.IPreProcessPlugin;
+import randori.plugin.builder.FileChangeListener;
+import randori.plugin.compiler.RandoriProjectCompiler;
+import randori.plugin.forms.RandoriProjectConfigurationForm;
+import randori.plugin.module.RandoriModuleType;
+import randori.plugin.roots.RandoriSdk;
+import randori.plugin.runner.RandoriRunConfiguration;
+import randori.plugin.runner.RandoriServerComponent;
+import randori.plugin.service.ProblemsService;
+import randori.plugin.ui.ProblemsToolWindowFactory;
+import randori.plugin.util.NotificationUtils;
+import randori.plugin.util.ProjectUtils;
+import randori.plugin.util.VFileUtils;
+import randori.plugin.workspace.IRandoriWorkspace;
+
+import javax.swing.*;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 @State(name = RandoriProjectComponent.COMPONENT_NAME, storages = { @Storage(id = "randoriProject", file = "$PROJECT_FILE$") })
 /**
@@ -112,14 +110,18 @@ public class RandoriProjectComponent implements ProjectComponent, Configurable,
         if (!ProjectUtils.hasRandoriModuleType(project))
             return;
 
+        CompilerWorkspaceConfiguration workspaceConfiguration = CompilerWorkspaceConfiguration.getInstance(project)
+                .getState();
+        workspaceConfiguration.USE_COMPILE_SERVER = false;
+        CompilerWorkspaceConfiguration.getInstance(project).loadState(workspaceConfiguration);
+
         workspace = new Workspace();
         compiler = addProjectCompiler(this.project);
         state = new RandoriProjectModel();
         modifiedFiles = new ArrayList<VirtualFile>();
 
         fileChangeListener = new FileChangeListener(project);
-        VirtualFileManager.getInstance().addVirtualFileListener(
-                fileChangeListener);
+        VirtualFileManager.getInstance().addVirtualFileListener(fileChangeListener);
 
         parse(false);
     }
@@ -145,8 +147,8 @@ public class RandoriProjectComponent implements ProjectComponent, Configurable,
         if (!ProjectUtils.hasRandoriModuleType(project))
             return;
 
-        ToolWindow toolWindow = ToolWindowManager.getInstance(project)
-                .getToolWindow(ProblemsToolWindowFactory.WINDOW_ID);
+        ToolWindow toolWindow = ToolWindowManager.getInstance(project).getToolWindow(
+                ProblemsToolWindowFactory.WINDOW_ID);
         if (toolWindow != null)
         {
             toolWindow.hide(new Runnable() {
@@ -165,8 +167,7 @@ public class RandoriProjectComponent implements ProjectComponent, Configurable,
         if (!ProjectUtils.hasRandoriModuleType(project))
             return;
 
-        VirtualFileManager.getInstance().removeVirtualFileListener(
-                fileChangeListener);
+        VirtualFileManager.getInstance().removeVirtualFileListener(fileChangeListener);
 
         compiler = null;
         workspace = null;
@@ -258,8 +259,7 @@ public class RandoriProjectComponent implements ProjectComponent, Configurable,
     }
 
     /**
-     * Returns the {@link ProblemsService} that manages {@link ICompilerProblem}
-     * s from the compiler.
+     * Returns the {@link ProblemsService} that manages {@link ICompilerProblem} s from the compiler.
      */
     public ProblemsService getProblemsService()
     {
@@ -272,8 +272,7 @@ public class RandoriProjectComponent implements ProjectComponent, Configurable,
     }
 
     /**
-     * Opens a ICompilerProblem in a new editor, or opens the editor and places
-     * the caret a the specific problem.
+     * Opens a ICompilerProblem in a new editor, or opens the editor and places the caret a the specific problem.
      * 
      * @param problem The ICompilerProblem to focus.
      */
@@ -282,16 +281,13 @@ public class RandoriProjectComponent implements ProjectComponent, Configurable,
         VirtualFile virtualFile = VFileUtils.getFile(problem.getSourcePath());
         if (virtualFile != null)
         {
-            OpenFileDescriptor descriptor = new OpenFileDescriptor(project,
-                    virtualFile);
+            OpenFileDescriptor descriptor = new OpenFileDescriptor(project, virtualFile);
             if (descriptor != null)
             {
-                Editor editor = FileEditorManager.getInstance(project)
-                        .openTextEditor(descriptor, true);
+                Editor editor = FileEditorManager.getInstance(project).openTextEditor(descriptor, true);
                 if (editor != null)
                 {
-                    LogicalPosition position = new LogicalPosition(
-                            problem.getLine(), problem.getColumn());
+                    LogicalPosition position = new LogicalPosition(problem.getLine(), problem.getColumn());
                     editor.getCaretModel().moveToLogicalPosition(position);
                 }
             }
@@ -332,10 +328,8 @@ public class RandoriProjectComponent implements ProjectComponent, Configurable,
 
     public void run(RandoriRunConfiguration configuration)
     {
-        RandoriServerComponent component = project
-                .getComponent(RandoriServerComponent.class);
-        String explicitWebRoot = (configuration.useExplicitWebroot) ? configuration.explicitWebroot
-                : "";
+        RandoriServerComponent component = project.getComponent(RandoriServerComponent.class);
+        String explicitWebRoot = (configuration.useExplicitWebroot) ? configuration.explicitWebroot : "";
         component.openURL(configuration.indexRoot, explicitWebRoot);
     }
 
@@ -348,8 +342,7 @@ public class RandoriProjectComponent implements ProjectComponent, Configurable,
         compiler.configure(arguments.toArguments());
         boolean success = compiler.compile(false);
 
-        ApplicationManager.getApplication().invokeLater(
-                new ProblemRunnable(success));
+        ApplicationManager.getApplication().invokeLater(new ProblemRunnable(success));
     }
 
     void parse(final CompilerArguments arguments)
@@ -357,16 +350,14 @@ public class RandoriProjectComponent implements ProjectComponent, Configurable,
         clearProblems();
 
         ProgressManager.getInstance().run(
-                new Task.Backgroundable(project,
-                        "Randori compiler building project", true, null) {
+                new Task.Backgroundable(project, "Randori compiler building project", true, null) {
                     @Override
                     public void run(@NotNull ProgressIndicator indicator)
                     {
                         compiler.configure(arguments.toArguments());
                         boolean success = compiler.compile(false);
 
-                        ApplicationManager.getApplication().invokeLater(
-                                new ProblemRunnable(success));
+                        ApplicationManager.getApplication().invokeLater(new ProblemRunnable(success));
                     }
                 });
     }
@@ -383,8 +374,7 @@ public class RandoriProjectComponent implements ProjectComponent, Configurable,
         compiler.configure(arguments.toArguments());
         boolean success = compiler.compile(true);
 
-        ApplicationManager.getApplication().invokeLater(
-                new ProblemUpdateRunnable());
+        ApplicationManager.getApplication().invokeLater(new ProblemUpdateRunnable());
 
         // only run if success, the compile will return false
         // with any errors or mis configurations
@@ -394,8 +384,7 @@ public class RandoriProjectComponent implements ProjectComponent, Configurable,
         }
 
         // this will take care of success and failure notices
-        ApplicationManager.getApplication().invokeLater(
-                new ProblemBuildRunnable());
+        ApplicationManager.getApplication().invokeLater(new ProblemBuildRunnable());
     }
 
     void build(boolean doClean, final CompilerArguments arguments)
@@ -408,8 +397,7 @@ public class RandoriProjectComponent implements ProjectComponent, Configurable,
         }
 
         ProgressManager.getInstance().run(
-                new Task.Backgroundable(project,
-                        "Randori compiler building project", true, null) {
+                new Task.Backgroundable(project, "Randori compiler building project", true, null) {
                     @Override
                     public void run(@NotNull ProgressIndicator indicator)
                     {
@@ -424,8 +412,7 @@ public class RandoriProjectComponent implements ProjectComponent, Configurable,
                         }
 
                         // this will take care of success and failure notices
-                        ApplicationManager.getApplication().invokeLater(
-                                new ProblemBuildRunnable());
+                        ApplicationManager.getApplication().invokeLater(new ProblemBuildRunnable());
                     }
                 });
     }
@@ -453,8 +440,7 @@ public class RandoriProjectComponent implements ProjectComponent, Configurable,
         for (Module module : modules)
         {
             // RandoriFlash/src
-            for (VirtualFile sourceRoot : ModuleRootManager.getInstance(module)
-                    .getSourceRoots())
+            for (VirtualFile sourceRoot : ModuleRootManager.getInstance(module).getSourceRoots())
             {
                 arguments.addSourcepath(sourceRoot.getPath());
             }
@@ -487,11 +473,8 @@ public class RandoriProjectComponent implements ProjectComponent, Configurable,
         {
             if (ModuleType.get(module) != RandoriModuleType.getInstance())
             {
-                Messages.showErrorDialog(module.getProject(),
-                        "This module is not a Randori module",
-                        "Can not compile");
-                ModulesConfigurator.showDialog(module.getProject(),
-                        module.getName(), ClasspathEditor.NAME);
+                Messages.showErrorDialog(module.getProject(), "This module is not a Randori module", "Can not compile");
+                ModulesConfigurator.showDialog(module.getProject(), module.getName(), ClasspathEditor.NAME);
                 return false;
             }
         }
@@ -504,8 +487,7 @@ public class RandoriProjectComponent implements ProjectComponent, Configurable,
         final VirtualFile baseDir = project.getBaseDir();
 
         // wipe the generated directory
-        VirtualFile virtualFile = baseDir.findFileByRelativePath(this
-                .getState().getBasePath());
+        VirtualFile virtualFile = baseDir.findFileByRelativePath(this.getState().getBasePath());
         if (virtualFile != null && virtualFile.exists())
         {
             File fsFile = new File(virtualFile.getPath());
@@ -520,8 +502,7 @@ public class RandoriProjectComponent implements ProjectComponent, Configurable,
 
     protected void clearProblems()
     {
-        ApplicationManager.getApplication().invokeLater(
-                new ProblemClearRunnable());
+        ApplicationManager.getApplication().invokeLater(new ProblemClearRunnable());
     }
 
     @SuppressWarnings("unused")
@@ -542,7 +523,8 @@ public class RandoriProjectComponent implements ProjectComponent, Configurable,
         return "Unknown error code";
     }
 
-    public RandoriProjectCompiler getCompiler() {
+    public RandoriProjectCompiler getCompiler()
+    {
         return compiler;
     }
 
@@ -591,19 +573,15 @@ public class RandoriProjectComponent implements ProjectComponent, Configurable,
             if (success)
             {
                 service.clearProblems();
-                NotificationUtils.sendRandoriInformation("Success",
-                        "Successfully compiled project", project);
+                NotificationUtils.sendRandoriInformation("Success", "Successfully compiled project", project);
             }
             else
             {
                 if (service.hasErrors())
                 {
-                    NotificationUtils.sendRandoriError("Error",
-                            "Error(s) in project, Check the <a href='"
-                                    + ProblemsToolWindowFactory.WINDOW_ID
-                                    + "'>"
-                                    + ProblemsToolWindowFactory.WINDOW_ID
-                                    + "</a> for more information", project);
+                    NotificationUtils.sendRandoriError("Error", "Error(s) in project, Check the <a href='"
+                            + ProblemsToolWindowFactory.WINDOW_ID + "'>" + ProblemsToolWindowFactory.WINDOW_ID
+                            + "</a> for more information", project);
                 }
             }
         }
@@ -624,16 +602,13 @@ public class RandoriProjectComponent implements ProjectComponent, Configurable,
 
             if (service.hasErrors())
             {
-                NotificationUtils.sendRandoriError("Error",
-                        "Error(s) in project, Check the <a href='"
-                                + ProblemsToolWindowFactory.WINDOW_ID + "'>"
-                                + ProblemsToolWindowFactory.WINDOW_ID
-                                + "</a> for more information", project);
+                NotificationUtils.sendRandoriError("Error", "Error(s) in project, Check the <a href='"
+                        + ProblemsToolWindowFactory.WINDOW_ID + "'>" + ProblemsToolWindowFactory.WINDOW_ID
+                        + "</a> for more information", project);
             }
             else
             {
-                NotificationUtils.sendRandoriInformation("Success",
-                        "Successfully compiled and built project", project);
+                NotificationUtils.sendRandoriInformation("Success", "Successfully compiled and built project", project);
             }
 
         }

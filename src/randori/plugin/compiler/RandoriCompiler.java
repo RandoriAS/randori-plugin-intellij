@@ -19,13 +19,6 @@
 
 package randori.plugin.compiler;
 
-import java.util.List;
-
-import org.jetbrains.annotations.NotNull;
-
-import randori.plugin.components.RandoriProjectComponent;
-import randori.plugin.util.VFileUtils;
-
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompileScope;
 import com.intellij.openapi.compiler.TranslatingCompiler;
@@ -34,6 +27,11 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Chunk;
+import org.jetbrains.annotations.NotNull;
+import randori.plugin.components.RandoriProjectComponent;
+import randori.plugin.util.VFileUtils;
+
+import java.util.List;
 
 /**
  * IDEA Compiler class for calling the internal compiler API.
@@ -43,8 +41,7 @@ import com.intellij.util.Chunk;
 public class RandoriCompiler implements TranslatingCompiler
 {
 
-    private static final Logger LOG = Logger
-            .getInstance("#randori.compiler.RandoriCompiler");
+    private static final Logger LOG = Logger.getInstance("#randori.compiler.RandoriCompiler");
     protected final Project project;
     private final RandoriProjectComponent projectComponent;
 
@@ -62,8 +59,7 @@ public class RandoriCompiler implements TranslatingCompiler
     }
 
     @Override
-    public void compile(CompileContext context, Chunk<Module> moduleChunk,
-            VirtualFile[] files, OutputSink sink)
+    public void compile(CompileContext context, Chunk<Module> moduleChunk, VirtualFile[] files, OutputSink sink)
     {
         context.getProgressIndicator().checkCanceled();
         context.getProgressIndicator().setText("Starting Randori compiler...");
