@@ -23,7 +23,6 @@ import java.util.*;
 
 import org.jetbrains.annotations.NotNull;
 
-import randori.compiler.internal.config.annotation.AnnotationManager;
 import randori.plugin.components.RandoriProjectComponent;
 import randori.plugin.util.ProjectUtils;
 import randori.plugin.util.VFileUtils;
@@ -122,7 +121,7 @@ public class FileChangeListener implements VirtualFileListener
                     @Override
                     public void run()
                     {
-                        importAnnotationsAndMake(file);
+                        importAnnotations(file);
 
                         if ((event.isFromSave()) && makeProjectOnSave)
                             executeMake(event);
@@ -132,7 +131,7 @@ public class FileChangeListener implements VirtualFileListener
         }
     }
 
-    private void importAnnotationsAndMake(VirtualFile file)
+    private void importAnnotations(VirtualFile file)
     {
         final List<PsiElement> annotations = new ArrayList<PsiElement>();
 
