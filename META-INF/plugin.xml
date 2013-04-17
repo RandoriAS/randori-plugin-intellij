@@ -128,4 +128,7 @@
 
     </extensions>
 
+    <depends>JavaScript</depends>
+    <depends>com.intellij.modules.lang</depends>
+
 </idea-plugin>
