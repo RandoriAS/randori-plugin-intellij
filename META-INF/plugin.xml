@@ -18,7 +18,7 @@
         <![CDATA[
          <h3>0.2.4 changes:</h3>
             <ul>
-                <li>!!!!!ATTENTION: YOU *MUST* UPDATE TO THE LATEST VERSION OF THE RANDORI SDK (0.2.5) TO USE THIS VERSION!!!!!</li>
+                <li>!!!!!ATTENTION: YOU *MUST* UPDATE TO THE LATEST VERSION OF THE RANDORI SDK (0.2.6) TO USE THIS VERSION!!!!!</li>
                 <li>[plugin-enhancement] "New Randori File" menu is now bundled into one dialog.</li>
                 <li>[plugin-enhancement] all Randori specific menu items are only available when a Randori project is active.</li>
                 <li>[plugin-feature] Randori specific CSS code completions.</li>
