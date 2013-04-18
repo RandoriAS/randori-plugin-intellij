@@ -18,9 +18,17 @@
         <![CDATA[
          <h3>0.2.4 changes:</h3>
             <ul>
+                <li>!!!!!ATTENTION: YOU *MUST* UPDATE TO THE LATEST VERSION OF THE RANDORI SDK (0.2.5) TO USE THIS VERSION!!!!!</li>
                 <li>[plugin-enhancement] "New Randori File" menu is now bundled into one dialog.</li>
                 <li>[plugin-enhancement] all Randori specific menu items are only available when a Randori project is active.</li>
                 <li>[plugin-feature] Randori specific CSS code completions.</li>
+                <li>[compiler-bug] Fixed Incremental compile using direct reverse dependencies.</li>
+                <li>[compiler-bug] Fixed delegate member access in Function arguments passing scope.</li>
+                <li>[compiler-bug] Fixed named inner function generation.</li>
+                <li>[compiler-bug] Fixed non resolving identifer in object literal.</li>
+                <li>[compiler-bug] Fixed JavaScript export=false defaults to declared type's qualifiedname.</li>
+                <li>[compiler-bug] Fixed small getter issue in continer block.</li>
+                <li>[compiler-feature] Added Gradle build system.</li>
                 <li>[compiler-feature] incremental compilation implemented.</li>
             </ul>
          <h3>0.2.3 changes:</h3>
