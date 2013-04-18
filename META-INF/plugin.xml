@@ -27,7 +27,7 @@
                 <li>[compiler-bug] Fixed named inner function generation.</li>
                 <li>[compiler-bug] Fixed non resolving identifer in object literal.</li>
                 <li>[compiler-bug] Fixed JavaScript export=false defaults to declared type's qualifiedname.</li>
-                <li>[compiler-bug] Fixed small getter issue in continer block.</li>
+                <li>[compiler-bug] Fixed small getter issue in container block.</li>
                 <li>[compiler-feature] Added Gradle build system.</li>
                 <li>[compiler-feature] incremental compilation implemented.</li>
             </ul>
