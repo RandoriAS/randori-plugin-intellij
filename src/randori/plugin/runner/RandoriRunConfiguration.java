@@ -19,23 +19,10 @@
 
 package randori.plugin.runner;
 
-import java.util.Arrays;
-import java.util.Collection;
-
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-
-import randori.plugin.components.RandoriProjectComponent;
-
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionResult;
 import com.intellij.execution.Executor;
-import com.intellij.execution.configurations.ConfigurationPerRunnerSettings;
-import com.intellij.execution.configurations.ModuleBasedConfiguration;
-import com.intellij.execution.configurations.RunConfiguration;
-import com.intellij.execution.configurations.RunProfileState;
-import com.intellij.execution.configurations.RunnerSettings;
-import com.intellij.execution.configurations.RuntimeConfigurationException;
+import com.intellij.execution.configurations.*;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.openapi.components.PathMacroManager;
@@ -46,6 +33,12 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.util.xmlb.XmlSerializer;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+import randori.plugin.components.RandoriProjectComponent;
+
+import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * @author Michael Schmalle
@@ -55,11 +48,8 @@ public class RandoriRunConfiguration extends
         ModuleBasedConfiguration<RandoriApplicationModuleBasedConfiguration>
 {
     public boolean useExplicitWebroot = false;
-
     public String explicitWebroot = "";
-
     public String indexRoot;
-
     private ExecutionEnvironment myEnvironment;
 
     public RandoriRunConfiguration(String name, Project project,
@@ -125,8 +115,6 @@ public class RandoriRunConfiguration extends
             @NotNull ExecutionEnvironment environment)
             throws ExecutionException
     {
-        //        return new RandoriCommandLineState(new RandoriConsoleProperties(this,
-        //                executor), env);
         myEnvironment = environment;
 
         RunProfileState state = new ApplicationServerRunState();
@@ -166,30 +154,6 @@ public class RandoriRunConfiguration extends
             RandoriProjectComponent component = getProject().getComponent(
                     RandoriProjectComponent.class);
             component.run(RandoriRunConfiguration.this);
-
-            //            ExecutionResult result = new ExecutionResult() {
-            //
-            //                @Override
-            //                public ProcessHandler getProcessHandler()
-            //                {
-            //                    // TODO Auto-generated method stub
-            //                    return null;
-            //                }
-            //
-            //                @Override
-            //                public ExecutionConsole getExecutionConsole()
-            //                {
-            //                    // TODO Auto-generated method stub
-            //                    return null;
-            //                }
-            //
-            //                @Override
-            //                public AnAction[] getActions()
-            //                {
-            //                    // TODO Auto-generated method stub
-            //                    return null;
-            //                }
-            //            };
             return null;
         }
 

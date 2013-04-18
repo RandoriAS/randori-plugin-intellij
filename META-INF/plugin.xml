@@ -1,19 +1,36 @@
 <idea-plugin version="2" url="http://randoriframework.com">
     <name>Randori Compiler</name>
-    <version>0.2.3</version>
+    <version>0.2.4</version>
     <idea-version since-build="123.169"/>
 
     <vendor>Teoti Graphix, LLC</vendor>
     <category>Framework integration</category>
 
     <description><![CDATA[
-    <p>The Randori Framework is a tool that helps making LARGE Javascript application development manageable.</p>
+    <p>The Randori Framework is a tool that helps in making LARGE Javascript application development manageable.</p>
     <p>It consists of an Actionscript cross-compiler and a client-side JavaScript framework.</p>
     <p>Please visit <strong>http://randoriframework.com</strong> for more information.</p>
     ]]></description>
 
+    <depends>com.intellij.css</depends>
+
     <change-notes>
         <![CDATA[
+         <h3>0.2.4 changes:</h3>
+            <ul>
+                <li>!!!!!ATTENTION: YOU *MUST* UPDATE TO THE LATEST VERSION OF THE RANDORI SDK (0.2.5) TO USE THIS VERSION!!!!!</li>
+                <li>[plugin-enhancement] "New Randori File" menu is now bundled into one dialog.</li>
+                <li>[plugin-enhancement] all Randori specific menu items are only available when a Randori project is active.</li>
+                <li>[plugin-feature] Randori specific CSS code completions.</li>
+                <li>[compiler-bug] Fixed Incremental compile using direct reverse dependencies.</li>
+                <li>[compiler-bug] Fixed delegate member access in Function arguments passing scope.</li>
+                <li>[compiler-bug] Fixed named inner function generation.</li>
+                <li>[compiler-bug] Fixed non resolving identifer in object literal.</li>
+                <li>[compiler-bug] Fixed JavaScript export=false defaults to declared type's qualifiedname.</li>
+                <li>[compiler-bug] Fixed small getter issue in continer block.</li>
+                <li>[compiler-feature] Added Gradle build system.</li>
+                <li>[compiler-feature] incremental compilation implemented.</li>
+            </ul>
          <h3>0.2.3 changes:</h3>
             <ul>
                 <li>[plugin-bug] fixed runtime exception when builtin.swc was not found in SDK.</li>
@@ -42,15 +59,12 @@
         <component>
             <implementation-class>randori.plugin.runner.RandoriRunnerConfigurationType</implementation-class>
         </component>
-        <component>
-            <implementation-class>randori.plugin.components.RandoriApplicationComponent</implementation-class>
-        </component>
-        <component>
-            <implementation-class>randori.plugin.components.WorkspaceApplicationComponent</implementation-class>
-        </component>
     </application-components>
 
     <project-components>
+        <component>
+            <implementation-class>randori.plugin.compiler.RandoriCompilerLoader</implementation-class>
+        </component>
         <component>
             <implementation-class>randori.plugin.components.RandoriProjectComponent</implementation-class>
         </component>
@@ -60,9 +74,6 @@
         <component>
             <implementation-class>randori.plugin.runner.RandoriServerComponent</implementation-class>
         </component>
-        <!--<component>-->
-        <!--<implementation-class>randori.plugin.components.ASProjectComponent</implementation-class>-->
-        <!--</component>-->
     </project-components>
 
     <module-components>
@@ -72,27 +83,24 @@
     </module-components>
 
     <actions>
-        <action id="RandoriPlugin.BuildClean" class="randori.plugin.action.RunBuildCleanAction"
-                text="Build and Clean Randori..."
-                description="Build and Cleans a Randori project">
-            <add-to-group group-id="BuildMenu" anchor="last"/>
-            <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl alt C"/>
-        </action>
-        <action id="RandoriPlugin.Build" class="randori.plugin.action.RunBuildAction" text="Build Randori..."
-                description="Builds a Randori project">
-            <add-to-group group-id="BuildMenu" anchor="last"/>
-            <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl alt R"/>
+        <action id="Randori.NewClass" class="randori.plugin.action.NewActionScriptClassAction"
+                text="Randori File" description="Create new Randori file">
+            <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewGroup1"/>
         </action>
 
-        <!--<action class="randori.plugin.action.CreateActionScriptClassAction" text="AS Class" id="NewASClass">-->
-        <!--<add-to-group anchor="last" group-id="NewGroup"/>-->
-        <!--</action>-->
-
+        <action id="RandoriPlugin.Parse" class="randori.plugin.action.ParseAction"
+                text="Parse Randori"
+                description="Parse Randori files for errors">
+            <add-to-group group-id="BuildMenu" anchor="last"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl P"/>
+        </action>
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
 
-        <!--<fileTemplateGroup implementation="randori.plugin.action.RandoriTemplatesFactory"/>-->
+        <completion.contributor language="CSS" implementationClass="randori.plugin.lang.css.RandoriCSSSCompletionContributor" id="randoriCSS"/>
+
+        <fileTemplateGroup implementation="randori.plugin.action.RandoriTemplatesFactory"/>
 
         <sdkType implementation="randori.plugin.roots.RandoriSdk"/>
 
@@ -120,6 +128,15 @@
         <projectService
                 serviceImplementation="randori.plugin.service.ProblemsService"/>
 
+        <projectService serviceInterface="randori.plugin.compiler.RandoriCompilerConfiguration"
+                        serviceImplementation="randori.plugin.compiler.RandoriCompilerConfiguration"/>
+
+        <projectConfigurable instance="randori.plugin.compiler.RandoriCompilerConfigurable" id="Randori compiler"
+                             displayName="Randori Compiler" parentId="project.propCompiler"/>
+
     </extensions>
+
+    <depends>JavaScript</depends>
+    <depends>com.intellij.modules.lang</depends>
 
 </idea-plugin>

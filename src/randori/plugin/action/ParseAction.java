@@ -16,23 +16,28 @@
  *
  * @author Michael Schmalle <mschmalle@teotigraphix.com>
  */
+package randori.plugin.action;
 
-package randori.plugin.components;
+import randori.plugin.components.RandoriProjectComponent;
+import randori.plugin.util.ProjectUtils;
 
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.project.Project;
-import org.apache.flex.compiler.internal.workspaces.Workspace;
-import org.apache.flex.compiler.projects.ICompilerProject;
 
 /**
- * The single instance of the IWorkspace in the IDE that manages compilation
- * units for
- * 
- * @author Michael Schmalle
+ * @author: Frédéric THOMAS Date: 10/04/13 Time: 16:28
  */
-public interface IWorkspaceApplication
+public class ParseAction extends BaseRandoriMenuAction
 {
 
-    Workspace getWorkspace();
+    @Override
+    public void actionPerformed(AnActionEvent event)
+    {
+        Project project = event.getData(PlatformDataKeys.PROJECT);
+        RandoriProjectComponent component = ProjectUtils
+                .getProjectComponent(project);
 
-    ICompilerProject addProject(Project project);
+        component.parse(false);
+    }
 }

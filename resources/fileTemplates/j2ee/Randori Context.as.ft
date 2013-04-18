@@ -1,0 +1,18 @@
+package ${PACKAGE_NAME}
+{
+    import guice.GuiceModule;
+    import guice.binding.Binder;
+    #parse("File Header.java")
+    public class ${NAME} extends GuiceModule
+    {
+
+        override public function configure(binder:Binder):void
+        {
+        }
+
+        public function ${NAME}()
+        {
+            super();
+        }
+    }
+}

@@ -19,16 +19,17 @@
 
 package randori.plugin.runner;
 
-import javax.swing.Icon;
+import javax.swing.*;
 
 import org.jetbrains.annotations.NotNull;
+
+import icons.RandoriIcons;
 
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.util.containers.ContainerUtil;
 
 /**
@@ -59,7 +60,7 @@ public class RandoriRunnerConfigurationType implements ConfigurationType
     @Override
     public Icon getIcon()
     {
-        return IconLoader.getIcon("/icons/randori.png");
+        return RandoriIcons.Randori16;
     }
 
     @Override

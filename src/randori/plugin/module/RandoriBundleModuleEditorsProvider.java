@@ -20,6 +20,7 @@ import java.util.List;
 public class RandoriBundleModuleEditorsProvider implements
         ModuleConfigurationEditorProvider {
 
+    @Override
     public ModuleConfigurationEditor[] createEditors(
             ModuleConfigurationState state)
     {

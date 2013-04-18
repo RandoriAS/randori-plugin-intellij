@@ -23,19 +23,18 @@ import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.project.Project;
 import org.apache.flex.compiler.internal.projects.FlexProject;
 import org.jetbrains.annotations.NotNull;
+import randori.plugin.workspace.IRandoriWorkspace;
 
 /**
  * @author Michael Schmalle
  */
 public class ASProjectComponent implements ProjectComponent
 {
-    private final IWorkspaceApplication workspace;
-
+    private final IRandoriWorkspace workspace;
     private final Project project;
-
     private FlexProject asProject;
 
-    public ASProjectComponent(Project project, IWorkspaceApplication workspace)
+    public ASProjectComponent(Project project, IRandoriWorkspace workspace)
     {
         this.project = project;
         this.workspace = workspace;
@@ -49,7 +48,7 @@ public class ASProjectComponent implements ProjectComponent
     @Override
     public void initComponent()
     {
-        asProject = (FlexProject) workspace.addProject(project);
+        asProject = (FlexProject) workspace.addProjectCompiler(project);
     }
 
     @Override

@@ -24,7 +24,9 @@ package randori.plugin.action;
  */
 public class RandoriTemplates
 {
-    public static final String RANDORI_CLASS = "RandoriClass.as";
-
-    public static final String RANDORI_INTERFACE = "RandoriInterface.as";
+    public static final String RANDORI_CLASS = "Randori Class.as";
+    public static final String RANDORI_INTERFACE = "Randori Interface.as";
+    public static final String RANDORI_BEHAVIOUR = "Randori Behavior.as";
+    public static final String RANDORI_CONTEXT = "Randori Context.as";
+    public static final String RANDORI_MEDIATOR = "Randori Mediator.as";
 }

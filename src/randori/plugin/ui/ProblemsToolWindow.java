@@ -19,7 +19,7 @@
 
 package randori.plugin.ui;
 
-import java.awt.BorderLayout;
+import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.util.ArrayList;
@@ -34,14 +34,13 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import com.intellij.openapi.util.IconLoader;
 import org.apache.flex.compiler.problems.ICompilerProblem;
 import org.apache.flex.compiler.problems.annotations.DefaultSeverity;
 
 import randori.plugin.components.RandoriProjectComponent;
 import randori.plugin.service.ProblemsService;
 import randori.plugin.service.ProblemsService.OnProblemServiceListener;
-import randori.plugin.utils.ProjectUtils;
+import randori.plugin.util.ProjectUtils;
 
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.ui.components.JBScrollPane;
@@ -49,6 +48,7 @@ import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.ui.content.ContentManager;
 import com.intellij.ui.table.JBTable;
+import icons.RandoriIcons;
 
 // TODO added an error log to the ProblemsService, the collection should not
 //      contain null File instances on CompilerProblems, left null checks in
@@ -60,27 +60,15 @@ public class ProblemsToolWindow
 {
     private static final String[] COLUMN_TITLES = new String[] { "Description",
             "Resource", "Path", "Location", "Type" };
-
     private static ProblemsToolWindow instance;
-
-    ContentManager contentManager;
-
-    @SuppressWarnings("unused")
-    private ToolWindow window;
-
-    private JBTable table;
-
-    private JPanel jPanel;
-
     private final List<Integer> columnSizes;
-
     @SuppressWarnings("unused")
     private final ProblemsService service;
-
-    private ProblemsTableModel getModel()
-    {
-        return (ProblemsTableModel) table.getModel();
-    }
+    ContentManager contentManager;
+    @SuppressWarnings("unused")
+    private ToolWindow window;
+    private JBTable table;
+    private JPanel jPanel;
 
     public ProblemsToolWindow(ToolWindow window, ProblemsService service,
             List<Integer> columnSizes)
@@ -115,6 +103,11 @@ public class ProblemsToolWindow
     public static ProblemsToolWindow getInstance()
     {
         return instance;
+    }
+
+    private ProblemsTableModel getModel()
+    {
+        return (ProblemsTableModel) table.getModel();
     }
 
     private void create()
@@ -164,6 +157,7 @@ public class ProblemsToolWindow
             }
         });
         table.addHierarchyListener(new HierarchyListener() {
+            @Override
             public void hierarchyChanged(HierarchyEvent e)
             {
                 if (e.getID() == HierarchyEvent.HIERARCHY_CHANGED
@@ -175,18 +169,23 @@ public class ProblemsToolWindow
         });
         table.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseReleased(MouseEvent e) {
+            public void mouseReleased(MouseEvent e)
+            {
                 int r = table.rowAtPoint(e.getPoint());
-                if (r >= 0 && r < table.getRowCount()) {
+                if (r >= 0 && r < table.getRowCount())
+                {
                     table.setRowSelectionInterval(r, r);
-                } else {
+                }
+                else
+                {
                     table.clearSelection();
                 }
 
                 int rowIndex = table.getSelectedRow();
                 if (rowIndex < 0)
                     return;
-                if (e.isPopupTrigger() && e.getComponent() instanceof JBTable ) {
+                if (e.isPopupTrigger() && e.getComponent() instanceof JBTable)
+                {
                     JPopupMenu popupMenu = createPopupMenu(rowIndex);
                     if (popupMenu != null)
                     {
@@ -197,33 +196,39 @@ public class ProblemsToolWindow
         });
     }
 
-    private JPopupMenu createPopupMenu(final int rowIndex) {
+    private JPopupMenu createPopupMenu(final int rowIndex)
+    {
         String menuTitle = generateMenuTitle(rowIndex);
         if (menuTitle != null)
         {
             JPopupMenu popupMenu = new JPopupMenu();
             ActionListener menuListener = new ActionListener() {
-                public void actionPerformed(ActionEvent event) {
+                @Override
+                public void actionPerformed(ActionEvent event)
+                {
                     jumpToProblemInFile(rowIndex);
                 }
             };
             JMenuItem item;
-            popupMenu.add(item = new JMenuItem(menuTitle, IconLoader
-                    .getIcon("/icons/jumpto.png")));
-            item.setHorizontalTextPosition(JMenuItem.RIGHT);
+            popupMenu.add(item = new JMenuItem(menuTitle,
+                    RandoriIcons.JumpToArrow));
+            item.setHorizontalTextPosition(SwingConstants.RIGHT);
             item.addActionListener(menuListener);
             return popupMenu;
         }
         return null;
     }
 
-    private String generateMenuTitle(int rowIndex) {
+    private String generateMenuTitle(int rowIndex)
+    {
         rowIndex = table.convertRowIndexToModel(rowIndex);
         ProblemsTableModel model = (ProblemsTableModel) table.getModel();
         ICompilerProblem problem = model.getProblemAt(rowIndex);
         if (problem != null)
         {
-            String title = "Jump to " + model.getSeverity(problem).toLowerCase() + " on line " + problem.getLine() + " in " + model.getName(problem);
+            String title = "Jump to "
+                    + model.getSeverity(problem).toLowerCase() + " on line "
+                    + problem.getLine() + " in " + model.getName(problem);
             return title;
         }
         return null;
@@ -271,15 +276,16 @@ public class ProblemsToolWindow
         }
     }
 
-    private void jumpToProblemInFile(int rowIndex) {
+    private void jumpToProblemInFile(int rowIndex)
+    {
         rowIndex = table.convertRowIndexToModel(rowIndex);
         ProblemsTableModel model = (ProblemsTableModel) table.getModel();
         ICompilerProblem problem = model.getProblemAt(rowIndex);
         if (!isValid(problem))
             return;
 
-        RandoriProjectComponent component = ProjectUtils
-                .findProjectComponent(jPanel, RandoriProjectComponent.class);
+        RandoriProjectComponent component = ProjectUtils.findProjectComponent(
+                jPanel, RandoriProjectComponent.class);
         component.openFileForProblem(problem);
     }
 
@@ -315,6 +321,10 @@ public class ProblemsToolWindow
     {
         private List<ICompilerProblem> problems;
 
+        public ProblemsTableModel()
+        {
+        }
+
         void setProblems(List<ICompilerProblem> problems)
         {
             this.problems = problems;
@@ -337,10 +347,6 @@ public class ProblemsToolWindow
                 return String.class;
             }
             return Object.class;
-        }
-
-        public ProblemsTableModel()
-        {
         }
 
         @Override
@@ -402,21 +408,31 @@ public class ProblemsToolWindow
 
         private String getPath(ICompilerProblem problem)
         {
-            if (problem == null)
-                return "";
+            String result = "";
 
-            File file = new File(problem.getSourcePath());
-            String result = file.getParent();
+            if (problem != null)
+            {
+                File file = new File(problem.getSourcePath());
+
+                if (file != null)
+                    result = file.getParent();
+            }
+
             return result;
         }
 
         public String getName(ICompilerProblem problem)
         {
-            if (problem == null)
-                return "";
+            String result = "";
 
-            File file = new File(problem.getSourcePath());
-            String result = file.getName();
+            if (problem != null)
+            {
+                File file = new File(problem.getSourcePath());
+
+                if (file != null)
+                    result = file.getName();
+            }
+
             return result;
         }
 

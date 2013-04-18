@@ -19,20 +19,20 @@
 
 package randori.plugin.service;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
-
+import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.project.Project;
 import org.apache.flex.compiler.problems.CompilerProblemSeverity;
 import org.apache.flex.compiler.problems.ICompilerProblem;
 import org.apache.flex.compiler.problems.NoDefinitionForSWCDependencyProblem;
 import org.apache.flex.compiler.problems.annotations.DefaultSeverity;
 import org.jetbrains.annotations.NotNull;
 
-import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.Project;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author Michael Schmalle
@@ -40,10 +40,18 @@ import com.intellij.openapi.project.Project;
 public class ProblemsService
 {
     private static final Logger log = Logger.getInstance(ProblemsService.class);
-
     private Set<ICompilerProblem> problems = new HashSet<ICompilerProblem>();
-
     private ArrayList<OnProblemServiceListener> listeners = new ArrayList<OnProblemServiceListener>();
+
+    public ProblemsService()
+    {
+    }
+
+    @NotNull
+    public static ProblemsService getInstance(Project project)
+    {
+        return ServiceManager.getService(project, ProblemsService.class);
+    }
 
     // XXX this needs to be non modifiable, clients need to call addAll() and add()
     public Set<ICompilerProblem> getProblems()
@@ -70,6 +78,15 @@ public class ProblemsService
     {
         problems.clear();
         fireOnReset();
+    }
+
+    public void addAll(List<ICompilerProblem> problems)
+    {
+        for (ICompilerProblem problem : problems)
+        {
+            addProblem(problem);
+        }
+        fireOnChange();
     }
 
     public void addAll(Set<ICompilerProblem> problems)
@@ -101,16 +118,6 @@ public class ProblemsService
         }
 
         problems.add(problem);
-    }
-
-    public ProblemsService()
-    {
-    }
-
-    @NotNull
-    public static ProblemsService getInstance(Project project)
-    {
-        return ServiceManager.getService(project, ProblemsService.class);
     }
 
     public void addListener(OnProblemServiceListener l)
@@ -151,17 +158,17 @@ public class ProblemsService
         fireOnChange();
     }
 
-    public interface OnProblemServiceListener
-    {
-        void onReset();
-
-        void onChange(Set<ICompilerProblem> problems);
-    }
-
     private CompilerProblemSeverity getSeverity(ICompilerProblem problem)
     {
         DefaultSeverity defaultSeverity = problem.getClass().getAnnotation(
                 DefaultSeverity.class);
         return defaultSeverity.value();
+    }
+
+    public interface OnProblemServiceListener
+    {
+        void onReset();
+
+        void onChange(Set<ICompilerProblem> problems);
     }
 }
