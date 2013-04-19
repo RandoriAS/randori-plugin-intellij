@@ -13,6 +13,8 @@
     ]]></description>
 
     <depends>com.intellij.css</depends>
+    <depends>JavaScript</depends>
+    <depends>com.intellij.flex</depends>
 
     <change-notes>
         <![CDATA[
