@@ -1,6 +1,6 @@
 <idea-plugin version="2" url="http://randoriframework.com">
     <name>Randori Compiler</name>
-    <version>0.2.4</version>
+    <version>0.3.0</version>
     <idea-version since-build="123.169"/>
 
     <vendor>Teoti Graphix, LLC</vendor>
@@ -18,6 +18,9 @@
 
     <change-notes>
         <![CDATA[
+         <h3>0.3.0 changes:</h3>
+            <ul>
+            </ul>
          <h3>0.2.4 changes:</h3>
             <ul>
                 <li>!!!!!ATTENTION: YOU *MUST* UPDATE TO THE LATEST VERSION OF THE RANDORI SDK (0.2.6) TO USE THIS VERSION!!!!!</li>
@@ -121,7 +124,8 @@
         <configurationType implementation="randori.plugin.runner.RandoriRunnerConfigurationType"/>
 
         <toolWindow id="Randori Problems" anchor="bottom" icon="/icons/randori13x13.png"
-                    factoryClass="randori.plugin.ui.ProblemsToolWindowFactory"/>
+                    factoryClass="randori.plugin.ui.ProblemsToolWindowFactory"
+                conditionClass="randori.plugin.ui.ProblemsToolWindowCondition"/>
 
         <dom.fileDescription implementation="randori.plugin.xml.FalconConfigDomFileDescription"></dom.fileDescription>
 
