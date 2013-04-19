@@ -25,6 +25,7 @@ import randori.plugin.service.RandoriProjectPreferences;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowFactory;
+import randori.plugin.util.ProjectUtils;
 
 /**
  * @author Michael Schmalle
