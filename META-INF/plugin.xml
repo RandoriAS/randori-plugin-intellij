@@ -9,7 +9,8 @@
     <description><![CDATA[
     <p>The Randori Framework is a tool that helps in making LARGE Javascript application development manageable.</p>
     <p>It consists of an Actionscript cross-compiler and a client-side JavaScript framework.</p>
-    <p>Please visit <strong>http://randoriframework.com</strong> for more information.</p>
+    <p>Please visit <a href="http://randoriframework.com" target="_blank">http://randoriframework.com</a> for more information.</p>
+    <p>To quickly get started please follow these <a href="https://github.com/RandoriAS/randori-plugin-intellij/wiki/_pages" target="_blank">lessons</a>.</p>
     ]]></description>
 
     <depends>com.intellij.css</depends>
@@ -20,6 +21,7 @@
         <![CDATA[
          <h3>0.3.0 changes:</h3>
             <ul>
+                <li>[plugin-enhancement] Support for bundle (library) projects.</li>
             </ul>
          <h3>0.2.4 changes:</h3>
             <ul>

@@ -23,6 +23,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.patterns.ElementPattern;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.css.CssBlock;
 import com.intellij.psi.css.CssDeclaration;
 import com.intellij.util.ProcessingContext;
 
@@ -33,6 +34,7 @@ public class RandoriCSSSCompletionContributor extends CompletionContributor {
     private static final Logger logger = Logger.getInstance(RandoriCSSSCompletionContributor.class);
 
     private static final ElementPattern<PsiElement> AFTER_DOUBLE_COLON = psiElement().afterLeaf(":");
+    private static final ElementPattern<PsiElement> INSIDE_CSS_BLOCK = psiElement().inside(CssBlock.class);
     private static final String RANDORI_PREFIX = "-randori";
     private static final Map<String, String> superClassLookup;
     static
@@ -52,6 +54,32 @@ public class RandoriCSSSCompletionContributor extends CompletionContributor {
         {
             final RandoriProjectComponent projectComponent = ProjectUtils.getProjectComponent(project);
 
+            extend(CompletionType.BASIC, INSIDE_CSS_BLOCK, new CompletionProvider<CompletionParameters>() {
+                @Override
+                protected void addCompletions(@NotNull CompletionParameters parameters,
+                                              ProcessingContext context,
+                                              @NotNull CompletionResultSet result) {
+                    if (!ProjectUtils.hasRandoriModuleType(project))
+                    {
+                        logger.debug("No Randori project active, bailing out");
+                        return;
+                    }
+
+                    for(final String key : superClassLookup.keySet())
+                    {
+                        result.addElement(new LookupElement()
+                        {
+                            @NotNull
+                            @Override
+                            public String getLookupString()
+                            {
+                                return key;
+                            }
+
+                        });
+                    }
+                }
+            });
 
             extend(CompletionType.BASIC, AFTER_DOUBLE_COLON, new CompletionProvider<CompletionParameters>() {
                 @Override
@@ -149,18 +177,18 @@ public class RandoriCSSSCompletionContributor extends CompletionContributor {
 
     private CssDeclaration getCssDeclaration(PsiElement position)
     {
-        CssDeclaration decl = null;
+        CssDeclaration declaration = null;
         PsiElement elm = position.getParent();
         while(elm != null)
         {
             if (elm instanceof CssDeclaration)
             {
-                decl = (CssDeclaration)elm;
+                declaration = (CssDeclaration)elm;
                 break;
             }
             elm = elm.getParent();
         }
-        return decl;
+        return declaration;
     }
 
 }
