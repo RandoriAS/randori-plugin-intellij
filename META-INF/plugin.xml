@@ -108,8 +108,6 @@
 
         <css.elementDescriptorProvider implementation="randori.plugin.lang.css.RandoriCssElementDescriptorProvider" order="first"/>
 
-        <!--completion.contributor language="CSS" implementationClass="randori.plugin.lang.css.RandoriCSSSCompletionContributor" id="randoriCSS"/-->
-
         <fileTemplateGroup implementation="randori.plugin.action.RandoriTemplatesFactory"/>
 
         <sdkType implementation="randori.plugin.roots.RandoriSdk"/>
