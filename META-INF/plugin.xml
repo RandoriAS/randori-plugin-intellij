@@ -106,7 +106,7 @@
 
     <extensions defaultExtensionNs="com.intellij">
 
-        <com.intellij.css.elementDescriptionProvider implementation="randori.plugin.lang.css.RandoriCssElementDescriptorProvider" order="first"/>
+        <css.elementDescriptorProvider implementation="randori.plugin.lang.css.RandoriCssElementDescriptorProvider" order="first"/>
 
         <!--completion.contributor language="CSS" implementationClass="randori.plugin.lang.css.RandoriCSSSCompletionContributor" id="randoriCSS"/-->
 
