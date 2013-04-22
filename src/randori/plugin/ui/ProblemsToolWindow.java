@@ -263,7 +263,7 @@ public class ProblemsToolWindow
         }
 
         getModel().setProblems(new ArrayList<ICompilerProblem>(problems));
-        // allows the table to be updated without reseting the columns
+        // allows the table to be updated without resetting the columns
         getModel().fireTableDataChanged();
     }
 
@@ -335,16 +335,13 @@ public class ProblemsToolWindow
         {
             switch (columnIndex)
             {
-            case 0:
-                return String.class;
-            case 1:
-                return String.class;
-            case 2:
-                return String.class;
-            case 3:
-                return Integer.class;
-            case 4:
-                return String.class;
+                case 0:
+                case 1:
+                case 2:
+                case 4:
+                    return String.class;
+                case 3:
+                    return Integer.class;
             }
             return Object.class;
         }
