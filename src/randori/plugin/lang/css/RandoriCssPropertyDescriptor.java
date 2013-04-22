@@ -140,7 +140,7 @@ public class RandoriCssPropertyDescriptor implements CssPropertyDescriptor
         return getSubClassesForPropertyName(_propertyName, contextElement.getProject());
     }
 
-    private Object[] getSubClassesForPropertyName(String propertyName, Project project)
+    private Object[] getSubClassesForPropertyName(@NotNull String propertyName, @NotNull Project project)
     {
         String superClass = getSuperClassNameForCSSDeclaration(propertyName);
         if (superClass != null)
