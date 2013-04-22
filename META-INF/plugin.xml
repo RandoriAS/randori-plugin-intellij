@@ -15,6 +15,7 @@
 
     <depends>com.intellij.css</depends>
     <depends>JavaScript</depends>
+    <depends>com.intellij.modules.lang</depends>
     <depends>com.intellij.flex</depends>
 
     <change-notes>
@@ -105,7 +106,9 @@
 
     <extensions defaultExtensionNs="com.intellij">
 
-        <completion.contributor language="CSS" implementationClass="randori.plugin.lang.css.RandoriCSSSCompletionContributor" id="randoriCSS"/>
+        <com.intellij.css.elementDescriptionProvider implementation="randori.plugin.lang.css.RandoriCssElementDescriptorProvider" order="first"/>
+
+        <!--completion.contributor language="CSS" implementationClass="randori.plugin.lang.css.RandoriCSSSCompletionContributor" id="randoriCSS"/-->
 
         <fileTemplateGroup implementation="randori.plugin.action.RandoriTemplatesFactory"/>
 
@@ -143,8 +146,5 @@
                              displayName="Randori Compiler" parentId="project.propCompiler"/>
 
     </extensions>
-
-    <depends>JavaScript</depends>
-    <depends>com.intellij.modules.lang</depends>
 
 </idea-plugin>
