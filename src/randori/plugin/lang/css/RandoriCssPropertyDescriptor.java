@@ -3,16 +3,13 @@ package randori.plugin.lang.css;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.css.*;
 import org.apache.flex.compiler.definitions.IClassDefinition;
 import org.apache.flex.compiler.definitions.ITypeDefinition;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.css.CssDeclaration;
-import com.intellij.psi.css.CssPropertyDescriptor;
-import com.intellij.psi.css.CssPropertyInfo;
-import com.intellij.psi.css.CssPropertyValue;
 import randori.compiler.access.IASProjectAccess;
 import randori.plugin.compiler.RandoriProjectCompiler;
 import randori.plugin.components.RandoriProjectComponent;
@@ -46,6 +43,12 @@ public class RandoriCssPropertyDescriptor implements CssPropertyDescriptor
     @Override
     public boolean isValidValue(@NotNull PsiElement element)
     {
+        if (element instanceof CssTerm)
+        {
+            CssTerm term = (CssTerm) element;
+            String txt = term.getText();
+            return ((txt.startsWith("\"")) && (txt.endsWith("\"")));
+        }
         return true;
     }
 

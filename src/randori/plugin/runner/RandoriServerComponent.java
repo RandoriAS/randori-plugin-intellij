@@ -31,6 +31,7 @@ import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.server.nio.NetworkTrafficSelectChannelConnector;
 import randori.plugin.components.RandoriProjectComponent;
 import randori.plugin.components.RandoriProjectModel;
+import randori.plugin.util.LogUtils;
 import randori.plugin.util.ProjectUtils;
 
 import java.net.ServerSocket;
@@ -60,15 +61,33 @@ public class RandoriServerComponent implements ProjectComponent
     private static int findFreePort()
     {
         int port = -1;
+        ServerSocket server = null;
         try
         {
-            ServerSocket server = new ServerSocket(0);
+            server = new ServerSocket(0);
             port = server.getLocalPort();
-            server.close();
         }
         catch (Exception e)
         {
             e.printStackTrace();
+            log.error("Error finding free port:");
+            log.error(LogUtils.dumpStackTrace(e.getStackTrace()));
+        }
+        finally
+        {
+            if (server != null)
+            {
+                try
+                {
+                    server.close();
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                    log.error("Error closing socket:");
+                    log.error(LogUtils.dumpStackTrace(e.getStackTrace()));
+                }
+            }
         }
         return port;
     }
@@ -158,7 +177,7 @@ public class RandoriServerComponent implements ProjectComponent
                 {
                     e.printStackTrace();
                     log.error("Error starting server:");
-                    log.error(e.getMessage());
+                    log.error(LogUtils.dumpStackTrace(e.getStackTrace()));
                 }
             }
         });
@@ -175,7 +194,7 @@ public class RandoriServerComponent implements ProjectComponent
         {
             e.printStackTrace();
             log.error("Error stopping server:");
-            log.error(e.getMessage());
+            log.error(LogUtils.dumpStackTrace(e.getStackTrace()));
         }
     }
 
