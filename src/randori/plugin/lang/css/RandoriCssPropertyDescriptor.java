@@ -43,13 +43,33 @@ public class RandoriCssPropertyDescriptor implements CssPropertyDescriptor
     @Override
     public boolean isValidValue(@NotNull PsiElement element)
     {
+        boolean result = true;
         if (element instanceof CssTerm)
         {
             CssTerm term = (CssTerm) element;
             String txt = term.getText();
-            return ((txt.startsWith("\"")) && (txt.endsWith("\"")));
+            result = ((txt.startsWith("\"")) && (txt.endsWith("\"")));
+            if (result)
+            {
+                final RandoriProjectComponent projectComponent = ProjectUtils
+                        .getProjectComponent(element.getProject());
+                if (projectComponent.getState().isValidateCSSClasses())
+                {
+                    final RandoriProjectCompiler compiler = projectComponent
+                            .getCompiler();
+                    if (compiler != null)
+                    {
+                        String className = txt.substring(1, txt.length()-1);
+                        IASProjectAccess projectAccess = compiler.getProjectAccess();
+                        if (projectAccess != null)
+                        {
+                            result = (projectAccess.getType(className) != null);
+                        }
+                    }
+                }
+            }
         }
-        return true;
+        return result;
     }
 
     @Override
