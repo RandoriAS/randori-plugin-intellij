@@ -3,16 +3,13 @@ package randori.plugin.lang.css;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.css.*;
 import org.apache.flex.compiler.definitions.IClassDefinition;
 import org.apache.flex.compiler.definitions.ITypeDefinition;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.css.CssDeclaration;
-import com.intellij.psi.css.CssPropertyDescriptor;
-import com.intellij.psi.css.CssPropertyInfo;
-import com.intellij.psi.css.CssPropertyValue;
 import randori.compiler.access.IASProjectAccess;
 import randori.plugin.compiler.RandoriProjectCompiler;
 import randori.plugin.components.RandoriProjectComponent;
@@ -46,7 +43,33 @@ public class RandoriCssPropertyDescriptor implements CssPropertyDescriptor
     @Override
     public boolean isValidValue(@NotNull PsiElement element)
     {
-        return true;
+        boolean result = true;
+        if (element instanceof CssTerm)
+        {
+            CssTerm term = (CssTerm) element;
+            String txt = term.getText();
+            result = ((txt.startsWith("\"")) && (txt.endsWith("\"")));
+            if (result)
+            {
+                final RandoriProjectComponent projectComponent = ProjectUtils
+                        .getProjectComponent(element.getProject());
+                if (projectComponent.getState().isValidateCSSClasses())
+                {
+                    final RandoriProjectCompiler compiler = projectComponent
+                            .getCompiler();
+                    if (compiler != null)
+                    {
+                        String className = txt.substring(1, txt.length()-1);
+                        IASProjectAccess projectAccess = compiler.getProjectAccess();
+                        if (projectAccess != null)
+                        {
+                            result = (projectAccess.getType(className) != null);
+                        }
+                    }
+                }
+            }
+        }
+        return result;
     }
 
     @Override
@@ -140,7 +163,7 @@ public class RandoriCssPropertyDescriptor implements CssPropertyDescriptor
         return getSubClassesForPropertyName(_propertyName, contextElement.getProject());
     }
 
-    private Object[] getSubClassesForPropertyName(String propertyName, Project project)
+    private Object[] getSubClassesForPropertyName(@NotNull String propertyName, @NotNull Project project)
     {
         String superClass = getSuperClassNameForCSSDeclaration(propertyName);
         if (superClass != null)

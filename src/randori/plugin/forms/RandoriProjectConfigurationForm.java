@@ -24,6 +24,7 @@ public class RandoriProjectConfigurationForm extends
     private JTextField basePath;
 
     private JTextField libraryPath;
+    private JCheckBox validateRandoriAS3ClassesCheckBox;
 
     //private JCheckBox exportAsFiles;
 
@@ -37,6 +38,7 @@ public class RandoriProjectConfigurationForm extends
         //data.setPort(Integer.valueOf(port.getText()));
         data.setBasePath(basePath.getText());
         data.setLibraryPath(libraryPath.getText());
+        data.setValidateCSSClasses(validateRandoriAS3ClassesCheckBox.isSelected());
         //data.setClassesAsFile(exportAsFiles.isSelected());
     }
 
@@ -46,6 +48,7 @@ public class RandoriProjectConfigurationForm extends
         //port.setText(Integer.toString(data.getPort()));
         basePath.setText(data.getBasePath());
         libraryPath.setText(data.getLibraryPath());
+        validateRandoriAS3ClassesCheckBox.setSelected(data.isValidateCSSClasses());
         //exportAsFiles.setSelected(data.isClassesAsFile());
     }
 
@@ -81,7 +84,8 @@ public class RandoriProjectConfigurationForm extends
         //if (isOpposite(exportAsFiles, data.isClassesAsFile()))
         //    return true;
         return isModified(basePath, data.getBasePath())
-                || isModified(libraryPath, data.getLibraryPath());
+                || isModified(libraryPath, data.getLibraryPath())
+                || (data.isValidateCSSClasses() != validateRandoriAS3ClassesCheckBox.isSelected());
 
     }
 
