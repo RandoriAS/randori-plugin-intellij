@@ -79,7 +79,7 @@
         </constraints>
         <properties>
           <labelFor value="2d7c9"/>
-          <text value="&lt;html&gt;The Randori plugin assumes that the webroot for your application is equal to your&lt;br/&gt;project root. So, it assumes there is a file called 'index.html' directly in your root.&lt;br/&gt;Should the index be underneath the 'src' folder for example, you'll have to enter&lt;br/&gt; 'src/index.html' in the textbox underneath here:"/>
+          <text value="&lt;html&gt;The Randori plugin assumes there is a file called 'index.html' directly in your project root.&lt;br/&gt;Should the index be called 'default.htm' for example, you can enter that name here:"/>
         </properties>
       </component>
       <component id="350ab" class="javax.swing.JRadioButton" binding="useEmbeddedServer">
