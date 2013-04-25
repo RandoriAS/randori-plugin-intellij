@@ -171,6 +171,8 @@ public class RandoriSdk extends SdkType
         }
         catch (IOException e)
         {
+            logger.error("Error copying '" + sourceFile.getAbsolutePath() + "' to '" + destinationDir.getPath() + "':");
+            logger.error(e.getMessage());
             logger.error(LogUtils.dumpStackTrace(Thread.currentThread()
                     .getStackTrace()));
             e.printStackTrace();
