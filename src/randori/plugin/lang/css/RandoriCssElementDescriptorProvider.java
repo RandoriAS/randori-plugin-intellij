@@ -24,12 +24,13 @@ public class RandoriCssElementDescriptorProvider extends
         CssElementDescriptorProvider
 {
     private static final String RANDORI_PREFIX = "-randori";
-    private static final String[] randoriNames = new String[3];
+    private static final String[] randoriNames = new String[4];
     static
     {
         randoriNames[0] = RANDORI_PREFIX + "-behavior";
         randoriNames[1] = RANDORI_PREFIX + "-mediator";
         randoriNames[2] = RANDORI_PREFIX + "-context";
+        randoriNames[3] = RANDORI_PREFIX + "-fragment";
     }
     private static final Map<String, String> superClassLookup;
     static
@@ -47,6 +48,7 @@ public class RandoriCssElementDescriptorProvider extends
         tempMap.put(randoriNames[0], createCssPropertyDescriptor(randoriNames[0]));
         tempMap.put(randoriNames[1], createCssPropertyDescriptor(randoriNames[1]));
         tempMap.put(randoriNames[2], createCssPropertyDescriptor(randoriNames[2]));
+        tempMap.put(randoriNames[3], createCssPropertyDescriptor(randoriNames[3]));
         descriptorLookup = Collections.unmodifiableMap(tempMap);
     }
 
