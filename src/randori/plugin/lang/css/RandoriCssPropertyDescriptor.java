@@ -3,6 +3,7 @@ package randori.plugin.lang.css;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.css.*;
 import org.apache.flex.compiler.definitions.IClassDefinition;
 import org.apache.flex.compiler.definitions.ITypeDefinition;
@@ -15,6 +16,7 @@ import randori.plugin.compiler.RandoriProjectCompiler;
 import randori.plugin.components.RandoriProjectComponent;
 import randori.plugin.util.ProjectUtils;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
@@ -49,7 +51,7 @@ public class RandoriCssPropertyDescriptor implements CssPropertyDescriptor
             CssTerm term = (CssTerm) element;
             String txt = term.getText();
             result = ((txt.startsWith("\"")) && (txt.endsWith("\"")));
-            if (result)
+            if ((result) && (_propertyName.equals("-randori-fragment") == false))
             {
                 final RandoriProjectComponent projectComponent = ProjectUtils
                         .getProjectComponent(element.getProject());
@@ -160,7 +162,48 @@ public class RandoriCssPropertyDescriptor implements CssPropertyDescriptor
     @Override
     public Object[] getVariants(@NotNull PsiElement contextElement)
     {
-        return getSubClassesForPropertyName(_propertyName, contextElement.getProject());
+        if (_propertyName.equals("-randori-fragment") == false)
+        {
+            return getSubClassesForPropertyName(_propertyName, contextElement.getProject());
+        } else {
+            return getHTMLFilesInProject(contextElement.getProject());
+        }
+    }
+
+    private Object[] getHTMLFilesInProject(@NotNull Project project)
+    {
+        VirtualFile baseDir = project.getBaseDir();
+        Collection<String> HTMLFiles = new ArrayList<String>();
+        getHTMLFilesInDirectory(baseDir, HTMLFiles);
+        Object[] result = new Object[HTMLFiles.size()];
+        int i = 0;
+        String baseDirString = baseDir.getPath();
+        for(String HTMLFile : HTMLFiles)
+        {
+            HTMLFile = HTMLFile.substring(baseDirString.length());
+            result[i++] = LookupElementBuilder.create("\"" + HTMLFile + "\"").withPresentableText(HTMLFile);
+        }
+        return result;
+    }
+
+    private void getHTMLFilesInDirectory(VirtualFile directory, Collection<String> htmlFiles)
+    {
+        VirtualFile[] children = directory.getChildren();
+        for(VirtualFile file : children)
+        {
+            if (file.isDirectory() == false)
+            {
+                String extension = file.getExtension();
+                if (extension.equals("html") || extension.equals("htm"))
+                {
+                    htmlFiles.add(file.getPath());
+                }
+            }
+            else
+            {
+                getHTMLFilesInDirectory(file, htmlFiles);
+            }
+        }
     }
 
     private Object[] getSubClassesForPropertyName(@NotNull String propertyName, @NotNull Project project)
