@@ -22,7 +22,8 @@
         <![CDATA[
          <h3>0.3.0 changes:</h3>
             <ul>
-                <li>[plugin-enhancement] Support for bundle (library) projects.</li>
+                <li>[plugin-feature] Randori specific CSS code completions now also complete -randori-fragment values.</li>
+                <li>[plugin-feature] Randori specific CSS code completions now also complete randori property names.</li>
             </ul>
          <h3>0.2.4 changes:</h3>
             <ul>

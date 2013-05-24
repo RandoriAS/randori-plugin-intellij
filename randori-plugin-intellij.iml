@@ -10,7 +10,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/resources" isTestSource="false" />
     </content>
-    <orderEntry type="jdk" jdkName="IDEA IU-123.169" jdkType="IDEA JDK" />
+    <orderEntry type="jdk" jdkName="IDEA IU-129.354" jdkType="IDEA JDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library">
       <library>
@@ -43,7 +43,6 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="external" level="project" />
-    <orderEntry type="library" name="lib" level="project" />
     <orderEntry type="library" name="jetty" level="project" />
   </component>
 </module>
