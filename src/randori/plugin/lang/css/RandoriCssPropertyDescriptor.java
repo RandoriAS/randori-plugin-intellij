@@ -26,6 +26,9 @@ import java.util.Map;
 public class RandoriCssPropertyDescriptor implements CssPropertyDescriptor
 {
 
+    public static final String HTML_EXT = "html";
+    public static final String HTM_EXT = "htm";
+
     public RandoriCssPropertyDescriptor(@NotNull String name, @NotNull Map<String, String> superClassLookup)
     {
         _propertyName = name;
@@ -194,7 +197,7 @@ public class RandoriCssPropertyDescriptor implements CssPropertyDescriptor
             if (file.isDirectory() == false)
             {
                 String extension = file.getExtension();
-                if (extension.equals("html") || extension.equals("htm"))
+                if (extension.equals(HTML_EXT) || extension.equals(HTM_EXT))
                 {
                     htmlFiles.add(file.getPath());
                 }
