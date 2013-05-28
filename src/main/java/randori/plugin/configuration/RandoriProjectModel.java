@@ -99,6 +99,22 @@ public class RandoriProjectModel {
     }
 
     //----------------------------------
+    // validateCSSClasses
+    //----------------------------------
+
+    private boolean validateCSSClasses = false;
+
+    public boolean isValidateCSSClasses()
+    {
+        return validateCSSClasses;
+    }
+
+    public void setValidateCSSClasses(boolean value)
+    {
+        validateCSSClasses = value;
+    }
+
+    //----------------------------------
     // classesAsFile
     //----------------------------------
 
