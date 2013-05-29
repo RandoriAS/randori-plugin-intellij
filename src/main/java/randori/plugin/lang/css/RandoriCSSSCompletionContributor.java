@@ -15,7 +15,6 @@ import org.jetbrains.annotations.NotNull;
 import randori.compiler.access.IASProjectAccess;
 import randori.compiler.internal.projects.RandoriProject;
 import randori.plugin.compiler.RandoriCompilerSession;
-import randori.plugin.components.RandoriProjectComponent;
 import randori.plugin.util.ProjectUtils;
 
 import java.util.Collection;
@@ -50,8 +49,6 @@ public class RandoriCSSSCompletionContributor extends CompletionContributor
 
         if (project != null)
         {
-            final RandoriProjectComponent projectComponent = ProjectUtils.getProjectComponent(project);
-
             extend(CompletionType.BASIC, AFTER_DOUBLE_COLON, new CompletionProvider<CompletionParameters>() {
                 @Override
                 protected void addCompletions(@NotNull CompletionParameters parameters, ProcessingContext context,
@@ -110,7 +107,6 @@ public class RandoriCSSSCompletionContributor extends CompletionContributor
                     return '"' + subClass.getQualifiedName() + '"';
                 }
 
-                @NotNull
                 @Override
                 public void renderElement(LookupElementPresentation presentation)
                 {

@@ -2,7 +2,6 @@ package randori.plugin.lang.css;
 
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.css.*;
 import org.apache.flex.compiler.definitions.IClassDefinition;
@@ -12,7 +11,8 @@ import org.jetbrains.annotations.Nullable;
 
 import com.intellij.psi.PsiElement;
 import randori.compiler.access.IASProjectAccess;
-import randori.plugin.compiler.RandoriProjectCompiler;
+import randori.compiler.internal.projects.RandoriProject;
+import randori.plugin.compiler.RandoriCompilerSession;
 import randori.plugin.components.RandoriProjectComponent;
 import randori.plugin.util.ProjectUtils;
 
@@ -54,14 +54,13 @@ public class RandoriCssPropertyDescriptor implements CssPropertyDescriptor
             CssTerm term = (CssTerm) element;
             String txt = term.getText();
             result = ((txt.startsWith("\"")) && (txt.endsWith("\"")));
-            if ((result) && (_propertyName.equals("-randori-fragment") == false))
+            if ((result) && (!_propertyName.equals("-randori-fragment")))
             {
                 final RandoriProjectComponent projectComponent = ProjectUtils
                         .getProjectComponent(element.getProject());
                 if (projectComponent.getState().isValidateCSSClasses())
                 {
-                    final RandoriProjectCompiler compiler = projectComponent
-                            .getCompiler();
+                    final RandoriProject compiler = RandoriCompilerSession.getLastCompiler();
                     if (compiler != null)
                     {
                         String className = txt.substring(1, txt.length()-1);
@@ -165,7 +164,7 @@ public class RandoriCssPropertyDescriptor implements CssPropertyDescriptor
     @Override
     public Object[] getVariants(@NotNull PsiElement contextElement)
     {
-        if (_propertyName.equals("-randori-fragment") == false)
+        if (!_propertyName.equals("-randori-fragment"))
         {
             return getSubClassesForPropertyName(_propertyName, contextElement.getProject());
         } else {
@@ -214,10 +213,7 @@ public class RandoriCssPropertyDescriptor implements CssPropertyDescriptor
         String superClass = getSuperClassNameForCSSDeclaration(propertyName);
         if (superClass != null)
         {
-            final RandoriProjectComponent projectComponent = ProjectUtils
-                    .getProjectComponent(project);
-            final RandoriProjectCompiler compiler = projectComponent
-                    .getCompiler();
+            final RandoriProject compiler = RandoriCompilerSession.getLastCompiler();
             if (compiler != null)
             {
                 IASProjectAccess projectAccess = compiler

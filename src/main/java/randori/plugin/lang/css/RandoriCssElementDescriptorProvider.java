@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -119,19 +118,18 @@ public class RandoriCssElementDescriptorProvider extends
     public String[] getPropertyNames(@Nullable PsiElement context)
     {
         String[] names = getBaseProvider().getPropertyNames(context);
-        if (ProjectUtils.hasRandoriModuleType(context.getProject()))
-        {
-            int aLen = names.length;
-            int bLen = randoriNames.length;
-            String[] propertyNames = new String[aLen+bLen];
-            System.arraycopy(names, 0, propertyNames, 0, aLen);
-            System.arraycopy(randoriNames, 0, propertyNames, aLen, bLen);
-            return propertyNames;
+        if (context != null) {
+            if (ProjectUtils.hasRandoriModuleType(context.getProject()))
+            {
+                int aLen = names.length;
+                int bLen = randoriNames.length;
+                String[] propertyNames = new String[aLen+bLen];
+                System.arraycopy(names, 0, propertyNames, 0, aLen);
+                System.arraycopy(randoriNames, 0, propertyNames, aLen, bLen);
+                return propertyNames;
+            }
         }
-        else
-        {
-            return names;
-        }
+        return names;
     }
 
     @NotNull
