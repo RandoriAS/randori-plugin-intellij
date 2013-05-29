@@ -63,15 +63,6 @@
         <jarDirectory url="file://$APPLICATION_HOME_DIR$/lib" recursive="false" type="SOURCES" />
       </library>
     </orderEntry>
-    <orderEntry type="module-library" scope="TEST">
-      <library>
-        <CLASSES>
-          <root url="jar://$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/lib/js-test-common.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
   </component>
 </module>
 
