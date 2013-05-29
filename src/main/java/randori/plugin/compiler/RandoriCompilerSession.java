@@ -278,7 +278,7 @@ public class RandoriCompilerSession
             entry.addIncludeSources(sourceIncludedPath);
         }
 
-        configuration.addExternalBundlePath(arguments.getSDKPath());
+        configuration.setSDKPath(arguments.getSDKPath());
 
         return configuration;
     }
