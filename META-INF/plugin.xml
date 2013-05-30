@@ -14,7 +14,6 @@
 
     <depends>com.intellij.css</depends>
     <depends>JavaScript</depends>
-    <depends>com.intellij.modules.lang</depends>
     <depends>com.intellij.flex</depends>
 
     <change-notes>
@@ -135,7 +134,9 @@
         <configurationType implementation="randori.plugin.runner.RandoriRunnerConfigurationType"/>
 
         <toolWindow id="Randori Problems" anchor="bottom" icon="/icons/randori13x13.png"
-                    factoryClass="randori.plugin.ui.ProblemsToolWindowFactory"/>
+                    factoryClass="randori.plugin.ui.ProblemsToolWindowFactory"
+                    conditionClass="randori.plugin.ui.ProblemsToolWindowCondition"/>
+
 
         <dom.fileDescription implementation="randori.plugin.xml.FalconConfigDomFileDescription"/>
 

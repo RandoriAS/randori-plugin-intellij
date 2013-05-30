@@ -8,6 +8,7 @@ import javax.swing.*;
 
 /**
  * @author Michael Schmalle
+ * @author Frédéric THOMAS
  */
 public class RandoriProjectConfigurable extends SettingsEditor<RandoriProjectModel>
 {

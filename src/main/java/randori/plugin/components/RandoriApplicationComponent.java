@@ -25,8 +25,8 @@ import javax.swing.*;
  */
 public class RandoriApplicationComponent extends FileTypeFactory implements ApplicationComponent
 {
-    private static String RBL_EXTENSION = "rbl";
-    private static String SWC_EXTENSION = "swc";
+    private static final String RBL_EXTENSION = "rbl";
+    private static final String SWC_EXTENSION = "swc";
 
     public static final Language DECOMPILED_RBL = new Language(JavaScriptSupportLoader.ECMA_SCRIPT_L4, "Decompiled RBL") {
 

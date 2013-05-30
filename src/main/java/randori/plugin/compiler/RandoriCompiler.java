@@ -25,7 +25,6 @@ import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 
-import randori.plugin.components.RandoriModuleComponent;
 import randori.plugin.components.RandoriProjectComponent;
 import randori.plugin.configuration.RandoriProjectModel;
 

@@ -9,7 +9,7 @@ import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.psi.PsiElement;
 
 /**
- * @author: Frédéric THOMAS Date: 27/04/13 Time: 15:55
+ * @author Frédéric THOMAS Date: 27/04/13 Time: 15:55
  */
 public class DecompiledRblLineMarkerProvider extends JavaScriptLineMarkerProvider
 {

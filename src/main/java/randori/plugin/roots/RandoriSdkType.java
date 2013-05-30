@@ -48,6 +48,7 @@ import java.util.List;
 /**
  * @author Michael Schmalle•
  * @author Roland Zwaga
+ * @author Frédéric THOMAS
  */
 public class RandoriSdkType extends SdkType
 {
@@ -167,7 +168,9 @@ public class RandoriSdkType extends SdkType
         }
         catch (IOException e)
         {
-            logger.error(LogUtils.dumpStackTrace(Thread.currentThread().getStackTrace()));
+            String stackTrace = LogUtils.dumpStackTrace(Thread.currentThread()
+                    .getStackTrace());
+            logger.error("Error copying '" + sourceFile.getAbsolutePath() + "' to '" + destinationDir.getPath() + "':\n" + e.getMessage() + ":\n" + stackTrace);
             e.printStackTrace();
         }
     }

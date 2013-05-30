@@ -21,6 +21,7 @@ package randori.plugin.configuration;
 
 /**
  * @author Michael Schmalle
+ * @author Frédéric THOMAS
  */
 public class RandoriModuleModel
 {

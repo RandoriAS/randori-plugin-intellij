@@ -12,7 +12,7 @@ import java.io.IOException;
  */
 public abstract class RandoriLightCodeInsightFixtureTestCase extends LightCodeInsightFixtureTestCase
 {
-    protected static final String TEST_BASE_PATH = "src/test/resources/";
+    private static final String TEST_BASE_PATH = "src/test/resources/";
 
     /**
      * Return relative path to the test data. Not intended to be overridden.

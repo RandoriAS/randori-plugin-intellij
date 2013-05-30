@@ -141,7 +141,7 @@ public class RblFileDecompiler implements BinaryFileDecompiler
         InputStream catalogInputStream;
         StAXManifestReader catalogReader;
 
-        catalogInputStream = getInputStream(rbl, MANIFEST_XML);
+        catalogInputStream = getInputStream(rbl);
         if (catalogInputStream != null)
         {
             catalogReader = new StAXManifestReader(new BufferedInputStream(catalogInputStream), bundle);
@@ -152,13 +152,13 @@ public class RblFileDecompiler implements BinaryFileDecompiler
         return catalogInputStream;
     }
 
-    private static InputStream getInputStream(ZipFile zipFile, String filename) throws IOException
+    private static InputStream getInputStream(ZipFile zipFile) throws IOException
     {
         ZipEntry zipEntry = null;
         for (final Enumeration<? extends ZipEntry> entryEnum = zipFile.entries(); entryEnum.hasMoreElements();)
         {
             final ZipEntry entry = entryEnum.nextElement();
-            if (entry.getName().equals(filename))
+            if (entry.getName().equals(RblFileDecompiler.MANIFEST_XML))
             {
                 zipEntry = entry;
                 break;

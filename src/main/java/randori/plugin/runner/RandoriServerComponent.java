@@ -97,9 +97,6 @@ public class RandoriServerComponent implements ProjectComponent
     @Override
     public void initComponent()
     {
-        // XXX temp
-        if (!ProjectUtils.hasRandoriModuleType(project))
-            return;
     }
 
     @Override

@@ -11,10 +11,6 @@ public class ProblemsToolWindowCondition implements Condition
 {
     @Override
     public boolean value(Object o) {
-        if (o instanceof Project)
-        {
-            return ProjectUtils.hasRandoriModuleType((Project)o);
-        }
-        return false;
+        return o instanceof Project && ProjectUtils.hasRandoriModuleType((Project) o);
     }
 }

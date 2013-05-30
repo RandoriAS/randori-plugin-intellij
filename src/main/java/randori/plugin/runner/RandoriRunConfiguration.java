@@ -114,8 +114,7 @@ public class RandoriRunConfiguration extends ModuleBasedConfiguration<RandoriApp
     {
         myEnvironment = environment;
 
-        RunProfileState state = new ApplicationServerRunState();
-        return state;
+        return new ApplicationServerRunState();
     }
 
     Module getModule()
@@ -146,7 +145,7 @@ public class RandoriRunConfiguration extends ModuleBasedConfiguration<RandoriApp
     {
         @Nullable
         @Override
-        public ExecutionResult execute(Executor executor, ProgramRunner runner) throws ExecutionException
+        public ExecutionResult execute(Executor executor, @NotNull ProgramRunner runner) throws ExecutionException
         {
             RandoriProjectComponent component = getProject().getComponent(RandoriProjectComponent.class);
             component.run(RandoriRunConfiguration.this);
