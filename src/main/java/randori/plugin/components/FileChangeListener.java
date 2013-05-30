@@ -23,14 +23,7 @@ import com.intellij.analysis.AnalysisScopeBundle;
 import com.intellij.codeInsight.actions.OptimizeImportsProcessor;
 import com.intellij.codeInsight.actions.ReformatCodeAction;
 import com.intellij.compiler.impl.ModuleCompileScope;
-import com.intellij.lang.Language;
 import com.intellij.lang.javascript.ActionScriptFileType;
-import com.intellij.lang.javascript.flex.ImportUtils;
-import com.intellij.lang.javascript.psi.JSFile;
-import com.intellij.lang.javascript.psi.ecmal4.JSAttribute;
-import com.intellij.lang.javascript.psi.ecmal4.impl.JSAttributeListImpl;
-import com.intellij.openapi.application.AccessToken;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.CompilerManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -39,19 +32,14 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.*;
-import com.intellij.psi.FileViewProvider;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import randori.plugin.configuration.RandoriCompilerModel;
 import randori.plugin.util.ProjectUtils;
 
-import java.util.*;
+import java.util.List;
 
 /**
  * @author Michael Schmalle
@@ -98,7 +86,6 @@ class FileChangeListener implements VirtualFileListener
                     @Override
                     public void run()
                     {
-                        importAnnotations(file);
 
                         RandoriCompilerModel state = RandoriCompilerModel.getInstance(project).getState();
 
@@ -107,73 +94,6 @@ class FileChangeListener implements VirtualFileListener
                     }
                 }).run();
         }
-    }
-
-    private void importAnnotations(@NotNull VirtualFile file)
-    {
-        final List<PsiElement> annotations = new ArrayList<PsiElement>();
-
-        PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
-        if (psiFile == null)
-            return;
-
-        FileViewProvider viewProvider = psiFile.getViewProvider();
-        Set<Language> languages = viewProvider.getLanguages();
-        JSFile asFile = (JSFile) viewProvider.getPsi(languages.iterator().next());
-
-        for (PsiElement psiElement : asFile.getChildren())
-        {
-            findAnnotations(annotations, psiElement);
-        }
-
-        Map<JSAttribute, String> importStatements = getImportStatementsFromAnnotations(annotations);
-
-        if (importStatements.size() > 0)
-        {
-            AccessToken accessToken = ApplicationManager.getApplication().acquireWriteActionLock(
-                    FileChangeListener.class);
-            try
-            {
-                for (Map.Entry<JSAttribute, String> entry : importStatements.entrySet())
-                {
-                    ImportUtils.doImport(entry.getKey(), entry.getValue(), true);
-                }
-            }
-            finally
-            {
-                accessToken.finish();
-            }
-        }
-    }
-
-    private static void findAnnotations(List<PsiElement> annotations, @NotNull PsiElement aChild)
-    {
-        if (aChild instanceof JSAttributeListImpl)
-        {
-            for (PsiElement psiElement : aChild.getChildren())
-            {
-                if (psiElement instanceof JSAttribute && !annotations.contains(psiElement))
-                {
-                    annotations.add(psiElement);
-                }
-            }
-        }
-
-        for (PsiElement child : aChild.getChildren())
-        {
-            findAnnotations(annotations, child);
-        }
-    }
-
-    private Map<JSAttribute, String> getImportStatementsFromAnnotations(List<PsiElement> annotations)
-    {
-
-        Map<JSAttribute, String> importStatements = new HashMap<JSAttribute, String>();
-
-        //AnnotationManager annotationManager = new AnnotationManager(projectComponent.getCompiler());
-        //TODO implement and maybe keep a map at class level and don't try to get what is already in the map.
-
-        return importStatements;
     }
 
     private void executeMake(final VirtualFileEvent event)
@@ -201,7 +121,8 @@ class FileChangeListener implements VirtualFileListener
                 {
                     final Module rootModule = moduleManager.findModuleByName(project.getName());
 
-                    if (rootModule != null) {
+                    if (rootModule != null)
+                    {
                         if ((!compilerManager.isCompilationActive())
                                 && (!compilerManager.isUpToDate(new ModuleCompileScope(rootModule, true))))
                             compilerManager.make(project, moduleManager.getModules(), null);

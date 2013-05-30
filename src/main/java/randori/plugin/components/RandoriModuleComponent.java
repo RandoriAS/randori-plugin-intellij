@@ -45,7 +45,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Autopackage module adds new module tab and holds plugin configuration.
+ * @author Frédéric THOMAS
  */
 @State(name = RandoriModuleComponent.COMPONENT_NAME, storages = { @Storage(id = "RandoriModule", file = "$MODULE_FILE$") })
 /**

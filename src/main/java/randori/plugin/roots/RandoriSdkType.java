@@ -48,6 +48,7 @@ import java.util.List;
 /**
  * @author Michael Schmalle•
  * @author Roland Zwaga
+ * @author Frédéric THOMAS
  */
 public class RandoriSdkType extends SdkType
 {

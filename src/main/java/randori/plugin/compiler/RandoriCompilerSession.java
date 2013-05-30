@@ -320,7 +320,7 @@ public class RandoriCompilerSession
     {
         private final Project project;
         private final RandoriProject compiler;
-        private boolean isBuild;
+        private final boolean isBuild;
 
         ProblemBuildRunnable(Project project, RandoriProject compiler, boolean isBuild)
         {

@@ -193,10 +193,10 @@ public class RandoriCssPropertyDescriptor implements CssPropertyDescriptor
         VirtualFile[] children = directory.getChildren();
         for(VirtualFile file : children)
         {
-            if (file.isDirectory() == false)
+            if (!file.isDirectory())
             {
                 String extension = file.getExtension();
-                if (extension.equals(HTML_EXT) || extension.equals(HTM_EXT))
+                if (extension != null && extension.equals(HTML_EXT) || extension.equals(HTM_EXT))
                 {
                     htmlFiles.add(file.getPath());
                 }
