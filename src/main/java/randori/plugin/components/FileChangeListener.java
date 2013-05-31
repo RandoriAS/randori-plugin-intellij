@@ -20,8 +20,6 @@
 package randori.plugin.components;
 
 import com.intellij.analysis.AnalysisScopeBundle;
-import com.intellij.codeInsight.actions.OptimizeImportsProcessor;
-import com.intellij.codeInsight.actions.ReformatCodeAction;
 import com.intellij.compiler.impl.ModuleCompileScope;
 import com.intellij.lang.javascript.ActionScriptFileType;
 import com.intellij.openapi.compiler.CompilerManager;
@@ -76,23 +74,10 @@ class FileChangeListener implements VirtualFileListener
             if (remove && modifiedFiles.contains(file))
                 modifiedFiles.remove(file);
 
-            final ReadonlyStatusHandler.OperationStatus operationStatus = ReadonlyStatusHandler.getInstance(project)
-                    .ensureFilesWritable(modifiedFiles);
+            RandoriCompilerModel state = RandoriCompilerModel.getInstance(project).getState();
 
-            if (!operationStatus.hasReadonlyFiles())
-                new OptimizeImportsProcessor(project, ReformatCodeAction.convertToPsiFiles(
-                        modifiedFiles.toArray(new VirtualFile[modifiedFiles.size()]), project), new Runnable() {
-
-                    @Override
-                    public void run()
-                    {
-
-                        RandoriCompilerModel state = RandoriCompilerModel.getInstance(project).getState();
-
-                        if (state != null && event.isFromSave() && state.isMakeOnSave())
-                            executeMake(event);
-                    }
-                }).run();
+            if (state != null && event.isFromSave() && state.isMakeOnSave())
+                executeMake(event);
         }
     }
 
