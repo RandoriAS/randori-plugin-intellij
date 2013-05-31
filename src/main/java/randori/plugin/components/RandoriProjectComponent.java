@@ -19,25 +19,6 @@
 
 package randori.plugin.components;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.*;
-
-import org.apache.flex.compiler.problems.ICompilerProblem;
-import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NotNull;
-
-import randori.plugin.compiler.RandoriCompilerSession;
-import randori.plugin.configuration.RandoriProjectConfigurable;
-import randori.plugin.configuration.RandoriProjectModel;
-import randori.plugin.module.RandoriModuleType;
-import randori.plugin.runner.RandoriRunConfiguration;
-import randori.plugin.runner.RandoriServerComponent;
-import randori.plugin.ui.ProblemsToolWindowFactory;
-import randori.plugin.util.ProjectUtils;
-import randori.plugin.util.VFileUtils;
-
 import com.intellij.compiler.CompilerWorkspaceConfiguration;
 import com.intellij.openapi.compiler.CompileScope;
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -61,6 +42,22 @@ import com.intellij.openapi.vfs.VirtualFileListener;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
+import org.apache.flex.compiler.problems.ICompilerProblem;
+import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NotNull;
+import randori.plugin.compiler.RandoriCompilerSession;
+import randori.plugin.configuration.RandoriProjectConfigurable;
+import randori.plugin.configuration.RandoriProjectModel;
+import randori.plugin.module.RandoriModuleType;
+import randori.plugin.runner.RandoriRunConfiguration;
+import randori.plugin.runner.RandoriServerComponent;
+import randori.plugin.ui.ProblemsToolWindowFactory;
+import randori.plugin.util.ProjectUtils;
+import randori.plugin.util.VFileUtils;
+
+import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @State(name = RandoriProjectComponent.COMPONENT_NAME, storages = { @Storage(id = "randoriProject", file = "$PROJECT_FILE$") })
 /**
@@ -250,20 +247,35 @@ public class RandoriProjectComponent implements ProjectComponent, Configurable,
 
     public boolean validateConfiguration(CompileScope scope)
     {
-        if (!ProjectUtils.isSDKInstalled(project))
-            return false;
-
-        // TODO Implement the Randori facet for modules.
-        for (final Module module : scope.getAffectedModules())
+        boolean validated = true;
+        String message = null;
+        Module module = null;
+        
+        if (ProjectUtils.isSDKInstalled(project))
         {
-            if (ModuleType.get(module) != RandoriModuleType.getInstance())
+            for (final Module affectedModule : scope.getAffectedModules())
             {
-                Messages.showErrorDialog(module.getProject(), "This module is not a Randori module", "Can not Compile");
-                ModulesConfigurator.showDialog(module.getProject(), module.getName(), ClasspathEditor.NAME);
-                return false;
+                if (ModuleType.get(affectedModule) != RandoriModuleType.getInstance())
+                {
+                    message = "This module is not a Randori module";
+                    module = affectedModule;
+                    validated = false;
+                    break;
+                }
+            }
+        }
+        else {
+            message = "This project is not a Randori project, please check your Project SDK settings.";
+            validated = false;
+        }
+        
+        if (message != null) {
+            Messages.showErrorDialog(project, message, "Can not Compile");
+            if (module != null) {
+                ModulesConfigurator.showDialog(project, module.getName(), ClasspathEditor.NAME);
             }
         }
 
-        return true;
+        return validated;
     }
 }

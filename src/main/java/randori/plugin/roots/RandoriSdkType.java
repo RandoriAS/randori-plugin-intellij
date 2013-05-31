@@ -19,6 +19,23 @@
 
 package randori.plugin.roots;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import javax.swing.*;
+import javax.xml.stream.XMLStreamException;
+
+import randori.compiler.bundle.*;
+import randori.compiler.bundle.io.StAXManifestReader;
+import randori.plugin.components.RandoriProjectComponent;
+import randori.plugin.configuration.RandoriProjectModel;
+import randori.plugin.util.LogUtils;
+
+import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.*;
@@ -29,21 +46,8 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.PathUtil;
 import icons.RandoriIcons;
-import randori.compiler.bundle.*;
-import randori.compiler.bundle.io.StAXManifestReader;
-import randori.plugin.components.RandoriProjectComponent;
-import randori.plugin.configuration.RandoriProjectModel;
-import randori.plugin.util.LogUtils;
-
-import javax.swing.*;
-import javax.xml.stream.XMLStreamException;
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * @author Michael Schmalle•
@@ -53,6 +57,8 @@ import java.util.List;
 public class RandoriSdkType extends SdkType
 {
     private static final Logger logger = Logger.getInstance(RandoriSdkType.class);
+    private static final String LAST_SELECTED_RANDORI_SDK_HOME_KEY = "last.selected.randori.sdk.home";
+
     private IBundleVersion sdkVersion;
     private IBundle sdkBundle;
 
@@ -87,6 +93,7 @@ public class RandoriSdkType extends SdkType
         {
             randoriSdk.sdkBundle = randoriSdk.getBundle(sdkRoot);
         }
+
         IBundle sdkBundle = randoriSdk.sdkBundle;
         if (sdkBundle == null)
         {
@@ -168,9 +175,9 @@ public class RandoriSdkType extends SdkType
         }
         catch (IOException e)
         {
-            String stackTrace = LogUtils.dumpStackTrace(Thread.currentThread()
-                    .getStackTrace());
-            logger.error("Error copying '" + sourceFile.getAbsolutePath() + "' to '" + destinationDir.getPath() + "':\n" + e.getMessage() + ":\n" + stackTrace);
+            String stackTrace = LogUtils.dumpStackTrace(Thread.currentThread().getStackTrace());
+            logger.error("Error copying '" + sourceFile.getAbsolutePath() + "' to '" + destinationDir.getPath()
+                    + "':\n" + e.getMessage() + ":\n" + stackTrace);
             e.printStackTrace();
         }
     }
@@ -187,11 +194,15 @@ public class RandoriSdkType extends SdkType
             logger.debug("SDK paths setup failed");
             return;
         }
+        sdkRoot.refresh(false, true);
+
+        PropertiesComponent.getInstance().setValue(LAST_SELECTED_RANDORI_SDK_HOME_KEY, sdkRoot.getPath());
 
         if (sdkBundle == null)
         {
             sdkBundle = getBundle(sdkRoot);
         }
+
         if ((sdkVersion == null) && (sdkBundle != null))
         {
             sdkVersion = sdkBundle.getVersion();
@@ -200,22 +211,18 @@ public class RandoriSdkType extends SdkType
         if (sdkBundle != null)
         {
             loadSDKLibraries(sdk, sdkBundle);
-
-            // setup project SDK and Module SDKs
-            setupDependentSdks(sdk);
             logger.debug("SDK paths setup successfully");
         }
         else
-        {
             logger.debug("SDK paths setup failed");
-        }
     }
 
     @Override
     public String suggestHomePath()
     {
         VirtualFile userHomeDir = VfsUtil.getUserHomeDir();
-        return userHomeDir != null ? userHomeDir.getPath() : null;
+        String path = PropertiesComponent.getInstance().getValue(LAST_SELECTED_RANDORI_SDK_HOME_KEY);
+        return (path != null) ? PathUtil.getParentPath(path) : ((userHomeDir != null) ? userHomeDir.getPath() : null);
     }
 
     // called when the directory is selected when creating a new SDK
@@ -361,16 +368,6 @@ public class RandoriSdkType extends SdkType
         {
             modificator.addRoot(jarRoot, OrderRootType.CLASSES);
         }
-    }
-
-    private void setupDependentSdks(Sdk sdk)
-    {
-        // until future understanding, anytime an sdk is setup, we make sure
-        // to sync the project and modules sdks to the new setup.
-        // NO, now that I think about this, we might have a dev and production sdk and
-        // changing people's settings after the fact is going to piss them off.
-        // We need to make this clear in the docs then about making sure SDKs are synced
-        // on the project and modules.
     }
 
     IBundle getBundle(VirtualFile sdkRoot)

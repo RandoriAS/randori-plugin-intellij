@@ -26,7 +26,6 @@ import javax.swing.*;
 public class RandoriApplicationComponent extends FileTypeFactory implements ApplicationComponent
 {
     private static final String RBL_EXTENSION = "rbl";
-    private static final String SWC_EXTENSION = "swc";
 
     public static final Language DECOMPILED_RBL = new Language(JavaScriptSupportLoader.ECMA_SCRIPT_L4, "Decompiled RBL") {
 
@@ -54,9 +53,6 @@ public class RandoriApplicationComponent extends FileTypeFactory implements Appl
     {
         consumer.consume(ArchiveFileType.INSTANCE, RBL_EXTENSION);
         consumer.consume(RBL_FILE_TYPE, RBL_EXTENSION);
-
-        consumer.consume(ArchiveFileType.INSTANCE, SWC_EXTENSION);
-        consumer.consume(SWC_FILE_TYPE, SWC_EXTENSION);
     }
 
     @NotNull
@@ -66,7 +62,7 @@ public class RandoriApplicationComponent extends FileTypeFactory implements Appl
         return "RandoriApplicationComponent";
     }
 
-    public static final FileType RBL_FILE_TYPE = new FileType() {
+    public static final FileType RBL_FILE_TYPE = new ArchiveFileType() {
 
         @NotNull
         @Override
@@ -87,55 +83,6 @@ public class RandoriApplicationComponent extends FileTypeFactory implements Appl
         public String getDefaultExtension()
         {
             return RBL_EXTENSION;
-        }
-
-        public Icon getIcon()
-        {
-            return RandoriIcons.Randori16;
-        }
-
-        @Override
-        public boolean isBinary()
-        {
-            return true;
-        }
-
-        @Override
-        public boolean isReadOnly()
-        {
-            return true;
-        }
-
-        @Nullable
-        @Override
-        public String getCharset(@NotNull VirtualFile file, byte[] content)
-        {
-            return null;
-        }
-
-    };
-
-    public static final FileType SWC_FILE_TYPE = new FileType() {
-
-        @NotNull
-        @Override
-        public String getName()
-        {
-            return "SWC";
-        }
-
-        @NotNull
-        @Override
-        public String getDescription()
-        {
-            return "Action Script Library";
-        }
-
-        @NotNull
-        @Override
-        public String getDefaultExtension()
-        {
-            return SWC_EXTENSION;
         }
 
         public Icon getIcon()
