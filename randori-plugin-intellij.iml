@@ -47,9 +47,8 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="external" level="project" />
-    <orderEntry type="library" name="lib" level="project" />
     <orderEntry type="library" name="jetty" level="project" />
-    <orderEntry type="library" name="truezip-file-7.7.1" level="project" />
+    <orderEntry type="library" name="truezip-7.7.1" level="project" />
     <orderEntry type="module-library" scope="TEST">
       <library>
         <CLASSES>

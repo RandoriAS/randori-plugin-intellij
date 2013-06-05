@@ -1,6 +1,6 @@
 <idea-plugin version="2" url="http://randoriframework.com">
     <name>Randori Compiler</name>
-    <version>0.2.4</version>
+    <version>0.3.0</version>
     <idea-version since-build="123.169"/>
 
     <vendor>Teoti Graphix, LLC</vendor>
@@ -9,7 +9,8 @@
     <description><![CDATA[
     <p>The Randori Framework is a tool that helps in making LARGE Javascript application development manageable.</p>
     <p>It consists of an Actionscript cross-compiler and a client-side JavaScript framework.</p>
-    <p>Please visit <strong>http://randoriframework.com</strong> for more information.</p>
+    <p>Please visit <a href="http://randoriframework.com" target="_blank">http://randoriframework.com</a> for more information.</p>
+    <p>To quickly get started please follow these <a href="https://github.com/RandoriAS/randori-plugin-intellij/wiki/_pages" target="_blank">lessons</a>.</p>
     ]]></description>
 
     <depends>com.intellij.css</depends>
@@ -18,10 +19,11 @@
 
     <change-notes>
         <![CDATA[
-         <h3>0.3.0 changes:</h3>
+         <h3>0.2.5 changes:</h3>
             <ul>
                 <li>[plugin-feature] Randori specific CSS code completions now also complete -randori-fragment values.</li>
                 <li>[plugin-feature] Randori specific CSS code completions now also complete randori property names.</li>
+                <li>[plugin-feature] Randori specific Annotation support.</li>
             </ul>
          <h3>0.2.4 changes:</h3>
             <ul>
@@ -64,7 +66,7 @@
 
     <application-components>
         <component>
-            <implementation-class>randori.plugin.components.RandoriApplicationComponent</implementation-class>
+            <implementation-class>randori.plugin.runner.RandoriRunnerConfigurationType</implementation-class>
         </component>
     </application-components>
 
@@ -136,7 +138,6 @@
         <toolWindow id="Randori Problems" anchor="bottom" icon="/icons/randori13x13.png"
                     factoryClass="randori.plugin.ui.ProblemsToolWindowFactory"
                     conditionClass="randori.plugin.ui.ProblemsToolWindowCondition"/>
-
 
         <dom.fileDescription implementation="randori.plugin.xml.FalconConfigDomFileDescription"/>
 
