@@ -1,6 +1,6 @@
 <idea-plugin version="2" url="http://randoriframework.com">
     <name>Randori Compiler</name>
-    <version>0.3.0</version>
+    <version>0.2.5</version>
     <idea-version since-build="123.169"/>
 
     <vendor>Teoti Graphix, LLC</vendor>
@@ -15,15 +15,15 @@
 
     <depends>com.intellij.css</depends>
     <depends>JavaScript</depends>
-    <depends>com.intellij.modules.lang</depends>
     <depends>com.intellij.flex</depends>
 
     <change-notes>
         <![CDATA[
-         <h3>0.3.0 changes:</h3>
+         <h3>0.2.5 changes:</h3>
             <ul>
                 <li>[plugin-feature] Randori specific CSS code completions now also complete -randori-fragment values.</li>
                 <li>[plugin-feature] Randori specific CSS code completions now also complete randori property names.</li>
+                <li>[plugin-feature] Randori specific Annotation support.</li>
             </ul>
          <h3>0.2.4 changes:</h3>
             <ul>
@@ -131,7 +131,7 @@
                     factoryClass="randori.plugin.ui.ProblemsToolWindowFactory"
                 conditionClass="randori.plugin.ui.ProblemsToolWindowCondition"/>
 
-        <dom.fileDescription implementation="randori.plugin.xml.FalconConfigDomFileDescription"></dom.fileDescription>
+        <dom.fileDescription implementation="randori.plugin.xml.FalconConfigDomFileDescription"/>
 
         <projectService
                 serviceImplementation="randori.plugin.service.RandoriProjectPreferences"/>
@@ -144,6 +144,7 @@
         <projectConfigurable instance="randori.plugin.compiler.RandoriCompilerConfigurable" id="Randori compiler"
                              displayName="Randori Compiler" parentId="project.propCompiler"/>
 
+        <standardResourceProvider implementation="randori.plugin.lang.RandoriResourceProvider"/>
     </extensions>
 
 </idea-plugin>
