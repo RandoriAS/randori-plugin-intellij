@@ -21,6 +21,7 @@ package randori.plugin.compiler;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
@@ -78,31 +79,27 @@ class RandoriCompiler implements TranslatingCompiler
     public void compile(CompileContext context, Chunk<Module> moduleChunk, VirtualFile[] files, OutputSink sink)
     {
         context.getProgressIndicator().checkCanceled();
+        int moduleCount = moduleChunk.getNodes().size();
 
-        for (Module module : moduleChunk.getNodes())
-        {
+        for (Module module : moduleChunk.getNodes()) {
+            moduleCount -= 1;
             List<VirtualFile> modifiedFiles = project.getComponent(RandoriProjectComponent.class).getModifiedFiles();
 
             boolean doClean = true;
             boolean success;
 
-            if (context.hashCode() != sessionId)
-            {
+            if (context.hashCode() != sessionId) {
                 sessionId = context.hashCode();
                 compilerSession = new RandoriCompilerSession(project);
-            }
-            else
+            } else
                 doClean = false;
 
-            if (context.isMake() && modifiedFiles.size() > 0)
-            {
+            if (context.isMake() && modifiedFiles.size() > 0) {
                 LOG.info("Starting Randori compiler... Make " + module.getName());
                 context.getProgressIndicator().setText("Starting Randori compiler... Make " + module.getName());
 
                 success = compilerSession.make(module);
-            }
-            else if (context.isRebuild())
-            {
+            } else if (context.isRebuild()) {
                 if (doClean)
                     clearAffectedOutputPathsIfPossible(context);
 
@@ -110,23 +107,19 @@ class RandoriCompiler implements TranslatingCompiler
                 context.getProgressIndicator().setText("Starting Randori compiler... Rebuild " + module.getName());
 
                 success = compilerSession.build(module);
-            }
-            else
+            } else
                 return;
 
-            final boolean isModuleRoot = ProjectUtils.isModuleRoot(project, module);
-            if (success)
-            {
-                if (context.isMake() && modifiedFiles.size() > 0 && isModuleRoot)
+            final boolean isLastModule = moduleCount == 0;
+            if (success) {
+                if (context.isMake() && modifiedFiles.size() > 0 && isLastModule)
                     modifiedFiles.removeAll(modifiedFiles);
-            }
-            else
-            {
+            } else {
                 context.getProgressIndicator().cancel();
             }
 
             // If compilation failed or it is the last module, Show the problem window
-            if (!success || isModuleRoot)
+            if (!success || isLastModule)
                 ApplicationManager.getApplication().invokeLater(
                         new RandoriCompilerSession.ProblemBuildRunnable(project, RandoriCompilerSession
                                 .getLastCompiler(), true));
