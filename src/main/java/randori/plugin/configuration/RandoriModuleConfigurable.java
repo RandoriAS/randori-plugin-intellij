@@ -57,6 +57,6 @@ public class RandoriModuleConfigurable extends SettingsEditor<RandoriModuleModel
 
     public boolean isModified(RandoriModuleModel data)
     {
-        return exportAsFiles.isSelected() == data.isExportAsFile() && generateRbl.isSelected() == data.isGenerateRbl();
+        return exportAsFiles.isSelected() != data.isExportAsFile() || generateRbl.isSelected() != data.isGenerateRbl();
     }
 }

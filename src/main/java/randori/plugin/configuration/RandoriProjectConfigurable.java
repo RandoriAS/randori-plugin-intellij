@@ -1,10 +1,11 @@
 package randori.plugin.configuration;
 
-import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.options.SettingsEditor;
+import javax.swing.*;
+
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.options.SettingsEditor;
 
 /**
  * @author Michael Schmalle
@@ -16,17 +17,20 @@ public class RandoriProjectConfigurable extends SettingsEditor<RandoriProjectMod
     private JPanel panel;
     private JTextField basePath;
     private JTextField libraryPath;
+    private JCheckBox validateCSSClasses;
 
-    public void getData(RandoriProjectModel data)
+    public void getData(RandoriProjectModel model)
     {
-        data.setBasePath(basePath.getText());
-        data.setLibraryPath(libraryPath.getText());
+        model.setBasePath(basePath.getText());
+        model.setLibraryPath(libraryPath.getText());
+        model.setValidateCSSClasses(validateCSSClasses.isSelected());
     }
 
-    public void setData(RandoriProjectModel data)
+    public void setData(RandoriProjectModel model)
     {
-        basePath.setText(data.getBasePath());
-        libraryPath.setText(data.getLibraryPath());
+        basePath.setText(model.getBasePath());
+        libraryPath.setText(model.getLibraryPath());
+        validateCSSClasses.setSelected(model.isValidateCSSClasses());
     }
 
     @Override
@@ -34,6 +38,7 @@ public class RandoriProjectConfigurable extends SettingsEditor<RandoriProjectMod
     {
         basePath.setText(model.getBasePath());
         libraryPath.setText(model.getLibraryPath());
+        validateCSSClasses.setSelected(model.isValidateCSSClasses());
     }
 
     @Override
@@ -41,6 +46,7 @@ public class RandoriProjectConfigurable extends SettingsEditor<RandoriProjectMod
     {
         model.setBasePath(basePath.getText());
         model.setLibraryPath(libraryPath.getText());
+        model.setValidateCSSClasses(validateCSSClasses.isSelected());
     }
 
     @NotNull
@@ -55,9 +61,10 @@ public class RandoriProjectConfigurable extends SettingsEditor<RandoriProjectMod
     {
     }
 
-    public boolean isModified(RandoriProjectModel data)
+    public boolean isModified(RandoriProjectModel model)
     {
-        return isModified(basePath, data.getBasePath()) || isModified(libraryPath, data.getLibraryPath());
+        return isModified(basePath, model.getBasePath()) || isModified(libraryPath, model.getLibraryPath())
+                || validateCSSClasses.isSelected() == model.isValidateCSSClasses();
 
     }
 
