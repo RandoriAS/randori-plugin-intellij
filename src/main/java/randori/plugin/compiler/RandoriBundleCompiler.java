@@ -1,6 +1,7 @@
 package randori.plugin.compiler;
 
 import org.apache.flex.compiler.internal.workspaces.Workspace;
+import randori.compiler.internal.driver.RandoriBackend;
 import randori.compiler.internal.projects.RandoriBundleProject;
 
 /**
@@ -10,6 +11,6 @@ import randori.compiler.internal.projects.RandoriBundleProject;
  */
 class RandoriBundleCompiler extends RandoriBundleProject {
     public RandoriBundleCompiler(Workspace workspace) {
-        super(workspace);
+        super(workspace, new RandoriBackend());
     }
 }
