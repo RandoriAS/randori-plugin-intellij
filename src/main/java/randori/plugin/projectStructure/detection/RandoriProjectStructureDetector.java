@@ -38,7 +38,7 @@ import com.intellij.util.StringBuilderSpinAllocator;
 public class RandoriProjectStructureDetector extends ProjectStructureDetector
 {
 
-    private static final NullableFunction<CharSequence, String> PACKAGE_NAME_FETCHER = new NullableFunction<CharSequence, String>() {
+    public static final NullableFunction<CharSequence, String> PACKAGE_NAME_FETCHER = new NullableFunction<CharSequence, String>() {
         @Nullable
         @Override
         public String fun(CharSequence charSequence)
