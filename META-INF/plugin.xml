@@ -1,7 +1,7 @@
 <idea-plugin version="2" url="http://randoriframework.com">
     <name>Randori Compiler</name>
     <version>0.3.0</version>
-    <idea-version since-build="123.169"/>
+    <idea-version since-build="129.713"/>
 
     <vendor>Teoti Graphix, LLC</vendor>
     <category>Framework integration</category>
@@ -19,6 +19,17 @@
 
     <change-notes>
         <![CDATA[
+         <h3>0.3.0 changes:</h3>
+            <ul>
+                <li>[compiler] Updated to v0.2.4.30</li>
+                <li>[plugin-feature] As user I should be able to import projects/modules/libraries. #74 #25 #11</li>
+                <li>[plugin-feature] As user I should be able to compile project composed of modules / RBLs.</li>
+                <li>[plugin-feature] Added Sources & Docs detection for RBLs</li>
+                <li>[plugin-bug] [View] : "Unknown Metadata Attribute Used" #60 #14.</li>
+                <li>[plugin-bug] If the Randori compiler gives an error code, IntelliJ should not say completed successfully #57</li>
+                <li>[plugin-bug] Managing import at save time takes too much time on refactor</li>
+                <li>[plugin-bug] #86 : After a Rebuild Project some files are not regenerated</li>
+            </ul>
          <h3>0.2.5 changes:</h3>
             <ul>
                 <li>[plugin-feature] Randori specific CSS code completions now also complete -randori-fragment values.</li>
