@@ -16,7 +16,11 @@
 
 package randori.plugin.compiled;
 
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.impl.source.PsiFileImpl;
+import com.intellij.psi.stubs.Stub;
 import junit.framework.Assert;
 
 import java.io.InputStream;
@@ -28,6 +32,9 @@ public class RblFileDecompilerTest extends CompiledTestCase
 {
     private static final String SIMPLE_RBL_PATH = "simple.rbl";
     private static final String COMPLEX_RBL_PATH = "complex.rbl";
+
+    private static final String SIMPLE_DECOMPILED_RBL_PATH = "simpleRblDecompiled.txt";
+    private static final String COMPLEX_DECOMPILED_RBL_PATH = "complexRblDecompiled.txt";
 
     public void testShouldExtractSimpleLibraryFromContent()
     {
@@ -67,21 +74,35 @@ public class RblFileDecompilerTest extends CompiledTestCase
 
     public void testShouldDecompileSimpleRbl()
     {
-        VirtualFile rblFile = getTestedRblFile(SIMPLE_RBL_PATH, Complexity.SIMPLE);
+        final VirtualFile rblFile = getTestedRblFile(SIMPLE_RBL_PATH, Complexity.SIMPLE);
+        final VirtualFile decompiledRblFile = getTestedRblFile(SIMPLE_DECOMPILED_RBL_PATH, Complexity.SIMPLE);
+
+        final Project project = myFixture.getProject();
+        PsiFileImpl decompiledRblData = (PsiFileImpl) PsiManager.getInstance(project).findFile(decompiledRblFile);
+        assert decompiledRblData != null;
+        String decompiledRblDataText = decompiledRblData.getText();
 
         RblFileDecompiler decompiler = new RblFileDecompiler();
         CharSequence decompiled = decompiler.decompile(rblFile);
 
         Assert.assertNotNull("Simple Rbl file should be decompiled", decompiled);
+        Assert.assertEquals("Simple Rbl file should be decompiled correctly", decompiledRblDataText, decompiled);
     }
 
     public void testShouldDecompileComplexRbl()
     {
-        VirtualFile rblFile = getTestedRblFile(COMPLEX_RBL_PATH, Complexity.COMPLEX);
+        final VirtualFile rblFile = getTestedRblFile(COMPLEX_RBL_PATH, Complexity.COMPLEX);
+        final VirtualFile decompiledRblFile = getTestedRblFile(COMPLEX_DECOMPILED_RBL_PATH, Complexity.COMPLEX);
+
+        final Project project = myFixture.getProject();
+        PsiFileImpl decompiledRblData = (PsiFileImpl) PsiManager.getInstance(project).findFile(decompiledRblFile);
+        assert decompiledRblData != null;
+        String decompiledRblDataText = decompiledRblData.getText();
 
         RblFileDecompiler decompiler = new RblFileDecompiler();
         CharSequence decompiled = decompiler.decompile(rblFile);
 
         Assert.assertNotNull("Complex Rbl file should be decompiled", decompiled);
+        Assert.assertEquals("Simple Rbl file should be decompiled correctly", decompiledRblDataText, decompiled);
     }
 }

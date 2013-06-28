@@ -53,7 +53,7 @@ public class RblFileStubBuilder implements BinaryFileStubBuilder
     @Override
     public int getStubVersion()
     {
-        return JSFileElementType.getVersion() + 6;
+        return JSFileElementType.getVersion() + 7;
     }
 
     private static PsiFileStub buildFileStub(final VirtualFile file, final byte[] content)
