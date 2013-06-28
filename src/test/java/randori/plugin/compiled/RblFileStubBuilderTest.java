@@ -29,7 +29,7 @@ import com.intellij.psi.stubs.Stub;
  */
 public class RblFileStubBuilderTest extends CompiledTestCase
 {
-    private static final int RBL_STUB_VERSION = -2030841460;
+    private static final int RBL_STUB_VERSION = -979960053;
 
     private static final String SIMPLE_RBL_PATH = "simple.rbl";
     private static final String COMPLEX_RBL_PATH = "complex.rbl";

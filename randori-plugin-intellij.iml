@@ -18,7 +18,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="external" level="project" />
     <orderEntry type="library" name="jetty" level="project" />
-    <orderEntry type="library" name="truezip-7.7.1" level="project" />
+    <orderEntry type="library" name="truezip-7.7.2" level="project" />
     <orderEntry type="library" name="compiler" level="project" />
     <orderEntry type="module-library" scope="TEST">
       <library>

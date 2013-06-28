@@ -24,9 +24,13 @@ import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Consumer;
+import de.schlichtherle.truezip.file.TArchiveDetector;
+import de.schlichtherle.truezip.file.TConfig;
 import de.schlichtherle.truezip.file.TFile;
 import de.schlichtherle.truezip.file.TFileInputStream;
+import de.schlichtherle.truezip.fs.archive.zip.ZipDriver;
 import de.schlichtherle.truezip.rof.ByteArrayReadOnlyFile;
+import de.schlichtherle.truezip.socket.sl.IOPoolLocator;
 import de.schlichtherle.truezip.zip.ZipEntry;
 import de.schlichtherle.truezip.zip.ZipFile;
 import org.apache.commons.io.IOUtils;
@@ -56,6 +60,8 @@ public class RblFileDecompiler implements BinaryFileDecompiler
     @NotNull
     public CharSequence decompile(VirtualFile file)
     {
+        TConfig.get().setArchiveDetector(new TArchiveDetector("rbl|swc", new ZipDriver(IOPoolLocator.SINGLETON)));
+
         final StringBuilder libraryInterface = new StringBuilder(ArrayUtil.EMPTY_CHAR_SEQUENCE);
         Project project = findProject();
 
@@ -99,7 +105,8 @@ public class RblFileDecompiler implements BinaryFileDecompiler
                     + File.separator + "swc" + File.separator + iBundleLibrary.getName() + ".swc" + File.separator
                     + "library.swf");
 
-            result.consume(new TFileInputStream(library));
+            InputStream inputStream = new TFileInputStream(library);
+            result.consume(inputStream);
         }
     }
 
