@@ -26,6 +26,9 @@
     <fileset dir="${basedir}/lib/jetty">
       <patternset refid="library.patterns"/>
     </fileset>
+    <fileset dir="${randori.compiler.path}">
+      <patternset refid="library.patterns"/>
+    </fileset>
   </path>
   
   <path id="randori-plugin-intellij.runtime.production.module.classpath">
@@ -37,6 +40,9 @@
       <patternset refid="library.patterns"/>
     </fileset>
     <fileset dir="${basedir}/lib/jetty">
+      <patternset refid="library.patterns"/>
+    </fileset>
+    <fileset dir="${randori.compiler.path}">
       <patternset refid="library.patterns"/>
     </fileset>
   </path>
@@ -53,6 +59,9 @@
     <fileset dir="${basedir}/lib/jetty">
       <patternset refid="library.patterns"/>
     </fileset>
+    <fileset dir="${randori.compiler.path}">
+      <patternset refid="library.patterns"/>
+    </fileset>
   </path>
   
   <path id="randori-plugin-intellij.runtime.module.classpath">
@@ -67,6 +76,9 @@
     <fileset dir="${basedir}/lib/jetty">
       <patternset refid="library.patterns"/>
     </fileset>
+    <fileset dir="${randori.compiler.path}">
+      <patternset refid="library.patterns"/>
+    </fileset>
   </path>
   
   
@@ -79,9 +91,9 @@
   </patternset>
   
   <path id="randori-plugin-intellij.module.sourcepath">
-    <dirset dir="${module.randori-plugin-intellij.basedir}/../randori-compiler">
+    <!--dirset dir="${module.randori-plugin-intellij.basedir}/../randori-compiler">
       <include name="src/main/java"/>
-    </dirset>
+    </dirset-->
     <dirset dir="${module.randori-plugin-intellij.basedir}">
       <include name="src"/>
       <include name="resources"/>
@@ -102,10 +114,10 @@
     </javac2>
     
     <copy todir="${randori-plugin-intellij.output.dir}">
-      <fileset dir="${module.randori-plugin-intellij.basedir}/../randori-compiler/src/main/java">
+      <!--fileset dir="${module.randori-plugin-intellij.basedir}/../randori-compiler/src/main/java">
         <patternset refid="compiler.resources"/>
         <type type="file"/>
-      </fileset>
+      </fileset-->
       <fileset dir="${module.randori-plugin-intellij.basedir}/src">
         <patternset refid="compiler.resources"/>
         <type type="file"/>

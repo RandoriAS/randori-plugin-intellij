@@ -13,7 +13,7 @@
   <property name="compiler.debug" value="on"/>
   <property name="compiler.generate.no.warnings" value="off"/>
   <property name="compiler.args" value=""/>
-  <property name="compiler.max.memory" value="128m"/>
+  <property name="compiler.max.memory" value="512m"/>
   <patternset id="ignored.files">
     <exclude name="**/CVS/**"/>
     <exclude name="**/SCCS/**"/>
@@ -60,22 +60,25 @@
   
   <!-- JDK definitions -->
   
-  <property name="jdk.bin.idea_iu-129.451" value="${jdk.home.idea_iu-129.451}/${relative.jdk.path.to.idea}bin"/>
+  <property name="jdk.bin.idea_iu-129.451" value="${jdk.path}bin"/>
+  
   <path id="jdk.classpath.idea_iu-129.451">
+    <fileset dir="${jdk.path}">
+      <include name="jre/lib/charsets.jar"/>
+      <include name="jre/lib/deploy.jar"/>
+      <include name="jre/lib/javaws.jar"/>
+      <include name="jre/lib/jce.jar"/>
+      <include name="jre/lib/jsse.jar"/>
+      <include name="jre/lib/management-agent.jar"/>
+      <include name="jre/lib/plugin.jar"/>
+      <include name="jre/lib/resources.jar"/>
+      <include name="jre/lib/rt.jar"/>
+      <include name="jre/lib/ext/dnsns.jar"/>
+      <include name="jre/lib/ext/localedata.jar"/>
+      <include name="jre/lib/ext/sunjce_provider.jar"/>
+      <include name="jre/lib/ext/sunmscapi.jar"/>
+    </fileset>
     <fileset dir="${jdk.home.idea_iu-129.451}">
-      <include name="${relative.jdk.path.to.idea}jre/lib/charsets.jar"/>
-      <include name="${relative.jdk.path.to.idea}jre/lib/deploy.jar"/>
-      <include name="${relative.jdk.path.to.idea}jre/lib/javaws.jar"/>
-      <include name="${relative.jdk.path.to.idea}jre/lib/jce.jar"/>
-      <include name="${relative.jdk.path.to.idea}jre/lib/jsse.jar"/>
-      <include name="${relative.jdk.path.to.idea}jre/lib/management-agent.jar"/>
-      <include name="${relative.jdk.path.to.idea}jre/lib/plugin.jar"/>
-      <include name="${relative.jdk.path.to.idea}jre/lib/resources.jar"/>
-      <include name="${relative.jdk.path.to.idea}jre/lib/rt.jar"/>
-      <include name="${relative.jdk.path.to.idea}jre/lib/ext/dnsns.jar"/>
-      <include name="${relative.jdk.path.to.idea}jre/lib/ext/localedata.jar"/>
-      <include name="${relative.jdk.path.to.idea}jre/lib/ext/sunjce_provider.jar"/>
-      <include name="${relative.jdk.path.to.idea}jre/lib/ext/sunmscapi.jar"/>
       <include name="lib/alloy.jar"/>
       <include name="lib/annotations.jar"/>
       <include name="lib/asm-commons.jar"/>
@@ -172,7 +175,9 @@
       <include name="plugins/CSS/lib/resources_en.jar"/>
       <include name="plugins/uml/lib/diagram-api.jar"/>
       <include name="plugins/JavaScriptLanguage/lib/JavascriptLanguage.jar"/>
+      <include name="plugins/JavaScriptLanguage/lib/resources_en.jar"/>
       <include name="plugins/flex/lib/FlexSupport.jar"/>
+      <include name="plugins/flex/lib/resources_en.jar"/>
     </fileset>
   </path>
   
