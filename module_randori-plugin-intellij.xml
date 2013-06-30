@@ -161,6 +161,7 @@
     <copy file="${module.randori-plugin-intellij.basedir}/lib/external/velocity-1.6.2.jar" tofile="${zipdirectory}/velocity-1.6.2.jar"/>
     <copy file="${module.randori-plugin-intellij.basedir}/lib/external/commons-lang3-3.1.jar" tofile="${zipdirectory}/commons-lang3-3.1.jar"/>
     <copy file="${module.randori-plugin-intellij.basedir}/lib/external/velocity-1.6.2-dep.jar" tofile="${zipdirectory}/velocity-1.6.2-dep.jar"/>
+    <copy file="${randori.compiler.path}/randori.jar" tofile="${zipdirectory}/randori.jar"/>
     <copy file="${module.randori-plugin-intellij.basedir}/lib/compiler.jar" tofile="${zipdirectory}/compiler.jar"/>
     <zip destfile="${randori-plugin-intellij.plugin.path.jar}">
       <fileset dir="${module.randori-plugin-intellij.basedir}/../temp"/>
