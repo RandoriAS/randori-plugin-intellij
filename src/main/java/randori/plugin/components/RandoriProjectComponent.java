@@ -18,18 +18,13 @@ package randori.plugin.components;
 
 import com.intellij.compiler.CompilerWorkspaceConfiguration;
 import com.intellij.openapi.compiler.CompileScope;
-import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ProjectComponent;
-import com.intellij.openapi.components.State;
-import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.LogicalPosition;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.options.Configurable;
-import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ui.configuration.ClasspathEditor;
 import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
@@ -40,11 +35,8 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
 import org.apache.flex.compiler.problems.ICompilerProblem;
-import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import randori.plugin.compiler.RandoriCompilerSession;
-import randori.plugin.configuration.RandoriProjectConfigurable;
-import randori.plugin.configuration.RandoriProjectModel;
 import randori.plugin.module.RandoriModuleType;
 import randori.plugin.runner.RandoriRunConfiguration;
 import randori.plugin.runner.RandoriServerComponent;
@@ -52,24 +44,19 @@ import randori.plugin.ui.ProblemsToolWindowFactory;
 import randori.plugin.util.ProjectUtils;
 import randori.plugin.util.VFileUtils;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@State(name = RandoriProjectComponent.COMPONENT_NAME, storages = { @Storage(id = "randoriProject", file = "$PROJECT_FILE$") })
 /**
  * The project component manages the global state of the current project and wrap the compiler.
- *
+ * 
  * @author Frédéric THOMAS
  */
-public class RandoriProjectComponent implements ProjectComponent, Configurable,
-        PersistentStateComponent<RandoriProjectModel>
+public class RandoriProjectComponent implements ProjectComponent
 {
 
     public static final String COMPONENT_NAME = "RandoriProject";
-    private RandoriProjectConfigurable form;
     private final Project project;
-    private RandoriProjectModel state;
     private VirtualFileListener fileChangeListener;
     private List<VirtualFile> modifiedFiles;
 
@@ -97,8 +84,6 @@ public class RandoriProjectComponent implements ProjectComponent, Configurable,
                 workspaceConfiguration.USE_COMPILE_SERVER = false;
                 CompilerWorkspaceConfiguration.getInstance(project).loadState(workspaceConfiguration);
             }
-
-            state = new RandoriProjectModel();
 
             fileChangeListener = new FileChangeListener(project);
             VirtualFileManager.getInstance().addVirtualFileListener(fileChangeListener);
@@ -136,8 +121,6 @@ public class RandoriProjectComponent implements ProjectComponent, Configurable,
             return;
 
         VirtualFileManager.getInstance().removeVirtualFileListener(fileChangeListener);
-
-        state = null;
     }
 
     @NotNull
@@ -145,69 +128,6 @@ public class RandoriProjectComponent implements ProjectComponent, Configurable,
     public String getComponentName()
     {
         return COMPONENT_NAME;
-    }
-
-    @Nls
-    @Override
-    public String getDisplayName()
-    {
-        return "Randori Project";
-    }
-
-    @Override
-    public String getHelpTopic()
-    {
-        return null;
-    }
-
-    @Override
-    public RandoriProjectModel getState()
-    {
-        return state;
-    }
-
-    @Override
-    public void loadState(RandoriProjectModel state)
-    {
-    }
-
-    @Override
-    public JComponent createComponent()
-    {
-        if (form == null)
-        {
-            form = new RandoriProjectConfigurable();
-        }
-        return form.getComponent();
-    }
-
-    @Override
-    public boolean isModified()
-    {
-        return form.isModified(getState());
-    }
-
-    @Override
-    public void apply() throws ConfigurationException
-    {
-        if (form != null)
-        {
-            form.getData(getState());
-        }
-    }
-
-    @Override
-    public void reset()
-    {
-        if (form != null)
-        {
-            form.setData(getState());
-        }
-    }
-
-    @Override
-    public void disposeUIResources()
-    {
     }
 
     public List<VirtualFile> getModifiedFiles()
@@ -247,7 +167,7 @@ public class RandoriProjectComponent implements ProjectComponent, Configurable,
         boolean validated = true;
         String message = null;
         Module module = null;
-        
+
         if (ProjectUtils.isSDKInstalled(project))
         {
             for (final Module affectedModule : scope.getAffectedModules())
@@ -261,14 +181,17 @@ public class RandoriProjectComponent implements ProjectComponent, Configurable,
                 }
             }
         }
-        else {
+        else
+        {
             message = "This project is not a Randori project, please check your Project SDK settings.";
             validated = false;
         }
-        
-        if (message != null) {
+
+        if (message != null)
+        {
             Messages.showErrorDialog(project, message, "Can not Compile");
-            if (module != null) {
+            if (module != null)
+            {
                 ModulesConfigurator.showDialog(project, module.getName(), ClasspathEditor.NAME);
             }
         }

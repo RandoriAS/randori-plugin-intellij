@@ -33,16 +33,17 @@ public class RandoriCompilerConfigurable implements SearchableConfigurable, Conf
 
     private static final String COMPONENT_LABEL = "Randori compiler";
 
-    private final RandoriCompilerModel myConfig;
+    private final RandoriCompilerModel model;
 
     private JCheckBox makeOnSave;
     private JPanel myMainPanel;
     private JPanel panel;
     private JTextField basePath;
     private JTextField libraryPath;
+    private JCheckBox validateCSSClasses;
 
     public RandoriCompilerConfigurable (Project project) {
-        myConfig = RandoriCompilerModel.getInstance(project);
+        model = RandoriCompilerModel.getInstance(project);
     }
     @Nullable
     @Override
@@ -53,17 +54,29 @@ public class RandoriCompilerConfigurable implements SearchableConfigurable, Conf
 
     @Override
     public boolean isModified() {
-        return !Comparing.equal(myConfig.isMakeOnSave(), makeOnSave.isSelected());
+        return !Comparing.equal(model.isMakeOnSave(), makeOnSave.isSelected()) || isModified(basePath, model.getBasePath()) || isModified(libraryPath, model.getLibraryPath())
+                || validateCSSClasses.isSelected() != model.isValidateCSSClasses();
+    }
+
+    private boolean isModified(JTextField component, String value)
+    {
+        return component.getText() != null ? !component.getText().equals(value) : value != null;
     }
 
     @Override
     public void apply() throws ConfigurationException {
-        myConfig.setMakeOnSave(makeOnSave.isSelected());
+        model.setMakeOnSave(makeOnSave.isSelected());
+        model.setBasePath(basePath.getText());
+        model.setLibraryPath(libraryPath.getText());
+        model.setValidateCSSClasses(validateCSSClasses.isSelected());
     }
 
     @Override
     public void reset() {
-        makeOnSave.setSelected(myConfig.isMakeOnSave());
+        makeOnSave.setSelected(model.isMakeOnSave());
+        basePath.setText(model.getBasePath());
+        libraryPath.setText(model.getLibraryPath());
+        validateCSSClasses.setSelected(model.isValidateCSSClasses());
     }
 
     @Override

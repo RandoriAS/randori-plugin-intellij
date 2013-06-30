@@ -19,18 +19,16 @@ package randori.plugin.lang.css;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.css.*;
 import org.apache.flex.compiler.definitions.IClassDefinition;
 import org.apache.flex.compiler.definitions.ITypeDefinition;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import com.intellij.psi.PsiElement;
 import randori.compiler.access.IASProjectAccess;
 import randori.compiler.internal.projects.RandoriProject;
 import randori.plugin.compiler.RandoriCompilerSession;
-import randori.plugin.components.RandoriProjectComponent;
-import randori.plugin.util.ProjectUtils;
+import randori.plugin.configuration.RandoriCompilerModel;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -72,14 +70,13 @@ public class RandoriCssPropertyDescriptor implements CssPropertyDescriptor
             result = ((txt.startsWith("\"")) && (txt.endsWith("\"")));
             if ((result) && (!_propertyName.equals("-randori-fragment")))
             {
-                final RandoriProjectComponent projectComponent = ProjectUtils
-                        .getProjectComponent(element.getProject());
-                if (projectComponent.getState().isValidateCSSClasses())
+                final RandoriCompilerModel model = RandoriCompilerModel.getInstance(element.getProject());
+                if (model.getState().isValidateCSSClasses())
                 {
                     final RandoriProject compiler = RandoriCompilerSession.getLastCompiler();
                     if (compiler != null)
                     {
-                        String className = txt.substring(1, txt.length()-1);
+                        String className = txt.substring(1, txt.length() - 1);
                         IASProjectAccess projectAccess = compiler.getProjectAccess();
                         if (projectAccess != null)
                         {
@@ -113,8 +110,7 @@ public class RandoriCssPropertyDescriptor implements CssPropertyDescriptor
 
     @Nullable
     @Override
-    public PsiElement[] getShorthandPsiValue(@NotNull CssDeclaration decl,
-            @NotNull String propertyName)
+    public PsiElement[] getShorthandPsiValue(@NotNull CssDeclaration decl, @NotNull String propertyName)
     {
         return new PsiElement[0];
     }
@@ -183,7 +179,9 @@ public class RandoriCssPropertyDescriptor implements CssPropertyDescriptor
         if (!_propertyName.equals("-randori-fragment"))
         {
             return getSubClassesForPropertyName(_propertyName, contextElement.getProject());
-        } else {
+        }
+        else
+        {
             return getHTMLFilesInProject(contextElement.getProject());
         }
     }
@@ -196,7 +194,7 @@ public class RandoriCssPropertyDescriptor implements CssPropertyDescriptor
         Object[] result = new Object[HTMLFiles.size()];
         int i = 0;
         String baseDirString = baseDir.getPath();
-        for(String HTMLFile : HTMLFiles)
+        for (String HTMLFile : HTMLFiles)
         {
             HTMLFile = HTMLFile.substring(baseDirString.length());
             result[i++] = LookupElementBuilder.create("\"" + HTMLFile + "\"").withPresentableText(HTMLFile);
@@ -207,7 +205,7 @@ public class RandoriCssPropertyDescriptor implements CssPropertyDescriptor
     private void getHTMLFilesInDirectory(VirtualFile directory, Collection<String> htmlFiles)
     {
         VirtualFile[] children = directory.getChildren();
-        for(VirtualFile file : children)
+        for (VirtualFile file : children)
         {
             if (!file.isDirectory())
             {
@@ -232,21 +230,19 @@ public class RandoriCssPropertyDescriptor implements CssPropertyDescriptor
             final RandoriProject compiler = RandoriCompilerSession.getLastCompiler();
             if (compiler != null)
             {
-                IASProjectAccess projectAccess = compiler
-                        .getProjectAccess();
+                IASProjectAccess projectAccess = compiler.getProjectAccess();
 
                 if (projectAccess != null)
                 {
-                    Collection<IClassDefinition> subClasses = getSubClasses(
-                            superClass,
-                            projectAccess);
+                    Collection<IClassDefinition> subClasses = getSubClasses(superClass, projectAccess);
                     if (subClasses != null)
                     {
                         Object[] result = new Object[subClasses.size()];
                         int i = 0;
-                        for(IClassDefinition definition : subClasses)
+                        for (IClassDefinition definition : subClasses)
                         {
-                            result[i++] = LookupElementBuilder.create("\"" + definition.getQualifiedName() + "\"").withPresentableText(definition.getQualifiedName());
+                            result[i++] = LookupElementBuilder.create("\"" + definition.getQualifiedName() + "\"")
+                                    .withPresentableText(definition.getQualifiedName());
                         }
                         return result;
                     }
@@ -256,15 +252,12 @@ public class RandoriCssPropertyDescriptor implements CssPropertyDescriptor
         return null;
     }
 
-    private Collection<IClassDefinition> getSubClasses(String superClass,
-                                                       IASProjectAccess projectAccess)
+    private Collection<IClassDefinition> getSubClasses(String superClass, IASProjectAccess projectAccess)
     {
         ITypeDefinition typeDefinition = projectAccess.getType(superClass);
-        if ((typeDefinition != null)
-                && (typeDefinition instanceof IClassDefinition))
+        if ((typeDefinition != null) && (typeDefinition instanceof IClassDefinition))
         {
-            return projectAccess
-                    .getSubClasses((IClassDefinition) typeDefinition);
+            return projectAccess.getSubClasses((IClassDefinition) typeDefinition);
         }
         return null;
     }
