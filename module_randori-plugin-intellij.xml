@@ -91,9 +91,6 @@
   </patternset>
   
   <path id="randori-plugin-intellij.module.sourcepath">
-    <!--dirset dir="${module.randori-plugin-intellij.basedir}/../randori-compiler">
-      <include name="src/main/java"/>
-    </dirset-->
     <dirset dir="${module.randori-plugin-intellij.basedir}">
       <include name="src"/>
       <include name="resources"/>
@@ -114,10 +111,6 @@
     </javac2>
     
     <copy todir="${randori-plugin-intellij.output.dir}">
-      <!--fileset dir="${module.randori-plugin-intellij.basedir}/../randori-compiler/src/main/java">
-        <patternset refid="compiler.resources"/>
-        <type type="file"/>
-      </fileset-->
       <fileset dir="${module.randori-plugin-intellij.basedir}/src">
         <patternset refid="compiler.resources"/>
         <type type="file"/>
