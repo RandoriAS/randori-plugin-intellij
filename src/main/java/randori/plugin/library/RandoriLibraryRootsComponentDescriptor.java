@@ -16,14 +16,18 @@
 
 package randori.plugin.library;
 
+import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.ProjectBundle;
 import com.intellij.openapi.projectRoots.ui.Util;
 import com.intellij.openapi.roots.JavadocOrderRootType;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.ui.*;
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.DefaultLibraryRootsComponentDescriptor;
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryEditor;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.UIBundle;
 import icons.FlexIcons;
@@ -39,6 +43,10 @@ import java.util.List;
  */
 class RandoriLibraryRootsComponentDescriptor extends LibraryRootsComponentDescriptor
 {
+    final static String CHOOSE_LIBRARY_FILE_DESCRIPTION = "<html>Select *.swc or *.rbl files and/or folders containing *.swc, *.rbl or raw ActionScript files.<br>"
+            + ApplicationNamesInfo.getInstance().getFullProductName()
+            + " will analyze the contents of the selected folders and automatically assign the files contained therein to the appropriate categories (Classes, Sources and Documentation).";
+
     public OrderRootTypePresentation getRootTypePresentation(@NotNull OrderRootType type)
     {
         if ((type instanceof JavadocOrderRootType))
@@ -72,23 +80,27 @@ class RandoriLibraryRootsComponentDescriptor extends LibraryRootsComponentDescri
     @NotNull
     public FileChooserDescriptor createAttachFilesChooserDescriptor(String libraryName)
     {
-        FileChooserDescriptor fileChooserDescriptor = new FileChooserDescriptor(true, false, true, false, false, true) {
+        //final FileChooserDescriptor descriptor = new FileChooserDescriptor(true, true, true, false, true, true);
+
+        final FileChooserDescriptor descriptor = new FileChooserDescriptor(true, true, true, false, false, true) {
             @Override
             public boolean isFileSelectable(VirtualFile file)
             {
-                return "rbl".equalsIgnoreCase(file.getExtension()) || "swc".equalsIgnoreCase(file.getExtension());
+                return file.isDirectory() || "rbl".equalsIgnoreCase(file.getExtension()) || "swc".equalsIgnoreCase(file.getExtension());
             }
 
             @Override
             public boolean isFileVisible(VirtualFile file, boolean showHiddenFiles)
             {
-                return super.isFileVisible(file, showHiddenFiles) && (file.isDirectory() || isFileSelectable(file));
+                return super.isFileVisible(file, showHiddenFiles) || file.isDirectory() || isFileSelectable(file);
             }
         };
-        fileChooserDescriptor.setTitle(UIBundle.message("file.chooser.default.title"));
-        fileChooserDescriptor.setDescription("Select *.rbl or *.swc files");
 
-        return fileChooserDescriptor;
+        descriptor.setTitle(StringUtil.isEmpty(libraryName) ? ProjectBundle.message("library.attach.files.action")
+                : ProjectBundle.message("library.attach.files.to.library.action", libraryName));
+        descriptor.setDescription(CHOOSE_LIBRARY_FILE_DESCRIPTION);
+
+        return descriptor;
     }
 
     public String getAttachFilesActionName()
