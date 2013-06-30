@@ -8,6 +8,39 @@
   <property name="skip.tests" value="true"/>
    -->
   
+  <pathconvert property="path.variable.maven_repository" dirsep="/">
+	<path location="${p.path.variable.maven_repository}" />
+	<filtermapper> 
+		<replacestring from="%20" to=" " /> 
+        </filtermapper>
+  </pathconvert>
+  <pathconvert property="jdk.home.idea_iu-129.451" dirsep="/">
+	<path location="${p.jdk.home.idea_iu-129.451}" />
+	<filtermapper> 
+		<replacestring from="%20" to=" " /> 
+        </filtermapper>
+  </pathconvert>
+  <pathconvert property="idea.home" dirsep="/">
+	<path location="${p.idea.home}" />
+	<filtermapper> 
+		<replacestring from="%20" to=" " /> 
+        </filtermapper>
+  </pathconvert>
+  <pathconvert property="jdk.path" dirsep="/">
+	<path location="${p.jdk.path}" />
+	<filtermapper> 
+		<replacestring from="%20" to=" " /> 
+        </filtermapper>
+  </pathconvert>
+  <pathconvert property="randori.compiler.path" dirsep="/">
+	<path location="${p.randori.compiler.path}" />
+	<filtermapper> 
+		<replacestring from="%20" to=" " /> 
+        </filtermapper>   
+  </pathconvert>
+  
+  <echo message="${jdk.home.idea_iu-129.451}"/>
+  
   <!-- Compiler options -->
   
   <property name="compiler.debug" value="on"/>
@@ -60,7 +93,7 @@
   
   <!-- JDK definitions -->
   
-  <property name="jdk.bin.idea_iu-129.451" value="${jdk.path}bin"/>
+  <property name="jdk.bin.idea_iu-129.451" value="${jdk.path}/bin"/>
   
   <path id="jdk.classpath.idea_iu-129.451">
     <fileset dir="${jdk.path}">
