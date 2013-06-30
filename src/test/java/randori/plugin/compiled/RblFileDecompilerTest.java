@@ -20,7 +20,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.source.PsiFileImpl;
-import com.intellij.psi.stubs.Stub;
 import junit.framework.Assert;
 
 import java.io.InputStream;
@@ -80,7 +79,7 @@ public class RblFileDecompilerTest extends CompiledTestCase
         final Project project = myFixture.getProject();
         PsiFileImpl decompiledRblData = (PsiFileImpl) PsiManager.getInstance(project).findFile(decompiledRblFile);
         assert decompiledRblData != null;
-        String decompiledRblDataText = decompiledRblData.getText();
+        final String decompiledRblDataText = decompiledRblData.getText();
 
         RblFileDecompiler decompiler = new RblFileDecompiler();
         CharSequence decompiled = decompiler.decompile(rblFile);
@@ -97,7 +96,7 @@ public class RblFileDecompilerTest extends CompiledTestCase
         final Project project = myFixture.getProject();
         PsiFileImpl decompiledRblData = (PsiFileImpl) PsiManager.getInstance(project).findFile(decompiledRblFile);
         assert decompiledRblData != null;
-        String decompiledRblDataText = decompiledRblData.getText();
+        final String decompiledRblDataText = decompiledRblData.getText();
 
         RblFileDecompiler decompiler = new RblFileDecompiler();
         CharSequence decompiled = decompiler.decompile(rblFile);

@@ -16,6 +16,7 @@
 
 package randori.plugin.library;
 
+import com.intellij.lang.javascript.flex.FlexBundle;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.roots.JavadocOrderRootType;
 import com.intellij.openapi.roots.OrderRootType;
@@ -44,7 +45,7 @@ class RandoriLibraryRootsDetector extends LibraryRootsDetectorImpl
         public boolean value(DetectedLibraryRoot root)
         {
             LibraryRootType libraryRootType = root.getTypes().get(0);
-            return (libraryRootType.getType() == OrderRootType.CLASSES) && (libraryRootType.isJarDirectory());
+            return (libraryRootType.getType() == OrderRootType.CLASSES) && (libraryRootType.isJarDirectory()) || libraryRootType.getType() == OrderRootType.SOURCES;
         }
     };
 
@@ -58,11 +59,11 @@ class RandoriLibraryRootsDetector extends LibraryRootsDetectorImpl
             @NotNull ProgressIndicator progressIndicator)
     {
         Collection<DetectedLibraryRoot> roots = super.detectRoots(rootCandidate, progressIndicator);
-        boolean swcsFoldersFound = ContainerUtil.find(roots, DETECTED_LIBRARY_ROOT_CONDITION) != null;
+        boolean libFoldersFound = ContainerUtil.find(roots, DETECTED_LIBRARY_ROOT_CONDITION) != null;
         final List<LibraryRootType> types = Arrays.asList(new LibraryRootType(OrderRootType.CLASSES, false),
                 new LibraryRootType(OrderRootType.SOURCES, false));
 
-        if (swcsFoldersFound)
+        if (libFoldersFound)
         {
             Collections.reverse(types);
         }
@@ -84,12 +85,20 @@ class RandoriLibraryRootsDetector extends LibraryRootsDetectorImpl
     {
         if (rootType.getType() == OrderRootType.SOURCES)
         {
-            return "RBL sources";
+            return FlexBundle.message("sources.root.detector.name");
+        }
+
+        if (rootType.getType() == OrderRootType.CLASSES) {
+            if (rootType.isJarDirectory()) {
+                return "Folder with RBLs or SWCs";
+            }
+
+            return FlexBundle.message("as.libraries.root.detector.name");
         }
 
         if ((rootType.getType() instanceof JavadocOrderRootType))
         {
-            return "RBL Documentation";
+            return FlexBundle.message("docs.root.detector.name");
         }
         return null;
     }
