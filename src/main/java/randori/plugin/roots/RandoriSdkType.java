@@ -16,22 +16,6 @@
 
 package randori.plugin.roots;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import javax.swing.*;
-import javax.xml.stream.XMLStreamException;
-
-import randori.compiler.bundle.*;
-import randori.compiler.bundle.io.StAXManifestReader;
-import randori.plugin.components.RandoriProjectComponent;
-import randori.plugin.configuration.RandoriProjectModel;
-import randori.plugin.util.LogUtils;
-
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
@@ -45,6 +29,19 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathUtil;
 import icons.RandoriIcons;
+import randori.compiler.bundle.*;
+import randori.compiler.bundle.io.StAXManifestReader;
+import randori.plugin.configuration.RandoriCompilerModel;
+import randori.plugin.util.LogUtils;
+
+import javax.swing.*;
+import javax.xml.stream.XMLStreamException;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * @author Michael Schmalle•
@@ -97,7 +94,7 @@ public class RandoriSdkType extends SdkType
             throw new RuntimeException("SDK bundle is invalid.");
         }
 
-        RandoriProjectModel state = project.getComponent(RandoriProjectComponent.class).getState();
+        final RandoriCompilerModel state = RandoriCompilerModel.getInstance(project).getState();
         String libPath = null;
         if (state != null)
             libPath = state.getLibraryPath();

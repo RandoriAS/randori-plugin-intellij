@@ -28,8 +28,7 @@ import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.server.nio.NetworkTrafficSelectChannelConnector;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import randori.plugin.components.RandoriProjectComponent;
-import randori.plugin.configuration.RandoriProjectModel;
+import randori.plugin.configuration.RandoriCompilerModel;
 import randori.plugin.util.LogUtils;
 import randori.plugin.util.ProjectUtils;
 
@@ -42,16 +41,14 @@ import java.util.concurrent.Executors;
  */
 public class RandoriServerComponent implements ProjectComponent
 {
-    private static final Logger log = Logger
-            .getInstance(RandoriServerComponent.class);
+    private static final Logger log = Logger.getInstance(RandoriServerComponent.class);
     private static final String DEFAULT_INDEX_HTML = "index.html";
     private Server server;
     private ExecutorService execService;
     private final Project project;
-    private final RandoriProjectComponent component;
+    private final RandoriCompilerModel component;
 
-    public RandoriServerComponent(Project project,
-            RandoriProjectComponent component)
+    public RandoriServerComponent(Project project, RandoriCompilerModel component)
     {
         this.project = project;
         this.component = component;
@@ -154,7 +151,7 @@ public class RandoriServerComponent implements ProjectComponent
         startServer(component.getState());
     }
 
-    void startServer(RandoriProjectModel model)
+    void startServer(RandoriCompilerModel model)
     {
         // we call this here since the webroot might have changed
         updateHandlers();
@@ -243,8 +240,7 @@ public class RandoriServerComponent implements ProjectComponent
         resourceHandler.setResourceBase(root);
 
         HandlerList handlers = new HandlerList();
-        handlers.setHandlers(new Handler[] { resourceHandler,
-                new DefaultHandler() });
+        handlers.setHandlers(new Handler[] { resourceHandler, new DefaultHandler() });
 
         server.setHandler(handlers);
     }

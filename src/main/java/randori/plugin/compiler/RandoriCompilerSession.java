@@ -39,8 +39,8 @@ import randori.plugin.components.DummyPreProcessPlugin;
 import randori.plugin.components.RandoriApplicationComponent;
 import randori.plugin.components.RandoriModuleComponent;
 import randori.plugin.components.RandoriProjectComponent;
+import randori.plugin.configuration.RandoriCompilerModel;
 import randori.plugin.configuration.RandoriModuleModel;
-import randori.plugin.configuration.RandoriProjectModel;
 import randori.plugin.library.RandoriLibraryType;
 import randori.plugin.roots.RandoriSdkType;
 import randori.plugin.service.ProblemsService;
@@ -63,7 +63,7 @@ public class RandoriCompilerSession
     private final Workspace workspace;
     private Module module;
     private List<VirtualFile> modifiedFiles;
-    private final RandoriProjectModel projectModel;
+    private final RandoriCompilerModel projectModel;
     private RandoriModuleModel moduleModel;
     private RandoriProject compiler;
     private String rblOutputPath;
@@ -104,7 +104,7 @@ public class RandoriCompilerSession
     public RandoriCompilerSession(@NotNull Project project)
     {
         this.project = project;
-        projectModel = project.getComponent(RandoriProjectComponent.class).getState();
+        projectModel = RandoriCompilerModel.getInstance(project).getState();
         workspace = new Workspace();
     }
 
@@ -251,7 +251,8 @@ public class RandoriCompilerSession
         }
     }
 
-    private void configure(RandoriProjectModel projectModel, RandoriModuleModel moduleModel, CompilerArguments arguments)
+    private void configure(RandoriCompilerModel projectModel, RandoriModuleModel moduleModel,
+            CompilerArguments arguments)
     {
         arguments.setAppName(project.getName());
         arguments.setJsBasePath(projectModel.getBasePath());

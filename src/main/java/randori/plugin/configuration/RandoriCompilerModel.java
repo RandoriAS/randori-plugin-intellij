@@ -60,6 +60,104 @@ public class RandoriCompilerModel implements PersistentStateComponent<RandoriCom
     {
         this.makeOnSave = makeOnSave;
     }
+    //----------------------------------
+    // webRoot
+    //----------------------------------
+
+    private String webRoot = null;
+
+    /**
+     * For the time being, the default webroot will be the project root.
+     */
+    public String getWebRoot()
+    {
+        return webRoot;
+    }
+
+    public void setWebRoot(String value)
+    {
+        webRoot = value;
+    }
+
+    //----------------------------------
+    // port
+    //----------------------------------
+
+    private int port = -1;
+
+    public int getPort()
+    {
+        return port;
+    }
+
+    public void setPort(int value)
+    {
+        port = value;
+    }
+
+    //----------------------------------
+    // basePath
+    //----------------------------------
+
+    private String basePath = "generated";
+
+    public String getBasePath()
+    {
+        return basePath;
+    }
+
+    public void setBasePath(String value)
+    {
+        basePath = value;
+    }
+
+    //----------------------------------
+    // libraryPath
+    //----------------------------------
+
+    private String libraryPath = "generated/lib";
+
+    public String getLibraryPath()
+    {
+        return libraryPath;
+    }
+
+    public void setLibraryPath(String value)
+    {
+        libraryPath = value;
+    }
+
+    //----------------------------------
+    // validateCSSClasses
+    //----------------------------------
+
+    private boolean validateCSSClasses = false;
+
+    public boolean isValidateCSSClasses()
+    {
+        return validateCSSClasses;
+    }
+
+    public void setValidateCSSClasses(boolean value)
+    {
+        validateCSSClasses = value;
+    }
+
+    //----------------------------------
+    // classesAsFile
+    //----------------------------------
+
+    private boolean classesAsFile = true;
+
+    public boolean isClassesAsFile()
+    {
+        return classesAsFile;
+    }
+
+    public void setClassesAsFile(boolean value)
+    {
+        classesAsFile = value;
+    }
 
     @Nullable
     @Override
