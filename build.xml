@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="randori-plugin-intellij" default="all">
   
+  <!-- THIS BUILDS AND PACKAGES THE RANDORI INTELLIJ PLUGIN -->
   
   <property file="randori-plugin-intellij.properties"/>
   <!-- Uncomment the following property if no tests compilation is needed -->
