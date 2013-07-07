@@ -16,15 +16,6 @@
 
 package randori.plugin.projectStructure.detection;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.*;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.intellij.ide.util.DelegatingProgressIndicator;
 import com.intellij.ide.util.importProject.LibrariesDetectionStep;
 import com.intellij.ide.util.importProject.ModulesDetectionStep;
@@ -47,6 +38,13 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.NullableFunction;
 import com.intellij.util.StringBuilderSpinAllocator;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Frédéric THOMAS Date: 19/04/13 Time: 18:58
@@ -79,12 +77,8 @@ public class RandoriProjectStructureDetector extends ProjectStructureDetector
     private static JSLanguageDialect getRandoriLanguageDialect(String extension)
     {
         extension = extension.toLowerCase();
-        if (ActionScriptFileType.INSTANCE.getDefaultExtension().equals(extension))
-        {
-            return JavaScriptSupportLoader.ECMA_SCRIPT_L4;
-        }
+        return ActionScriptFileType.INSTANCE.getDefaultExtension().equals(extension) ? JavaScriptSupportLoader.ECMA_SCRIPT_L4 : null;
 
-        return null;
     }
 
     @NotNull

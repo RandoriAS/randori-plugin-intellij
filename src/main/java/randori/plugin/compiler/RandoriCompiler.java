@@ -76,11 +76,12 @@ class RandoriCompiler implements TranslatingCompiler
 
         for (Module module : moduleChunk.getNodes())
         {
-            moduleCount -= 1;
+            final boolean isLastModule = --moduleCount == 0;
             List<VirtualFile> modifiedFiles = project.getComponent(RandoriProjectComponent.class).getModifiedFiles();
 
             boolean doClean = true;
             boolean success;
+
 
             if (context.hashCode() != sessionId)
             {
@@ -110,7 +111,6 @@ class RandoriCompiler implements TranslatingCompiler
             else
                 return;
 
-            final boolean isLastModule = moduleCount == 0;
             if (success)
             {
                 if (context.isMake() && modifiedFiles.size() > 0 && isLastModule)

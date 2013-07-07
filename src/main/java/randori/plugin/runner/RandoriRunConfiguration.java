@@ -44,7 +44,7 @@ import com.intellij.util.xmlb.XmlSerializer;
  * @author Michael Schmalle
  */
 @SuppressWarnings({ "rawtypes" })
-public class RandoriRunConfiguration extends ModuleBasedConfiguration<RandoriApplicationModuleBasedConfiguration>
+public class RandoriRunConfiguration extends ModuleBasedConfiguration<RunConfigurationModule>
 {
     public boolean useExplicitWebroot = false;
     public String explicitWebroot = "";
@@ -53,7 +53,7 @@ public class RandoriRunConfiguration extends ModuleBasedConfiguration<RandoriApp
 
     public RandoriRunConfiguration(String name, Project project, RandoriRunnerConfigurationType configurationType)
     {
-        super(name, new RandoriApplicationModuleBasedConfiguration(project), configurationType
+        super(name, new RunConfigurationModule(project), configurationType
                 .getConfigurationFactories()[0]);
     }
 

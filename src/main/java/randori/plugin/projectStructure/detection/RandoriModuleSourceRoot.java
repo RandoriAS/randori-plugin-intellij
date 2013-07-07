@@ -42,10 +42,8 @@ class RandoriModuleSourceRoot extends DetectedSourceRoot
     @Override
     public DetectedProjectRoot combineWith(@NotNull DetectedProjectRoot root)
     {
-        if (root instanceof RandoriModuleSourceRoot)
-            return this;
+        return root instanceof RandoriModuleSourceRoot ? this : null;
 
-        return null;
     }
 
     @Override
