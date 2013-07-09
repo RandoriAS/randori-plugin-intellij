@@ -39,6 +39,7 @@ import randori.plugin.configuration.RandoriCompilerModel;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -101,7 +102,7 @@ class RandoriCompiler implements TranslatingCompiler
             else if (context.isRebuild())
             {
                 if (doClean)
-                    clearAffectedOutputPathsIfPossible(context);
+                    clearAffectedOutputPathsIfPossible(context, moduleChunk.getNodes().iterator());
 
                 LOG.info("Starting Randori compiler... Rebuild " + module.getName());
                 context.getProgressIndicator().setText("Starting Randori compiler... Rebuild " + module.getName());
@@ -142,7 +143,7 @@ class RandoriCompiler implements TranslatingCompiler
         return projectComponent.validateConfiguration(scope);
     }
 
-    private void clearAffectedOutputPathsIfPossible(final CompileContext context)
+    private void clearAffectedOutputPathsIfPossible(final CompileContext context, final Iterator<Module> moduleIterator)
     {
         final List<File> outPutDirs = new ReadAction<List<File>>() {
             protected void run(final Result<List<File>> result)
@@ -151,10 +152,18 @@ class RandoriCompiler implements TranslatingCompiler
                 final RandoriCompilerModel projectModel = RandoriCompilerModel.getInstance(project).getState();
                 final VirtualFile baseDir = project.getBaseDir();
                 assert projectModel != null;
+
                 baseDir.findFileByRelativePath(projectModel.getBasePath());
-                File outPutDir = new File(FileUtil.toSystemDependentName(baseDir.getPath() + File.separator
+                File generatedDir = new File(FileUtil.toSystemDependentName(baseDir.getPath() + File.separator
                         + projectModel.getBasePath()));
-                dirs.add(outPutDir);
+                dirs.add(generatedDir);
+
+                while (moduleIterator.hasNext()) {
+                    VirtualFile outPutDir = context.getModuleOutputDirectory(moduleIterator.next());
+                    if (outPutDir != null) {
+                        dirs.add(new File(outPutDir.getCanonicalPath()));
+                    }
+                }
                 result.setResult(dirs);
             }
         }.execute().getResultObject();
