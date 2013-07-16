@@ -81,7 +81,7 @@ public class NewRandoriClassAction extends JavaCreateTemplateInPackageAction<Psi
 
         builder.setTitle("Create new Randori file")
                 .addKind("Class", RandoriIcons.Randori16, RandoriTemplates.RANDORI_CLASS)
-                //.addKind("Interface", RandoriIcons.Randori16, RandoriTemplates.RANDORI_INTERFACE)
+                .addKind("Interface", RandoriIcons.Randori16, RandoriTemplates.RANDORI_INTERFACE)
                 .addKind("Behavior", RandoriIcons.Randori16, RandoriTemplates.RANDORI_BEHAVIOUR)
                 .addKind("Mediator", RandoriIcons.Randori16, RandoriTemplates.RANDORI_MEDIATOR)
                 .addKind("Context", RandoriIcons.Randori16, RandoriTemplates.RANDORI_CONTEXT);
