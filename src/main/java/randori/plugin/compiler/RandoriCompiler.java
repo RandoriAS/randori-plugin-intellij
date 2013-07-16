@@ -114,7 +114,7 @@ class RandoriCompiler implements TranslatingCompiler
 
             if (success)
             {
-                if (context.isMake() && modifiedFiles.size() > 0 && isLastModule)
+                if (isLastModule && modifiedFiles.size() > 0)
                     modifiedFiles.removeAll(modifiedFiles);
             }
             else
