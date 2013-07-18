@@ -92,8 +92,8 @@
   
   <path id="randori-plugin-intellij.module.sourcepath">
     <dirset dir="${module.randori-plugin-intellij.basedir}">
-      <include name="src"/>
-      <include name="resources"/>
+      <include name="src/main/java"/>
+      <include name="src/main/resources"/>
     </dirset>
   </path>
   
