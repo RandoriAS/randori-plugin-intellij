@@ -21,7 +21,7 @@
         <![CDATA[
          <h3>0.3.0 changes:</h3>
             <ul>
-                <li>[compiler] Updated to v0.2.4.30</li>
+                <li>[compiler] Updated to v0.2.5.2</li>
                 <li>[plugin-feature] As user I should be able to import projects/modules/libraries. #74 #25 #11</li>
                 <li>[plugin-feature] As user I should be able to compile project composed of modules / RBLs.</li>
                 <li>[plugin-feature] Added Sources & Docs detection for RBLs</li>
