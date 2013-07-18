@@ -14,7 +14,7 @@
  * the License.
  */
 
-package icons;
+package randori.plugin.ui.icons;
 
 import com.intellij.openapi.util.IconLoader;
 

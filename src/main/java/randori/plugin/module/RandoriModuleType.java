@@ -19,7 +19,7 @@ package randori.plugin.module;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.ModuleTypeManager;
-import icons.RandoriIcons;
+import randori.plugin.ui.icons.RandoriIcons;
 import org.jetbrains.annotations.NonNls;
 
 import javax.swing.*;

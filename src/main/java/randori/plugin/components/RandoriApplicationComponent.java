@@ -30,7 +30,7 @@ import de.schlichtherle.truezip.file.TVFS;
 import de.schlichtherle.truezip.fs.FsSyncException;
 import de.schlichtherle.truezip.fs.archive.zip.ZipDriver;
 import de.schlichtherle.truezip.socket.sl.IOPoolLocator;
-import icons.RandoriIcons;
+import randori.plugin.ui.icons.RandoriIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

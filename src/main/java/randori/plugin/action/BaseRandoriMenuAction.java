@@ -19,7 +19,7 @@ package randori.plugin.action;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.LangDataKeys;
-import icons.RandoriIcons;
+import randori.plugin.ui.icons.RandoriIcons;
 import randori.plugin.util.ProjectUtils;
 
 /**

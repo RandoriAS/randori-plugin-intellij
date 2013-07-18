@@ -31,7 +31,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
-import icons.RandoriIcons;
+import randori.plugin.ui.icons.RandoriIcons;
 
 /**
  * @author Roland Zwaga <roland@stackandheap.com>

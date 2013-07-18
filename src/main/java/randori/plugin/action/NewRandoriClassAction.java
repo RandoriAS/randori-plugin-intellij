@@ -32,7 +32,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.util.IncorrectOperationException;
-import icons.RandoriIcons;
+import randori.plugin.ui.icons.RandoriIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import randori.plugin.util.ProjectUtils;

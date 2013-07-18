@@ -45,7 +45,7 @@ import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.ui.content.ContentManager;
 import com.intellij.ui.table.JBTable;
-import icons.RandoriIcons;
+import randori.plugin.ui.icons.RandoriIcons;
 
 // TODO added an error log to the ProblemsService, the collection should not
 //      contain null File instances on CompilerProblems, left null checks in

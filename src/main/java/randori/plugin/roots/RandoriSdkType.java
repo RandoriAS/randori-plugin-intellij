@@ -28,7 +28,7 @@ import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.PathUtil;
-import icons.RandoriIcons;
+import randori.plugin.ui.icons.RandoriIcons;
 import randori.compiler.bundle.*;
 import randori.compiler.bundle.io.StAXManifestReader;
 import randori.plugin.configuration.RandoriCompilerModel;
@@ -113,7 +113,6 @@ public class RandoriSdkType extends SdkType
             copyJSFilesFromBundle(libraryDir, sdkRoot, sdkBundle);
             logger.debug("Finished copying JS files from SDK to library path: " + libPath);
 
-            // TODO figure out the correct way to refresh the generated dir
             // says this should only be called in a writeAction
             baseDir.refresh(true, true);
         }
