@@ -1,0 +1,837 @@
+
+[native(cls="UIntVectorClass",gc="exact",instance="UIntVectorObject",methods="auto")]
+__AS3__$vec final dynamic class Vector$uint extends Object
+{
+  native public function Vector$uint(length:uint = 0,fixed:Boolean = false):*;
+  native AS3 function shift():uint;
+  native AS3 function some(checker:*,thisObj:Object = null):Boolean;
+  native AS3 function reverse():Vector$uint;
+
+  native AS3 function unshift(... rest):uint;
+  native public function set length(value:uint):*;
+  native AS3 function indexOf(value:uint,from:Number = 0):Number;
+  native AS3 function pop():uint;
+  native AS3 function slice(start:Number = 0,end:Number = 2147483647):Vector$uint;
+
+  native private function _slice(start:Number = 0,end:Number = 2147483647):*;
+  native AS3 function concat(... rest):Vector$uint;
+  native private function _filter(callback:Function,thisObject:*):*;
+  native AS3 function push(... rest):uint;
+  native AS3 function every(checker:Function,thisObj:Object = null):Boolean;
+
+  native AS3 function map(mapper:Function,thisObj:Object = null):*;
+  native private function _map(callback:Function,thisObject:*):*;
+  native AS3 function sort(comparefn:*):Vector$uint;
+  native private function _splice(start:*,deleteCount:*,items:Array):*;
+  native private function _reverse():void;
+
+  native public function get length():uint;
+  native public function set fixed(f:Boolean):*;
+  native private function _spliceHelper(insertpoint:uint,insertcount:uint,deleteCount:uint,args:Object,offset:uint):void;
+  native AS3 function forEach(eacher:Function,thisObj:Object = null):void;
+  native AS3 function lastIndexOf(value:uint,from:Number = 2147483647):Number;
+
+  native AS3 function toString():String;
+  native AS3 function toLocaleString():String;
+  native AS3 function join(separator:String = ","):String;
+  native private function _concat(items:Array):*;
+  native public function get fixed():Boolean;
+
+  native private function newThisType():Vector$uint;
+  native private function clamp(val:Number,len:uint):uint;
+  native AS3 function splice(start:Number,deleteCount:Number,... rest):Vector$uint;
+  native AS3 function filter(checker:Function,thisObj:Object = null):Vector$uint;
+  static native private final function castToThisType(item:*):Vector$uint;
+
+  static native private final function _forEach(o:*,callback:Function,thisObject:*):void;
+  static native private final function _every(o:*,callback:Function,thisObject:*):Boolean;
+  static native private final function _some(o:*,callback:Function,thisObject:*):Boolean;
+  static native private final function _sort(o:*,args:Array):*;
+  static native private const AS3:* = "http://adobe.com/AS3/2006/builtin";
+}
+
+native public const avmplus.INCLUDE_METADATA:uint = 64;
+
+[native(cls="BooleanClass",classgc="exact",instance="bool",methods="auto",customconstruct="true")]
+public final class Boolean extends Object
+{
+  native public function Boolean(value:* = null):*;
+  native AS3 function valueOf():Boolean;
+  native AS3 function toString():String;
+  static native public const length:int = 1;
+
+  static native private const AS3:* = "http://adobe.com/AS3/2006/builtin";
+}
+
+[native(cls="MethodClosureClass",gc="exact",instance="MethodClosure",methods="auto",customconstruct="true")]
+private final class MethodClosure extends Function
+{
+  native private function MethodClosure():*;
+  native public override function get prototype():*;
+  native public override function set prototype(p:*):*;
+}
+[native("DescribeTypeClass::describeTypeJSON")]
+native public function avmplus.describeTypeJSON(o:*,flags:uint):Object;
+
+native public const avmplus.FLASH10_FLAGS:uint;
+native public function avmplus.describeMetadata(x:XML,metadata:Array):void;
+[native("Toplevel::encodeURIComponent")]
+native public function encodeURIComponent(uri:String = undefined):String;
+native public const avmplus.INCLUDE_BASES:uint = 2;
+
+[native(cls="IntVectorClass",gc="exact",instance="IntVectorObject",methods="auto")]
+__AS3__$vec final dynamic class Vector$int extends Object
+{
+  native public function Vector$int(length:uint = 0,fixed:Boolean = false):*;
+
+  native AS3 function shift():int;
+  native AS3 function some(checker:*,thisObj:Object = null):Boolean;
+  native AS3 function reverse():Vector$int;
+  native AS3 function unshift(... rest):uint;
+  native public function set length(value:uint):*;
+
+  native AS3 function indexOf(value:int,from:Number = 0):Number;
+  native AS3 function pop():int;
+  native AS3 function slice(start:Number = 0,end:Number = 2147483647):Vector$int;
+  native private function _slice(start:Number = 0,end:Number = 2147483647):*;
+  native AS3 function concat(... rest):Vector$int;
+
+  native private function _filter(callback:Function,thisObject:*):*;
+  native AS3 function push(... rest):uint;
+  native AS3 function every(checker:Function,thisObj:Object = null):Boolean;
+  native AS3 function map(mapper:Function,thisObj:Object = null):*;
+  native private function _map(callback:Function,thisObject:*):*;
+
+  native AS3 function sort(comparefn:*):Vector$int;
+  native private function _splice(start:*,deleteCount:*,items:Array):*;
+  native private function _reverse():void;
+  native public function get length():uint;
+  native public function set fixed(f:Boolean):*;
+
+  native private function _spliceHelper(insertpoint:uint,insertcount:uint,deleteCount:uint,args:Object,offset:uint):void;
+  native AS3 function forEach(eacher:Function,thisObj:Object = null):void;
+  native AS3 function lastIndexOf(value:int,from:Number = 2147483647):Number;
+  native AS3 function toString():String;
+  native AS3 function toLocaleString():String;
+
+  native AS3 function join(separator:String = ","):String;
+  native private function _concat(items:Array):*;
+  native public function get fixed():Boolean;
+  native private function newThisType():Vector$int;
+  native private function clamp(val:Number,len:uint):uint;
+
+  native AS3 function splice(start:Number,deleteCount:Number,... rest):Vector$int;
+  native AS3 function filter(checker:Function,thisObj:Object = null):Vector$int;
+  static native private final function castToThisType(item:*):Vector$int;
+  static native private final function _forEach(o:*,callback:Function,thisObject:*):void;
+  static native private final function _every(o:*,callback:Function,thisObject:*):Boolean;
+
+  static native private final function _some(o:*,callback:Function,thisObject:*):Boolean;
+  static native private final function _sort(o:*,args:Array):*;
+  static native private const AS3:* = "http://adobe.com/AS3/2006/builtin";
+}
+
+[native(cls="StringClass",classgc="exact",instance="String",methods="auto",customconstruct="true")]
+public final class String extends Object
+{
+  native public function String(value:* = ""):*;
+  native AS3 function match(p:* = null):Array;
+
+  native AS3 function indexOf(s:String = undefined,i:Number = 0):int;
+  native private function _indexOf(s:String,i:int = 0):int;
+  native private function _substr(start:int = 0,end:int = 2147483647):String;
+  native AS3 function substring(start:Number = 0,end:Number = 2147483647):String;
+  native AS3 function slice(start:Number = 0,end:Number = 2147483647):String;
+
+  native AS3 function lastIndexOf(s:String = undefined,i:Number = 2147483647):int;
+  native private function _lastIndexOf(s:String,i:int = 2147483647):int;
+  native AS3 function toLowerCase():String;
+  native private function _substring(start:int = 0,end:int = 2147483647):String;
+  native AS3 function split(delim:* = null,limit:* = NaN):Array;
+
+  native AS3 function concat(... rest):String;
+  native AS3 function toLocaleLowerCase():String;
+  native private function _slice(start:int = 0,end:int = 2147483647):String;
+  native public function get length():int;
+  native AS3 function search(p:* = null):int;
+
+  native AS3 function charAt(i:Number = 0):String;
+  native AS3 function localeCompare(other:* = null):int;
+  native AS3 function toString():String;
+  native AS3 function valueOf():String;
+  native AS3 function substr(start:Number = 0,len:Number = 2147483647):String;
+
+  native AS3 function replace(p:* = null,repl:* = null):String;
+  native AS3 function charCodeAt(i:Number = 0):Number;
+  native AS3 function toUpperCase():String;
+  native AS3 function toLocaleUpperCase():String;
+  static native private final function _replace(s:String,p:*,repl:*):String;
+
+  static native public const length:int = 1;
+  static native private final function _match(s:String,p:*):Array;
+  static native private final function _search(s:String,p:*):int;
+  static native private final function _split(s:String,delim:*,limit:uint):Array;
+  static native AS3 final function fromCharCode(... rest):String;
+
+  static native private const AS3:* = "http://adobe.com/AS3/2006/builtin";
+}
+
+[native(cls="DoubleVectorClass",gc="exact",instance="DoubleVectorObject",methods="auto")]
+__AS3__$vec final dynamic class Vector$double extends Object
+{
+  native public function Vector$double(length:uint = 0,fixed:Boolean = false):*;
+  native AS3 function shift():Number;
+  native AS3 function some(checker:*,thisObj:Object = null):Boolean;
+  native AS3 function reverse():Vector$double;
+
+  native AS3 function unshift(... rest):uint;
+  native public function set length(value:uint):*;
+  native AS3 function indexOf(value:Number,from:Number = 0):Number;
+  native AS3 function pop():Number;
+  native AS3 function slice(start:Number = 0,end:Number = 2147483647):Vector$double;
+
+  native private function _slice(start:Number = 0,end:Number = 2147483647):*;
+  native AS3 function concat(... rest):Vector$double;
+  native private function _filter(callback:Function,thisObject:*):*;
+  native AS3 function push(... rest):uint;
+  native AS3 function every(checker:Function,thisObj:Object = null):Boolean;
+
+  native AS3 function map(mapper:Function,thisObj:Object = null):*;
+  native private function _map(callback:Function,thisObject:*):*;
+  native AS3 function sort(comparefn:*):Vector$double;
+  native private function _splice(start:*,deleteCount:*,items:Array):*;
+  native private function _reverse():void;
+
+  native public function get length():uint;
+  native public function set fixed(f:Boolean):*;
+  native private function _spliceHelper(insertpoint:uint,insertcount:uint,deleteCount:uint,args:Object,offset:uint):void;
+  native AS3 function forEach(eacher:Function,thisObj:Object = null):void;
+  native AS3 function lastIndexOf(value:Number,from:Number = 2147483647):Number;
+
+  native AS3 function toString():String;
+  native AS3 function toLocaleString():String;
+  native AS3 function join(separator:String = ","):String;
+  native private function _concat(items:Array):*;
+  native public function get fixed():Boolean;
+
+  native private function newThisType():Vector$double;
+  native private function clamp(val:Number,len:uint):uint;
+  native AS3 function splice(start:Number,deleteCount:Number,... rest):Vector$double;
+  native AS3 function filter(checker:Function,thisObj:Object = null):Vector$double;
+  static native private final function castToThisType(item:*):Vector$double;
+
+  static native private final function _forEach(o:*,callback:Function,thisObject:*):void;
+  static native private final function _every(o:*,callback:Function,thisObject:*):Boolean;
+  static native private final function _some(o:*,callback:Function,thisObject:*):Boolean;
+  static native private final function _sort(o:*,args:Array):*;
+  static native private const AS3:* = "http://adobe.com/AS3/2006/builtin";
+}
+
+native public function avmplus.describeParams(x:XML,parameters:Object):void;
+
+[native(cls="ArrayClass",gc="exact",instance="ArrayObject",methods="auto")]
+public dynamic class Array extends Object
+{
+  native public function Array(... rest):*;
+  native AS3 function reverse():Array;
+  native AS3 function map(callback:Function,thisObject:* = null):Array;
+  native AS3 function shift():*;
+
+  native public function get length():uint;
+  native AS3 function unshift(... rest):uint;
+  native AS3 function join(sep:* = null):String;
+  native AS3 function lastIndexOf(searchElement:*,fromIndex:* = 2147483647):int;
+  native public function set length(newLength:uint):*;
+
+  native AS3 function indexOf(searchElement:*,fromIndex:* = 0):int;
+  native AS3 function pop():*;
+  native AS3 function slice(A:* = 0,B:* = NaN):Array;
+  native AS3 function concat(... rest):Array;
+  native AS3 function some(callback:Function,thisObject:* = null):Boolean;
+
+  native AS3 function filter(callback:Function,thisObject:* = null):Array;
+  native AS3 function forEach(callback:Function,thisObject:* = null):void;
+  native AS3 function push(... rest):uint;
+  native AS3 function every(callback:Function,thisObject:* = null):Boolean;
+  native AS3 function splice(... rest):*;
+
+  native AS3 function sortOn(names:*,options:* = 0,... rest):*;
+  native AS3 function sort(... rest):*;
+  static native public const CASEINSENSITIVE:uint = 1;
+  static native private final function _shift(o:*):*;
+  static native private final function _join(o:*,sep:*):String;
+
+  static native private final function _unshift(o:*,args:Array):uint;
+  static native private final function _indexOf(o:*,searchElement:*,fromIndex:int):int;
+  static native private final function _pop(o:*):*;
+  static native private final function _slice(o:*,A:Number,B:Number):Array;
+  static native private final function _lastIndexOf(o:*,searchElement:*,fromIndex:int = 0):int;
+
+  static native private final function _filter(o:*,callback:Function,thisObject:*):Array;
+  static native private final function _splice(o:*,args:Array):Array;
+  static native private final function _every(o:*,callback:Function,thisObject:*):Boolean;
+  static native private final function _map(o:*,callback:Function,thisObject:*):Array;
+  static native private final function _reverse(o:*):*;
+
+  static native public const length:int = 1;
+  static native private final function _forEach(o:*,callback:Function,thisObject:*):void;
+  static native public const NUMERIC:uint = 16;
+  static native public const UNIQUESORT:uint = 4;
+  static native private final function _concat(o:*,args:Array):Array;
+
+  static native private final function _some(o:*,callback:Function,thisObject:*):Boolean;
+  static native public const RETURNINDEXEDARRAY:uint = 8;
+  static native private final function _sortOn(o:*,names:*,options:*):*;
+  static native private final function _sort(o:*,args:Array):*;
+  static native public const DESCENDING:uint = 2;
+
+  static native private const AS3:* = "http://adobe.com/AS3/2006/builtin";
+}
+
+[native(cls="NamespaceClass",classgc="exact",instance="Namespace",methods="auto",customconstruct="true")]
+public final class Namespace extends Object
+{
+  native public function Namespace(prefix:* = null,uri:* = null):*;
+  native AS3 function valueOf():String;
+  native public function get prefix():*;
+  native AS3 function toString():String;
+
+  native public function get uri():String;
+  static native public const length:* = 2;
+  static native private const AS3:* = "http://adobe.com/AS3/2006/builtin";
+}
+[native("Toplevel::parseInt")]
+native public function parseInt(s:String = NaN,radix:int = 0):Number;
+native public const AS3:* = "http://adobe.com/AS3/2006/builtin";
+
+native public const avmplus.implementsXml:XML;
+native public const Infinity:Number = Infinity;
+native public const undefined:*;
+native public const avmplus.accessorXml:XML;
+
+[native(cls="ClassClass",gc="exact",instance="ClassClosure",methods="auto",customconstruct="true")]
+public dynamic class Class extends Object
+{
+  native public function Class():*;
+
+  native public final function get prototype():*;
+  static native public const length:int = 1;
+}
+[API("675")]
+[native("Toplevel::bugzilla")]
+native public function bugzilla(n:int):Boolean;
+
+[native(cls="ObjectClass",classgc="exact",methods="auto",customconstruct="true")]
+public dynamic class Object
+{
+  native public function Object():*;
+  native AS3 function hasOwnProperty(V:* = null):Boolean;
+
+  native AS3 function propertyIsEnumerable(V:* = null):Boolean;
+  native AS3 function isPrototypeOf(V:* = null):Boolean;
+  static native private final function _hasOwnProperty(o:*,V:String):Boolean;
+  static native protected final function _dontEnumPrototype(proto:Object):void;
+  static native private final function _propertyIsEnumerable(o:*,V:String):Boolean;
+
+  static native private final function _isPrototypeOf(o:*,V:*):Boolean;
+  static native protected final function _setPropertyIsEnumerable(o:*,V:String,enumerable:Boolean):void;
+  static native private final function _toString(o:*):String;
+  static native public const length:int = 1;
+  [API("675")]
+  static native public final function _init():*;
+
+  static native public final function init():*;
+  static native private const AS3:* = "http://adobe.com/AS3/2006/builtin";
+}
+native public const avmplus.INCLUDE_VARIABLES:uint = 8;
+
+[native(cls="UIntClass",classgc="exact",instance="uint32_t",methods="auto",customconstruct="true")]
+public final class uint extends Object
+{
+  native public function uint(value:* = 0):*;
+  native AS3 function toPrecision(p:* = 0):String;
+
+  native AS3 function valueOf():uint;
+  native AS3 function toFixed(p:* = 0):String;
+  native AS3 function toExponential(p:* = 0):String;
+  native AS3 function toString(radix:* = 10):String;
+  static native public const MIN_VALUE:uint = 0;
+
+  static native public const length:int = 1;
+  static native public const MAX_VALUE:uint = NaN;
+  static native private const AS3:* = "http://adobe.com/AS3/2006/builtin";
+}
+
+[native(cls="VectorClass",gc="exact",instance="ObjectVectorObject",methods="auto")]
+__AS3__$vec final dynamic class Vector extends Object
+{
+  native public function Vector():*;
+}
+native public const avmplus.metadataXml:XML;
+
+[native("Toplevel::unescape")]
+native public function unescape(s:String = undefined):String;
+[native("Toplevel::parseFloat")]
+native public function parseFloat(str:String = NaN):Number;
+native public const avmplus.INCLUDE_INTERFACES:uint = 4;
+native public const avmplus.methodXml:XML;
+[native("Toplevel::isFinite")]
+native public function isFinite(n:Number = 0):Boolean;
+
+native public const avmplus.typeXml:XML;
+[native("Toplevel::isNaN")]
+native public function isNaN(n:Number = 0):Boolean;
+[native("Toplevel::escape")]
+native public function escape(s:String = undefined):String;
+native public const avmplus.HIDE_NSURI_METHODS:uint = 1;
+
+[native(cls="NumberClass",classgc="exact",instance="double",methods="auto",customconstruct="true")]
+public final class Number extends Object
+{
+  native public function Number(value:* = 0):*;
+
+  native AS3 function toPrecision(p:* = 0):String;
+  native AS3 function valueOf():Number;
+  native AS3 function toFixed(p:* = 0):String;
+  native AS3 function toExponential(p:* = 0):String;
+  native AS3 function toString(radix:* = 10):String;
+
+  static native private final function _convert(n:Number,precision:int,mode:int):String;
+  static native public const MIN_VALUE:Number;
+  static native public const length:int = 1;
+  static native private const DTOSTR_FIXED:int = 1;
+  static native public const POSITIVE_INFINITY:Number = Infinity;
+
+  static native private const DTOSTR_PRECISION:int = 2;
+  static native public const NEGATIVE_INFINITY:Number = -Infinity;
+  static native private final function _numberToString(n:Number,radix:int):String;
+  static native public const MAX_VALUE:Number = NaN;
+  static native private const DTOSTR_EXPONENTIAL:int = 3;
+
+  static native public const NaN:Number = NaN;
+  static native private final function _minValue():Number;
+  static native private const AS3:* = "http://adobe.com/AS3/2006/builtin";
+}
+native public function avmplus.finish(e:XML,i:Object):void;
+[native("DescribeTypeClass::getQualifiedSuperclassName")]
+native public function avmplus.getQualifiedSuperclassName(value:*):String;
+
+[native("Toplevel::encodeURI")]
+native public function encodeURI(uri:String = undefined):String;
+[native("Toplevel::decodeURI")]
+native public function decodeURI(uri:String = undefined):String;
+
+[native(cls="ObjectVectorClass",gc="exact",instance="ObjectVectorObject",methods="auto")]
+__AS3__$vec final dynamic class Vector$object extends Object
+{
+  native public function Vector$object(length:uint = 0,fixed:Boolean = false):*;
+  native AS3 function shift():*;
+  native AS3 function some(checker:*,thisObj:Object = null):Boolean;
+
+  native AS3 function reverse():Vector$object;
+  native AS3 function unshift(... rest):uint;
+  native public function set length(value:uint):*;
+  native AS3 function indexOf(value:Object,from:Number = 0):Number;
+  native AS3 function pop():*;
+
+  native AS3 function slice(start:Number = 0,end:Number = 2147483647):Vector$object;
+  native private function _slice(start:Number = 0,end:Number = 2147483647):*;
+  native AS3 function concat(... rest):Vector$object;
+  native private function _filter(callback:Function,thisObject:*):*;
+  native AS3 function push(... rest):uint;
+
+  native AS3 function every(checker:Function,thisObj:Object = null):Boolean;
+  native AS3 function map(mapper:Function,thisObj:Object = null):*;
+  native private function _map(callback:Function,thisObject:*):*;
+  native AS3 function sort(comparefn:*):Vector$object;
+  native private function _splice(start:*,deleteCount:*,items:Array):*;
+
+  native private function _reverse():void;
+  native public function get length():uint;
+  native public function set fixed(f:Boolean):*;
+  native private function _spliceHelper(insertpoint:uint,insertcount:uint,deleteCount:uint,args:Object,offset:uint):void;
+  native AS3 function forEach(eacher:Function,thisObj:Object = null):void;
+
+  native AS3 function lastIndexOf(value:Object,from:Number = 2147483647):Number;
+  native AS3 function toString():String;
+  native AS3 function toLocaleString():String;
+  native AS3 function join(separator:String = ","):String;
+  native private function _concat(items:Array):*;
+
+  native public function get fixed():Boolean;
+  native private function newThisType():Vector$object;
+  native private function clamp(val:Number,len:uint):uint;
+  native AS3 function splice(start:Number,deleteCount:Number,... rest):Vector$object;
+  native AS3 function filter(checker:Function,thisObj:Object = null):Vector$object;
+
+  static native private final function castToThisType(item:*):Vector$object;
+  static native private final function _forEach(o:*,callback:Function,thisObject:*):void;
+  static native private final function _every(o:*,callback:Function,thisObject:*):Boolean;
+  static native private final function _some(o:*,callback:Function,thisObject:*):Boolean;
+  static native private final function _sort(o:*,args:Array):*;
+
+  static native private const AS3:* = "http://adobe.com/AS3/2006/builtin";
+}
+native public const avmplus.INCLUDE_CONSTRUCTOR:uint = 128;
+native public function avmplus.describeType(value:*,flags:uint):XML;
+native public const avmplus.factoryXml:XML;
+native public const avmplus.parameterXml:XML;
+
+[native("Toplevel::isXMLName")]
+native public function isXMLName(str:* = null):Boolean;
+native public const avmplus.INCLUDE_TRAITS:uint = 256;
+native public const avmplus.constructorXml:XML;
+native public const avmplus.extendsXml:XML;
+native public const avmplus.constantXml:XML;
+
+native public const avmplus.USE_ITRAITS:uint = 512;
+native public function avmplus.describeTraits(x:XML,traits:Object):void;
+native public const NaN:Number = NaN;
+native public const avmplus.HIDE_OBJECT:uint = 1024;
+[native("DescribeTypeClass::getQualifiedClassName")]
+native public function avmplus.getQualifiedClassName(value:*):String;
+
+native public const avmplus.argXml:XML;
+
+[native(cls="IntClass",classgc="exact",instance="int32_t",methods="auto",customconstruct="true")]
+public final class int extends Object
+{
+  native public function int(value:* = 0):*;
+  native AS3 function toPrecision(p:* = 0):String;
+  native AS3 function valueOf():int;
+  native AS3 function toFixed(p:* = 0):String;
+
+  native AS3 function toExponential(p:* = 0):String;
+  native AS3 function toString(radix:* = 10):String;
+  static native public const MIN_VALUE:int = -2147483648;
+  static native public const length:int = 1;
+  static native public const MAX_VALUE:int = 2147483647;
+
+  static native private const AS3:* = "http://adobe.com/AS3/2006/builtin";
+}
+native public const avmplus.INCLUDE_METHODS:uint = 32;
+native public const avmplus.INCLUDE_ACCESSORS:uint = 16;
+
+[native(cls="FunctionClass",gc="exact",instance="FunctionObject",methods="auto",customconstruct="true")]
+public dynamic class Function extends Object
+{
+  native public function Function():*;
+  native public function get prototype():*;
+
+  native public function set prototype(p:*):*;
+  native AS3 function call(thisArg:* = null,... rest):*;
+  native public function get length():int;
+  native AS3 function apply(thisArg:* = null,argArray:* = null):*;
+  static native private final function emptyCtor():*;
+
+  static native public const length:int = 1;
+  static native private const AS3:* = "http://adobe.com/AS3/2006/builtin";
+}
+native public const avmplus.variableXml:XML;
+[native("Toplevel::decodeURIComponent")]
+native public function decodeURIComponent(uri:String = undefined):String;
+
+
+[JavaScript(export="false",name="Object",mode="json")]
+public class service.vo.TargetData extends Object
+{
+  native public function TargetData():*;
+
+  native public var name:String;
+  native public var image:String;
+  native public var lastKnownLocation:String;
+  native public var status:String;
+}
+
+
+[JavaScript(export="false")]
+public class JSON extends Object
+{
+  native public function JSON():*;
+
+  static native public function parse(value:String):Object;
+}
+
+
+public class randori.service.parser.AbstractParser extends Object
+{
+  native public function AbstractParser():*;
+}
+
+
+public class service.parser.GenericJsonParser extends randori.service.parser.AbstractParser
+{
+  native public function GenericJsonParser():*;
+  native public function parseResult(result:Object):Array;
+}
+
+
+[JavaScript(export="false",name="Object",mode="json")]
+public class service.vo.Gadget extends Object
+{
+  native public function Gadget():*;
+
+  native public var name:String;
+  native public var image:String;
+  native public var status:String;
+}
+
+
+[native(cls="XMLListClass",gc="exact",instance="XMLListObject",methods="auto",customconstruct="true")]
+public final dynamic class XMLList extends Object
+{
+  native public function XMLList(value:* = null):*;
+  native AS3 override function hasOwnProperty(P:* = null):Boolean;
+
+  native AS3 function insertChildBefore(child1:*,child2:*):*;
+  native AS3 function namespaceDeclarations():Array;
+  native AS3 function removeNamespace(ns:*):XML;
+  native AS3 override function propertyIsEnumerable(P:* = null):Boolean;
+  native AS3 function setChildren(value:*):XML;
+
+  native AS3 function name():Object;
+  native AS3 function replace(propertyName:*,value:*):XML;
+  native AS3 function normalize():XMLList;
+  native AS3 function inScopeNamespaces():Array;
+  native AS3 function toXMLString():String;
+
+  native AS3 function descendants(name:* = "*"):XMLList;
+  native AS3 function attributes():XMLList;
+  native AS3 function processingInstructions(name:* = "*"):XMLList;
+  native AS3 function setNamespace(ns:*):void;
+  native AS3 function setLocalName(name:*):void;
+
+  native AS3 function namespace(prefix:* = null):*;
+  native AS3 function attribute(arg:*):XMLList;
+  native AS3 function childIndex():int;
+  native AS3 function contains(value:*):Boolean;
+  native AS3 function appendChild(child:*):XML;
+
+  native AS3 function hasComplexContent():Boolean;
+  native AS3 function localName():Object;
+  native AS3 function length():int;
+  native AS3 function valueOf():XMLList;
+  native AS3 function parent():*;
+
+  native AS3 function child(propertyName:*):XMLList;
+  native AS3 function toString():String;
+  native AS3 function hasSimpleContent():Boolean;
+  native AS3 function prependChild(value:*):XML;
+  native AS3 function setName(name:*):void;
+
+  native AS3 function text():XMLList;
+  native AS3 function copy():XMLList;
+  native AS3 function nodeKind():String;
+  native AS3 function elements(name:* = "*"):XMLList;
+  native AS3 function insertChildAfter(child1:*,child2:*):*;
+
+  native AS3 function addNamespace(ns:*):XML;
+  native AS3 function comments():XMLList;
+  native private function _namespace(prefix:*,argc:int):*;
+  native AS3 function children():XMLList;
+  static native public const length:* = 1;
+
+  static native private const AS3:* = "http://adobe.com/AS3/2006/builtin";
+}
+
+[native(cls="QNameClass",gc="exact",instance="QNameObject",methods="auto",customconstruct="true")]
+public final class QName extends Object
+{
+  native public function QName(namespace:* = null,name:* = null):*;
+  native AS3 function valueOf():QName;
+  native AS3 function toString():String;
+  native public function get uri():*;
+
+  native public function get localName():String;
+  static native public const length:* = 2;
+  static native private const AS3:* = "http://adobe.com/AS3/2006/builtin";
+}
+
+[native(cls="XMLClass",gc="exact",instance="XMLObject",methods="auto",customconstruct="true")]
+public final dynamic class XML extends Object
+{
+  native public function XML(value:* = null):*;
+  native AS3 override function hasOwnProperty(P:* = null):Boolean;
+
+  native AS3 function insertChildBefore(child1:*,child2:*):*;
+  native AS3 function replace(propertyName:*,value:*):XML;
+  native AS3 function setNotification(f:Function):*;
+  native AS3 function removeNamespace(ns:*):XML;
+  native AS3 override function propertyIsEnumerable(P:* = null):Boolean;
+
+  native AS3 function setChildren(value:*):XML;
+  native AS3 function name():Object;
+  native AS3 function normalize():XML;
+  native AS3 function inScopeNamespaces():Array;
+  native AS3 function toXMLString():String;
+
+  native AS3 function setLocalName(name:*):void;
+  native AS3 function localName():Object;
+  native AS3 function attributes():XMLList;
+  native AS3 function processingInstructions(name:* = "*"):XMLList;
+  native AS3 function setNamespace(ns:*):void;
+
+  native AS3 function namespace(prefix:* = null):*;
+  native AS3 function child(propertyName:*):XMLList;
+  native AS3 function childIndex():int;
+  native AS3 function contains(value:*):Boolean;
+  native AS3 function appendChild(child:*):XML;
+
+  native AS3 function hasComplexContent():Boolean;
+  native AS3 function descendants(name:* = "*"):XMLList;
+  native AS3 function length():int;
+  native AS3 function valueOf():XML;
+  native AS3 function parent():*;
+
+  native private function _namespace(prefix:*,argc:int):*;
+  native AS3 function toString():String;
+  native AS3 function hasSimpleContent():Boolean;
+  native AS3 function prependChild(value:*):XML;
+  native AS3 function setName(name:*):void;
+
+  native AS3 function notification():Function;
+  native AS3 function comments():XMLList;
+  native AS3 function copy():XML;
+  native AS3 function nodeKind():String;
+  native AS3 function elements(name:* = "*"):XMLList;
+
+  native AS3 function insertChildAfter(child1:*,child2:*):*;
+  native AS3 function addNamespace(ns:*):XML;
+  native AS3 function namespaceDeclarations():Array;
+  native AS3 function text():XMLList;
+  native AS3 function attribute(arg:*):XMLList;
+
+  native AS3 function children():XMLList;
+  static native AS3 final function settings():Object;
+  static native public final function set prettyIndent(newIndent:int):*;
+  static native AS3 final function setSettings(o:Object = null):void;
+  static native public final function get ignoreComments():Boolean;
+
+  static native public final function get prettyIndent():int;
+  static native public final function get ignoreProcessingInstructions():Boolean;
+  static native public final function get prettyPrinting():Boolean;
+  static native public const length:* = 1;
+  static native public final function get ignoreWhitespace():Boolean;
+
+  static native public final function set ignoreComments(newIgnore:Boolean):*;
+  static native public final function set ignoreProcessingInstructions(newIgnore:Boolean):*;
+  static native public final function set prettyPrinting(newPretty:Boolean):*;
+  static native AS3 final function defaultSettings():Object;
+  static native public final function set ignoreWhitespace(newIgnore:Boolean):*;
+
+  static native private const AS3:* = "http://adobe.com/AS3/2006/builtin";
+}
+
+
+[native(cls="URIErrorClass",gc="exact",instance="URIErrorObject",methods="auto")]
+public dynamic class URIError extends Error
+{
+  native public function URIError(message:* = "",id:* = 0):*;
+  static native public const length:int = 1;
+}
+
+[native(cls="ArgumentErrorClass",gc="exact",instance="ArgumentErrorObject",methods="auto")]
+public dynamic class ArgumentError extends Error
+{
+  native public function ArgumentError(message:* = "",id:* = 0):*;
+  static native public const length:int = 1;
+}
+
+[native(cls="UninitializedErrorClass",gc="exact",instance="UninitializedErrorObject",methods="auto")]
+public dynamic class UninitializedError extends Error
+{
+
+  native public function UninitializedError(message:* = "",id:* = 0):*;
+  static native public const length:int = 1;
+}
+
+[native(cls="DefinitionErrorClass",gc="exact",instance="DefinitionErrorObject",methods="auto")]
+public dynamic class DefinitionError extends Error
+{
+  native public function DefinitionError(message:* = "",id:* = 0):*;
+  static native public const length:int = 1;
+}
+
+public dynamic class flash.errors.MemoryError extends Error
+{
+  native public function MemoryError(message:String = "",id:int = 0):*;
+}
+
+public dynamic class flash.errors.IOError extends Error
+{
+
+  native public function IOError(message:String = "",id:int = 0):*;
+}
+
+[native(cls="SecurityErrorClass",gc="exact",instance="SecurityErrorObject",methods="auto")]
+public dynamic class SecurityError extends Error
+{
+  native public function SecurityError(message:* = "",id:* = 0):*;
+  static native public const length:int = 1;
+}
+
+public dynamic class flash.errors.EOFError extends flash.errors.IOError
+{
+  native public function EOFError(message:String = "",id:int = 0):*;
+}
+
+[native(cls="ReferenceErrorClass",gc="exact",instance="ReferenceErrorObject",methods="auto")]
+public dynamic class ReferenceError extends Error
+{
+  native public function ReferenceError(message:* = "",id:* = 0):*;
+
+  static native public const length:int = 1;
+}
+
+[native(cls="EvalErrorClass",gc="exact",instance="EvalErrorObject",methods="auto")]
+public dynamic class EvalError extends Error
+{
+  native public function EvalError(message:* = "",id:* = 0):*;
+  static native public const length:int = 1;
+}
+
+[native(cls="SyntaxErrorClass",gc="exact",instance="SyntaxErrorObject",methods="auto")]
+public dynamic class SyntaxError extends Error
+{
+  native public function SyntaxError(message:* = "",id:* = 0):*;
+  static native public const length:int = 1;
+}
+
+[native(cls="TypeErrorClass",gc="exact",instance="TypeErrorObject",methods="auto")]
+public dynamic class TypeError extends Error
+{
+
+  native public function TypeError(message:* = "",id:* = 0):*;
+  static native public const length:int = 1;
+}
+
+[native(cls="ErrorClass",gc="exact",instance="ErrorObject",methods="auto")]
+public dynamic class Error extends Object
+{
+  native public function Error(message:* = "",id:* = 0):*;
+  native public function getStackTrace():String;
+  native private var _errorID:int;
+
+  native public function get errorID():int;
+  native public var message:*;
+  native public var name:*;
+  static native public final function throwError(type:Class,index:uint,... rest):*;
+  static native public final function getErrorMessage(index:int):String;
+
+  static native public const length:int = 1;
+}
+
+[native(cls="RangeErrorClass",gc="exact",instance="RangeErrorObject",methods="auto")]
+public dynamic class RangeError extends Error
+{
+  native public function RangeError(message:* = "",id:* = 0):*;
+  static native public const length:int = 1;
+}
+
+[native(cls="VerifyErrorClass",gc="exact",instance="VerifyErrorObject",methods="auto")]
+public dynamic class VerifyError extends Error
+{
+  native public function VerifyError(message:* = "",id:* = 0):*;
+  static native public const length:int = 1;
+}
+
