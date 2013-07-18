@@ -5,9 +5,7 @@
   
   <property file="randori-plugin-intellij.properties"/>
   <!-- Uncomment the following property if no tests compilation is needed -->
-  <!-- 
   <property name="skip.tests" value="true"/>
-   -->
   
   <pathconvert property="path.variable.maven_repository" dirsep="/">
 	<path location="${p.path.variable.maven_repository}" />
