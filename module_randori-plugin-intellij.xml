@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_randori-plugin-intellij" default="compile.module.randori-plugin-intellij">
+  <dirname property="module.randori-plugin-intellij.basedir" file="${ant.file.module_randori-plugin-intellij}"/>
+  
+  <property name="module.jdk.home.randori-plugin-intellij" value="${jdk.home.idea_iu-129.451}"/>
+  <property name="module.jdk.bin.randori-plugin-intellij" value="${jdk.bin.idea_iu-129.451}"/>
+  <property name="module.jdk.classpath.randori-plugin-intellij" value="jdk.classpath.idea_iu-129.451"/>
+  
+  <property name="compiler.args.randori-plugin-intellij" value="${compiler.args}"/>
+  
+  <property name="randori-plugin-intellij.output.dir" value="${module.randori-plugin-intellij.basedir}/out/production/randori-plugin-intellij"/>
+  <property name="randori-plugin-intellij.testoutput.dir" value="${module.randori-plugin-intellij.basedir}/out/test/randori-plugin-intellij"/>
+  
+  <path id="randori-plugin-intellij.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="randori-plugin-intellij.module.production.classpath">
+    <path refid="${module.jdk.classpath.randori-plugin-intellij}"/>
+    <fileset dir="${basedir}/lib">
+      <patternset refid="library.patterns"/>
+    </fileset>
+    <fileset dir="${basedir}/lib/external">
+      <patternset refid="library.patterns"/>
+    </fileset>
+    <fileset dir="${basedir}/lib/jetty">
+      <patternset refid="library.patterns"/>
+    </fileset>
+    <fileset dir="${randori.compiler.path}">
+      <patternset refid="library.patterns"/>
+    </fileset>
+  </path>
+  
+  <path id="randori-plugin-intellij.runtime.production.module.classpath">
+    <pathelement location="${randori-plugin-intellij.output.dir}"/>
+    <fileset dir="${basedir}/lib">
+      <patternset refid="library.patterns"/>
+    </fileset>
+    <fileset dir="${basedir}/lib/external">
+      <patternset refid="library.patterns"/>
+    </fileset>
+    <fileset dir="${basedir}/lib/jetty">
+      <patternset refid="library.patterns"/>
+    </fileset>
+    <fileset dir="${randori.compiler.path}">
+      <patternset refid="library.patterns"/>
+    </fileset>
+  </path>
+  
+  <path id="randori-plugin-intellij.module.classpath">
+    <path refid="${module.jdk.classpath.randori-plugin-intellij}"/>
+    <pathelement location="${randori-plugin-intellij.output.dir}"/>
+    <fileset dir="${basedir}/lib">
+      <patternset refid="library.patterns"/>
+    </fileset>
+    <fileset dir="${basedir}/lib/external">
+      <patternset refid="library.patterns"/>
+    </fileset>
+    <fileset dir="${basedir}/lib/jetty">
+      <patternset refid="library.patterns"/>
+    </fileset>
+    <fileset dir="${randori.compiler.path}">
+      <patternset refid="library.patterns"/>
+    </fileset>
+  </path>
+  
+  <path id="randori-plugin-intellij.runtime.module.classpath">
+    <pathelement location="${randori-plugin-intellij.testoutput.dir}"/>
+    <pathelement location="${randori-plugin-intellij.output.dir}"/>
+    <fileset dir="${basedir}/lib">
+      <patternset refid="library.patterns"/>
+    </fileset>
+    <fileset dir="${basedir}/lib/external">
+      <patternset refid="library.patterns"/>
+    </fileset>
+    <fileset dir="${basedir}/lib/jetty">
+      <patternset refid="library.patterns"/>
+    </fileset>
+    <fileset dir="${randori.compiler.path}">
+      <patternset refid="library.patterns"/>
+    </fileset>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.randori-plugin-intellij">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.randori-plugin-intellij">
+    <patternset refid="excluded.from.module.randori-plugin-intellij"/>
+  </patternset>
+  
+  <path id="randori-plugin-intellij.module.sourcepath">
+    <dirset dir="${module.randori-plugin-intellij.basedir}">
+      <include name="src"/>
+      <include name="resources"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.randori-plugin-intellij" depends="compile.module.randori-plugin-intellij.production,compile.module.randori-plugin-intellij.tests" description="Compile module randori-plugin-intellij"/>
+  
+  <target name="compile.module.randori-plugin-intellij.production" depends="register.custom.compilers" description="Compile module randori-plugin-intellij; production classes">
+    <mkdir dir="${randori-plugin-intellij.output.dir}"/>
+    <javac2 destdir="${randori-plugin-intellij.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.randori-plugin-intellij}/javac">
+      <compilerarg line="${compiler.args.randori-plugin-intellij}"/>
+      <bootclasspath refid="randori-plugin-intellij.module.bootclasspath"/>
+      <classpath refid="randori-plugin-intellij.module.production.classpath"/>
+      <src refid="randori-plugin-intellij.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.randori-plugin-intellij"/>
+    </javac2>
+
+    <copy todir="${randori-plugin-intellij.output.dir}">
+      <fileset dir="${module.randori-plugin-intellij.basedir}/src/main/java">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+      <fileset dir="${module.randori-plugin-intellij.basedir}/src/main/resources">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.randori-plugin-intellij.tests" depends="register.custom.compilers,compile.module.randori-plugin-intellij.production" description="compile module randori-plugin-intellij; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.randori-plugin-intellij" description="cleanup module">
+    <delete dir="${randori-plugin-intellij.output.dir}"/>
+    <delete dir="${randori-plugin-intellij.testoutput.dir}"/>
+  </target>
+  
+  <property name="randori-plugin-intellij.plugin.path.jar" value="${module.randori-plugin-intellij.basedir}/randori-plugin-intellij.zip"/>
+  
+  <!-- Build archive for plugin 'randori-plugin-intellij' -->
+  <target name="plugin.build.jar.randori-plugin-intellij" depends="compile.module.randori-plugin-intellij" description="Build plugin archive for module &#39;randori-plugin-intellij&#39;">
+    <property name="tmp.dir.randori-plugin-intellij" value="${module.randori-plugin-intellij.basedir}/../temp"/>
+    <mkdir dir="${tmp.dir.randori-plugin-intellij}"/>
+    <mkdir dir="${tmp.dir.randori-plugin-intellij}/randori-plugin-intellij"/>
+    <mkdir dir="${tmp.dir.randori-plugin-intellij}/randori-plugin-intellij/lib"/>
+    <property name="zipdirectory" value="${tmp.dir.randori-plugin-intellij}/randori-plugin-intellij/lib"/>
+    <jar destfile="${zipdirectory}/randori-plugin-intellij.jar" duplicate="preserve">
+      <zipfileset dir="${module.randori-plugin-intellij.basedir}/out/production/randori-plugin-intellij"/>
+      <zipfileset file="${module.randori-plugin-intellij.basedir}/META-INF/plugin.xml" prefix="META-INF"/>
+      <manifest>
+        <attribute name="Created-By" value="IntelliJ IDEA"/>
+        <attribute name="Manifest-Version" value="1.0"/>
+      </manifest>
+    </jar>
+    <copy file="${module.randori-plugin-intellij.basedir}/lib/jetty/servlet-api-3.0.jar" tofile="${zipdirectory}/servlet-api-3.0.jar"/>
+    <copy file="${module.randori-plugin-intellij.basedir}/lib/jetty/jetty-io-8.1.10.v20130312.jar" tofile="${zipdirectory}/jetty-io-8.1.10.v20130312.jar"/>
+    <copy file="${module.randori-plugin-intellij.basedir}/lib/jetty/jetty-http-8.1.10.v20130312.jar" tofile="${zipdirectory}/jetty-http-8.1.10.v20130312.jar"/>
+    <copy file="${module.randori-plugin-intellij.basedir}/lib/jetty/jetty-util-8.1.10.v20130312.jar" tofile="${zipdirectory}/jetty-util-8.1.10.v20130312.jar"/>
+    <copy file="${module.randori-plugin-intellij.basedir}/lib/jetty/jetty-server-8.1.10.v20130312.jar" tofile="${zipdirectory}/jetty-server-8.1.10.v20130312.jar"/>
+    <copy file="${module.randori-plugin-intellij.basedir}/lib/jetty/jetty-continuation-8.1.10.v20130312.jar" tofile="${zipdirectory}/jetty-continuation-8.1.10.v20130312.jar"/>
+    <copy file="${module.randori-plugin-intellij.basedir}/lib/external/antlr.jar" tofile="${zipdirectory}/antlr.jar"/>
+    <copy file="${module.randori-plugin-intellij.basedir}/lib/external/guava.jar" tofile="${zipdirectory}/guava.jar"/>
+    <copy file="${module.randori-plugin-intellij.basedir}/lib/external/lzma-sdk.jar" tofile="${zipdirectory}/lzma-sdk.jar"/>
+    <copy file="${module.randori-plugin-intellij.basedir}/lib/external/commons-io.jar" tofile="${zipdirectory}/commons-io.jar"/>
+    <copy file="${module.randori-plugin-intellij.basedir}/lib/external/jatl-0.2.2.jar" tofile="${zipdirectory}/jatl-0.2.2.jar"/>
+    <copy file="${module.randori-plugin-intellij.basedir}/lib/external/commons-cli.jar" tofile="${zipdirectory}/commons-cli.jar"/>
+    <copy file="${module.randori-plugin-intellij.basedir}/lib/external/velocity-1.6.2.jar" tofile="${zipdirectory}/velocity-1.6.2.jar"/>
+    <copy file="${module.randori-plugin-intellij.basedir}/lib/external/commons-lang3-3.1.jar" tofile="${zipdirectory}/commons-lang3-3.1.jar"/>
+    <copy file="${module.randori-plugin-intellij.basedir}/lib/external/velocity-1.6.2-dep.jar" tofile="${zipdirectory}/velocity-1.6.2-dep.jar"/>
+    <copy file="${randori.compiler.path}/randori.jar" tofile="${zipdirectory}/randori.jar"/>
+    <copy file="${randori.compiler.path}/truezip-driver-file-7.7.2.jar" tofile="${zipdirectory}/truezip-driver-file-7.7.2.jar"/>
+    <copy file="${randori.compiler.path}/truezip-driver-zip-7.7.2.jar" tofile="${zipdirectory}/truezip-driver-zip-7.7.2.jar"/>
+    <copy file="${randori.compiler.path}/truezip-file-7.7.2.jar" tofile="${zipdirectory}/truezip-file-7.7.2.jar"/>
+    <copy file="${randori.compiler.path}/truezip-kernel-7.7.2.jar" tofile="${zipdirectory}/truezip-kernel-7.7.2.jar"/>
+    <copy file="${randori.compiler.path}/truezip-swing-7.7.2.jar" tofile="${zipdirectory}/truezip-swing-7.7.2.jar"/>
+    <copy file="${module.randori-plugin-intellij.basedir}/lib/compiler.jar" tofile="${zipdirectory}/compiler.jar"/>
+    <zip destfile="${randori-plugin-intellij.plugin.path.jar}">
+      <fileset dir="${module.randori-plugin-intellij.basedir}/../temp"/>
+    </zip>
+    <delete dir="${tmp.dir.randori-plugin-intellij}"/>
+  </target>
+</project>
