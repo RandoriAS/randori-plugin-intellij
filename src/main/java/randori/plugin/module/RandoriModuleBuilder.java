@@ -77,14 +77,6 @@ public class RandoriModuleBuilder extends JavaModuleBuilder
         {
             rootModel.setSdk(sdks.get(0));
         }
-
-        //        // copy the files to generated
-        //        VirtualFile randoriJS = sdkRoot.findFileByRelativePath("src/Randori.js");
-        //        VirtualFile guiceJS = sdkRoot.findFileByRelativePath("src/RandoriGuiceJS.js");
-        //        VirtualFile newRandoriJS = newFile;
-        //        VirtualFile newRandoriGuiceJS = newFile;
-        //        randoriJS.copy(this, newRandoriJS, "Randori.js");
-        //        randoriJS.copy(this, newRandoriGuiceJS, "RandoriGuiceJS.js");
     }
 
     @Override
@@ -95,7 +87,6 @@ public class RandoriModuleBuilder extends JavaModuleBuilder
             final List<Pair<String, String>> paths = new ArrayList<Pair<String, String>>();
             @NonNls
             final String path = getContentEntryPath() + File.separator + "src";
-            //noinspection ResultOfMethodCallIgnored
             new File(path).mkdirs();
             paths.add(Pair.create(path, ""));
             return paths;

@@ -71,12 +71,12 @@ public class RandoriLibraryModuleType extends ModuleType<RandoriLibraryModuleBui
     @Override
     public Icon getBigIcon()
     {
-        return PlatformIcons.LIBRARY_ICON;
+        return RandoriIcons.RandoriLibModule24;
     }
 
     @Override
     public Icon getNodeIcon(boolean isOpened)
     {
-        return PlatformIcons.LIBRARY_ICON;
+        return RandoriIcons.RandoriLibModule16;
     }
 }
