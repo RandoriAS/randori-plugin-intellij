@@ -32,4 +32,6 @@ public class RandoriIcons {
     public static final Icon Randori16 = load("/icons/randori16x16.png"); // 16x16
     public static final Icon Randori13 = load("/icons/randori13x13.png"); // 13x13
     public static final Icon Randori24 = load("/icons/randori24x24.png"); // 24x24
+    public static final Icon RandoriLibModule16 = load("/icons/randoriLibModule16x16.png"); // 16x16
+    public static final Icon RandoriLibModule24 = load("/icons/randoriLibModule24x24.png"); // 24x24
 }
