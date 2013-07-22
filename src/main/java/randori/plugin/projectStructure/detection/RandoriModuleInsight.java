@@ -30,7 +30,8 @@ import randori.compiler.bundle.IBundle;
 import randori.compiler.bundle.IBundleLibrary;
 import randori.compiler.bundle.io.BundleReader;
 import randori.plugin.library.RandoriLibraryType;
-import randori.plugin.module.RandoriModuleType;
+import randori.plugin.module.RandoriLibraryModuleType;
+import randori.plugin.module.RandoriWebModuleType;
 
 import com.intellij.ide.util.DelegatingProgressIndicator;
 import com.intellij.ide.util.importProject.ModuleDescriptor;
@@ -59,13 +60,21 @@ class RandoriModuleInsight extends ModuleInsight
     protected ModuleDescriptor createModuleDescriptor(File moduleContentRoot,
             Collection<DetectedProjectRoot> sourceRoots)
     {
-        return new ModuleDescriptor(moduleContentRoot, RandoriModuleType.getInstance(), sourceRoots);
+        ModuleDescriptor moduleDescriptor = null;
+        String rootTypeName = sourceRoots.iterator().next().getRootTypeName();
+
+        if (rootTypeName.equals(RandoriWebModuleType.getInstance().getName()))
+            moduleDescriptor = new ModuleDescriptor(moduleContentRoot, RandoriWebModuleType.getInstance(), sourceRoots);
+        else if (rootTypeName.equals(RandoriLibraryModuleType.getInstance().getName()))
+            moduleDescriptor = new ModuleDescriptor(moduleContentRoot, RandoriLibraryModuleType.getInstance(), sourceRoots);
+
+        return moduleDescriptor;
     }
 
     @Override
     public boolean isApplicableRoot(DetectedProjectRoot root)
     {
-        return root instanceof RandoriModuleSourceRoot;
+        return root instanceof RandoriWebModuleSourceRoot || root instanceof RandoriLibraryModuleSourceRoot;
     }
 
     @Override

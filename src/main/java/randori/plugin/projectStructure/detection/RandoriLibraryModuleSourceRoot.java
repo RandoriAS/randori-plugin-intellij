@@ -25,9 +25,9 @@ import java.io.File;
 /**
  * @author Frédéric THOMAS Date: 19/04/13 Time: 19:40
  */
-class RandoriModuleSourceRoot extends DetectedSourceRoot
+class RandoriLibraryModuleSourceRoot extends DetectedSourceRoot
 {
-    public RandoriModuleSourceRoot(final File directory)
+    public RandoriLibraryModuleSourceRoot(final File directory)
     {
         super(directory, null);
     }
@@ -36,18 +36,17 @@ class RandoriModuleSourceRoot extends DetectedSourceRoot
     @Override
     public String getRootTypeName()
     {
-        return "Randori module";
+        return "Randori Library Module";
     }
 
     @Override
     public DetectedProjectRoot combineWith(@NotNull DetectedProjectRoot root)
     {
-        return root instanceof RandoriModuleSourceRoot ? this : null;
-
+        return root instanceof RandoriLibraryModuleSourceRoot || root instanceof RandoriWebModuleSourceRoot ? this : null;
     }
 
     @Override
     public boolean canContainRoot(@NotNull DetectedProjectRoot root) {
-        return !(root instanceof RandoriModuleSourceRoot);
+        return !(root instanceof RandoriLibraryModuleSourceRoot);
     }
 }
