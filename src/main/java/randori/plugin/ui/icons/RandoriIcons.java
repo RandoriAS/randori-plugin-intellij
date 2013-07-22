@@ -28,8 +28,8 @@ public class RandoriIcons {
         return IconLoader.getIcon(path, RandoriIcons.class);
     }
 
-    public static final Icon JumpToArrow = load("/icons/jumpto.png"); // 12x12
-    public static final Icon Randori16 = load("/icons/randori.png"); // 16x16
-    public static final Icon Randori13 = load("/icons/randori13x13.png"); // 16x16
-    public static final Icon Randori24 = load("/icons/randorix2.png"); // 16x16
+    public static final Icon JumpToArrow = load("/icons/jumpTo.png"); // 16x16
+    public static final Icon Randori16 = load("/icons/randori16x16.png"); // 16x16
+    public static final Icon Randori13 = load("/icons/randori13x13.png"); // 13x13
+    public static final Icon Randori24 = load("/icons/randori24x24.png"); // 24x24
 }
