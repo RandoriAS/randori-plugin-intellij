@@ -117,6 +117,16 @@
 
         <projectStructureDetector implementation="randori.plugin.projectStructure.detection.RandoriProjectStructureDetector"/>
 
+        <moduleType id="RANDORI_WEB_MODULE"
+                    implementationClass="randori.plugin.module.RandoriWebModuleType"
+                    classpathProvider="true"/>
+
+        <moduleType id="RANDORI_LIBRARY_MODULE"
+                    implementationClass="randori.plugin.module.RandoriLibraryModuleType"
+                    classpathProvider="true"/>
+
+        <moduleConfigurationEditorProvider implementation="randori.plugin.module.RandoriModuleEditorsProvider"/>
+
         <fileTypeFactory implementation="randori.plugin.components.RandoriApplicationComponent"/>
         <library.type implementation="randori.plugin.library.RandoriLibraryType"/>
 
@@ -137,12 +147,6 @@
         <fileTemplateGroup implementation="randori.plugin.action.RandoriTemplatesFactory"/>
 
         <sdkType implementation="randori.plugin.roots.RandoriSdkType"/>
-
-        <moduleType id="RANDORI_MODULE"
-                    implementationClass="randori.plugin.module.RandoriModuleType"
-                    classpathProvider="true"/>
-
-        <moduleConfigurationEditorProvider implementation="randori.plugin.module.RandoriModuleEditorsProvider"/>
 
         <configurationType implementation="randori.plugin.runner.RandoriRunnerConfigurationType"/>
 

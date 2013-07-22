@@ -37,7 +37,8 @@ import com.intellij.openapi.wm.ToolWindowManager;
 import org.apache.flex.compiler.problems.ICompilerProblem;
 import org.jetbrains.annotations.NotNull;
 import randori.plugin.compiler.RandoriCompilerSession;
-import randori.plugin.module.RandoriModuleType;
+import randori.plugin.module.RandoriLibraryModuleType;
+import randori.plugin.module.RandoriWebModuleType;
 import randori.plugin.runner.RandoriRunConfiguration;
 import randori.plugin.runner.RandoriServerComponent;
 import randori.plugin.ui.ProblemsToolWindowFactory;
@@ -49,38 +50,32 @@ import java.util.List;
 
 /**
  * The project component manages the global state of the current project and wrap the compiler.
- * 
+ *
  * @author Frédéric THOMAS
  */
-public class RandoriProjectComponent implements ProjectComponent
-{
+public class RandoriProjectComponent implements ProjectComponent {
 
     public static final String COMPONENT_NAME = "RandoriProject";
     private final Project project;
     private VirtualFileListener fileChangeListener;
     private List<VirtualFile> modifiedFiles;
 
-    public RandoriProjectComponent(Project project)
-    {
+    public RandoriProjectComponent(Project project) {
         this.project = project;
     }
 
     @Override
-    public void initComponent()
-    {
+    public void initComponent() {
     }
 
     @Override
-    public void projectOpened()
-    {
-        if (ProjectUtils.hasRandoriModuleType(project))
-        {
+    public void projectOpened() {
+        if (ProjectUtils.hasRandoriModuleType(project)) {
             modifiedFiles = new ArrayList<VirtualFile>();
 
             CompilerWorkspaceConfiguration workspaceConfiguration = CompilerWorkspaceConfiguration.getInstance(project)
                     .getState();
-            if (workspaceConfiguration != null)
-            {
+            if (workspaceConfiguration != null) {
                 workspaceConfiguration.USE_COMPILE_SERVER = false;
                 CompilerWorkspaceConfiguration.getInstance(project).loadState(workspaceConfiguration);
             }
@@ -93,19 +88,15 @@ public class RandoriProjectComponent implements ProjectComponent
     }
 
     @Override
-    public void projectClosed()
-    {
-        if (ProjectUtils.hasRandoriModuleType(project))
-        {
+    public void projectClosed() {
+        if (ProjectUtils.hasRandoriModuleType(project)) {
 
             ToolWindow toolWindow = ToolWindowManager.getInstance(project).getToolWindow(
                     ProblemsToolWindowFactory.WINDOW_ID);
-            if (toolWindow != null)
-            {
+            if (toolWindow != null) {
                 toolWindow.hide(new Runnable() {
                     @Override
-                    public void run()
-                    {
+                    public void run() {
                     }
                 });
             }
@@ -114,8 +105,7 @@ public class RandoriProjectComponent implements ProjectComponent
     }
 
     @Override
-    public void disposeComponent()
-    {
+    public void disposeComponent() {
 
         if (!ProjectUtils.hasRandoriModuleType(project))
             return;
@@ -125,73 +115,59 @@ public class RandoriProjectComponent implements ProjectComponent
 
     @NotNull
     @Override
-    public String getComponentName()
-    {
+    public String getComponentName() {
         return COMPONENT_NAME;
     }
 
-    public List<VirtualFile> getModifiedFiles()
-    {
+    public List<VirtualFile> getModifiedFiles() {
         return modifiedFiles;
     }
 
     /**
      * Opens a ICompilerProblem in a new editor, or opens the editor and places the caret a the specific problem.
-     * 
+     *
      * @param problem The ICompilerProblem to focus.
      */
-    public void openFileForProblem(ICompilerProblem problem)
-    {
+    public void openFileForProblem(ICompilerProblem problem) {
         VirtualFile virtualFile = VFileUtils.getFile(problem.getSourcePath());
-        if (virtualFile != null)
-        {
+        if (virtualFile != null) {
             OpenFileDescriptor descriptor = new OpenFileDescriptor(project, virtualFile);
             Editor editor = FileEditorManager.getInstance(project).openTextEditor(descriptor, true);
-            if (editor != null)
-            {
+            if (editor != null) {
                 LogicalPosition position = new LogicalPosition(problem.getLine(), problem.getColumn());
                 editor.getCaretModel().moveToLogicalPosition(position);
             }
         }
     }
 
-    public void run(RandoriRunConfiguration configuration)
-    {
+    public void run(RandoriRunConfiguration configuration) {
         RandoriServerComponent component = project.getComponent(RandoriServerComponent.class);
         String explicitWebRoot = (configuration.useExplicitWebroot) ? configuration.explicitWebroot : "";
         component.openURL(configuration.indexRoot, explicitWebRoot);
     }
 
-    public boolean validateConfiguration(CompileScope scope)
-    {
+    public boolean validateConfiguration(CompileScope scope) {
         boolean validated = true;
         String message = null;
         Module module = null;
 
-        if (ProjectUtils.isSDKInstalled(project))
-        {
-            for (final Module affectedModule : scope.getAffectedModules())
-            {
-                if (ModuleType.get(affectedModule) != RandoriModuleType.getInstance())
-                {
+        if (ProjectUtils.isSDKInstalled(project)) {
+            for (final Module affectedModule : scope.getAffectedModules()) {
+                if (!(RandoriWebModuleType.isOfType(affectedModule)) && !(RandoriLibraryModuleType.isOfType(affectedModule))) {
                     message = "This module is not a Randori module";
                     module = affectedModule;
                     validated = false;
                     break;
                 }
             }
-        }
-        else
-        {
+        } else {
             message = "This project is not a Randori project, please check your Project SDK settings.";
             validated = false;
         }
 
-        if (message != null)
-        {
+        if (message != null) {
             Messages.showErrorDialog(project, message, "Can not Compile");
-            if (module != null)
-            {
+            if (module != null) {
                 ModulesConfigurator.showDialog(project, module.getName(), ClasspathEditor.NAME);
             }
         }

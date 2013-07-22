@@ -26,26 +26,27 @@ import javax.swing.*;
 
 /**
  * @author Michael Schmalle
+ * @author Frédéric THOMAS
  */
-public class RandoriModuleType extends ModuleType<RandoriModuleBuilder>
+public class RandoriWebModuleType extends ModuleType<RandoriModuleBuilder>
 {
 
     @NonNls
-    private static final String MODULE_ID = "RANDORI_MODULE";
+    private static final String MODULE_ID = "RANDORI_WEB_MODULE";
 
-    public RandoriModuleType()
+    public RandoriWebModuleType()
     {
         super(MODULE_ID);
     }
 
-    public static RandoriModuleType getInstance()
+    public static RandoriWebModuleType getInstance()
     {
-        return (RandoriModuleType) ModuleTypeManager.getInstance().findByID(MODULE_ID);
+        return (RandoriWebModuleType) ModuleTypeManager.getInstance().findByID(MODULE_ID);
     }
 
     public static boolean isOfType(Module module)
     {
-        return get(module) instanceof RandoriModuleType;
+        return get(module) instanceof RandoriWebModuleType;
     }
 
     // create New Project
@@ -58,13 +59,13 @@ public class RandoriModuleType extends ModuleType<RandoriModuleBuilder>
     @Override
     public String getName()
     {
-        return "Randori Module";
+        return "Randori Web Module";
     }
 
     @Override
     public String getDescription()
     {
-        return "This module type is used to create Randori AS3 projects using the Randori JavaScript cross compiler";
+        return "This module type is used to create Randori AS3 Web projects using the Randori JavaScript cross compiler";
     }
 
     @Override

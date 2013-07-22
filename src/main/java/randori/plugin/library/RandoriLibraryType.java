@@ -21,7 +21,8 @@ import javax.swing.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import randori.plugin.module.RandoriModuleType;
+import randori.plugin.module.RandoriLibraryModuleType;
+import randori.plugin.module.RandoriWebModuleType;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
@@ -105,7 +106,7 @@ public class RandoriLibraryType extends LibraryType<RandoriLibraryProperties>
 
     public boolean isSuitableModule(@NotNull Module module, @NotNull FacetsProvider facetsProvider)
     {
-        return ModuleType.get(module).equals(RandoriModuleType.getInstance());
+        return RandoriWebModuleType.isOfType(module) || RandoriLibraryModuleType.isOfType(module);
     }
 
     @NotNull

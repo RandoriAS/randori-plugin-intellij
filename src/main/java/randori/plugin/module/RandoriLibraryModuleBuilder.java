@@ -16,14 +16,6 @@
 
 package randori.plugin.module;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.jetbrains.annotations.NonNls;
-
-import randori.plugin.roots.RandoriSdkType;
-
 import com.intellij.ide.util.projectWizard.JavaModuleBuilder;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.options.ConfigurationException;
@@ -36,12 +28,17 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NonNls;
+import randori.plugin.roots.RandoriSdkType;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * @author Michael Schmalle
  * @author Frédéric THOMAS
  */
-public class RandoriModuleBuilder extends JavaModuleBuilder
+public class RandoriLibraryModuleBuilder extends JavaModuleBuilder
 {
     // Pair<Source Path, Package Prefix>
     private List<Pair<String, String>> mySourcePaths;
@@ -123,7 +120,7 @@ public class RandoriModuleBuilder extends JavaModuleBuilder
     @Override
     public ModuleType getModuleType()
     {
-        return RandoriWebModuleType.getInstance();
+        return RandoriLibraryModuleType.getInstance();
     }
 
     @Override
