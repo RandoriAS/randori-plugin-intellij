@@ -138,7 +138,7 @@ public class RandoriCompilerSession
     {
         boolean success = true;
 
-        isModuleRoot = ProjectUtils.isModuleRoot(project, module);
+        isModuleRoot = ProjectUtils.isRandoriWebModule(module);
 
         prepareCompilation(module);
 

@@ -131,7 +131,7 @@ public class RandoriModuleComponent implements ModuleComponent, Configurable,
         if (form == null)
         {
             form = new RandoriModuleConfigurable();
-            if (ProjectUtils.isModuleRoot(project, module))
+            if (ProjectUtils.isRandoriWebModule(module))
             {
                 final JComponent formComponent = form.getComponent();
                 for (Component component : formComponent.getComponents())
