@@ -128,7 +128,7 @@ class RandoriRunConfigurationEditor extends
         private final String _noModule;
         private final Project _project;
         private final JComboBox _modulesList;
-        private final SortedComboBoxModel<Object> myModules = new SortedComboBoxModel<Object>(new Comparator<Object>() {
+        private final SortedComboBoxModel<Object> _modules = new SortedComboBoxModel<Object>(new Comparator<Object>() {
             public int compare(final Object module, final Object module1) {
                 if (module instanceof Module && module1 instanceof Module) {
                     return ((Module) module).getName().compareToIgnoreCase(((Module) module1).getName());
@@ -155,7 +155,7 @@ class RandoriRunConfigurationEditor extends
                     return super.getElementText(element);
                 }
             };
-            _modulesList.setModel(myModules);
+            _modulesList.setModel(_modules);
             _modulesList.setRenderer(new ListCellRendererWrapper() {
                 @Override
                 public void customize(final JList list, final Object value, final int index, final boolean selected, final boolean hasFocus) {
@@ -181,7 +181,7 @@ class RandoriRunConfigurationEditor extends
                 if (isModuleAccepted(module)) list.add(module);
             }
             setModules(list);
-            myModules.setSelectedItem(configuration.getConfigurationModule().getModule());
+            _modules.setSelectedItem(configuration.getConfigurationModule().getModule());
         }
 
         public boolean isModuleAccepted(final Module module) {
@@ -194,20 +194,20 @@ class RandoriRunConfigurationEditor extends
 
         public JavaRunConfigurationModule getConfigurationModule() {
             final JavaRunConfigurationModule configurationModule = new JavaRunConfigurationModule(getProject(), false);
-            configurationModule.setModule((Module) myModules.getSelectedItem());
+            configurationModule.setModule((Module) _modules.getSelectedItem());
             return configurationModule;
         }
 
         private void setModules(final Collection<Module> modules) {
-            myModules.clear();
-            myModules.add(null);
+            _modules.clear();
+            _modules.add(null);
             for (Module module : modules) {
-                myModules.add(module);
+                _modules.add(module);
             }
         }
 
         public Module getModule() {
-            return (Module) myModules.getSelectedItem();
+            return (Module) _modules.getSelectedItem();
         }
 
         @Nullable
@@ -216,7 +216,7 @@ class RandoriRunConfigurationEditor extends
         }
 
         public String getModuleName() {
-            final Module module = (Module) myModules.getSelectedItem();
+            final Module module = (Module) _modules.getSelectedItem();
             return module == null ? "" : module.getName();
         }
     }
