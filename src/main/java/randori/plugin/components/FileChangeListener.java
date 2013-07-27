@@ -32,8 +32,10 @@ import com.intellij.openapi.vfs.*;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import randori.plugin.configuration.RandoriCompilerModel;
+import randori.plugin.module.RandoriWebModuleType;
 import randori.plugin.util.ProjectUtils;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -102,19 +104,26 @@ class FileChangeListener implements VirtualFileListener {
     }
 
     @SuppressWarnings("unused")
-    private void executeMakeInUIThread(VirtualFileEvent event) {
+    private void executeMakeInUIThread(final VirtualFileEvent event) {
         if ((project.isInitialized()) && (!project.isDisposed()) && (project.isOpen()) && (!project.isDefault())) {
             final ModuleManager moduleManager = ModuleManager.getInstance(project);
             final CompilerManager compilerManager = CompilerManager.getInstance(project);
 
             UIUtil.invokeAndWaitIfNeeded(new Runnable() {
                 public void run() {
-                    final Module rootModule = moduleManager.findModuleByName(project.getName());
+                    final Module module = ModuleUtilCore.findModuleForFile(event.getFile(), project);
+                    List<Module> webModulesParents = null;
 
-                    if (rootModule != null) {
-                        if ((!compilerManager.isCompilationActive())
-                                && (!compilerManager.isUpToDate(new ModuleCompileScope(rootModule, true))))
-                            compilerManager.make(project, moduleManager.getModules(), null);
+                    if (module != null) {
+                        webModulesParents = module.getComponent(RandoriModuleComponent.class).getWebModulesParents();
+
+                        if (webModulesParents.size() > 0) {
+                            for (Module webModulesParent : webModulesParents) {
+                                boolean upToDate = compilerManager.isUpToDate(new ModuleCompileScope(webModulesParent, true));
+                                if ((!compilerManager.isCompilationActive()) && (!upToDate))
+                                    compilerManager.make(project, moduleManager.getModules(), null);
+                            }
+                        }
                     }
                 }
             });
