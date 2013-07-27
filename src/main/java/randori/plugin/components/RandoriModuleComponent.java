@@ -42,6 +42,7 @@ import randori.plugin.util.ProjectUtils;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -67,6 +68,7 @@ public class RandoriModuleComponent implements ModuleComponent, Configurable,
         this.module = module;
         this.project = project;
         state = new RandoriModuleModel();
+        webModulesParents = new ArrayList<Module>();
     }
 
     @Nls
@@ -178,7 +180,9 @@ public class RandoriModuleComponent implements ModuleComponent, Configurable,
         getUsedDependencies(module);
         dependencies.remove(0);
 
-        webModulesParents = ModuleUtil.getParentModulesOfType(RandoriWebModuleType.getInstance(), module);
+        webModulesParents = RandoriWebModuleType.isOfType(module) ?
+                Arrays.asList(module) :
+                ModuleUtil.getParentModulesOfType(RandoriWebModuleType.getInstance(), module);
     }
 
     private void getUsedDependencies(Module module) {
