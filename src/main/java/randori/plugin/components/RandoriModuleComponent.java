@@ -31,6 +31,7 @@ import com.intellij.openapi.roots.FileIndex;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.xmlb.XmlSerializerUtil;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import randori.plugin.configuration.RandoriModuleConfigurable;
@@ -65,6 +66,7 @@ public class RandoriModuleComponent implements ModuleComponent, Configurable,
     public RandoriModuleComponent(Module module, Project project) {
         this.module = module;
         this.project = project;
+        state = new RandoriModuleModel();
     }
 
     @Nls
@@ -75,7 +77,7 @@ public class RandoriModuleComponent implements ModuleComponent, Configurable,
 
     @Override
     public void initComponent() {
-        state = new RandoriModuleModel();
+
     }
 
     @Override
@@ -114,6 +116,7 @@ public class RandoriModuleComponent implements ModuleComponent, Configurable,
 
     @Override
     public void loadState(RandoriModuleModel state) {
+        XmlSerializerUtil.copyBean(state, this.state);
     }
 
     @Override
