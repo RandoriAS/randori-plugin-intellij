@@ -18,6 +18,8 @@ package randori.plugin.runner;
 
 import com.intellij.execution.configurations.JavaRunConfigurationModule;
 import com.intellij.execution.configurations.ModuleBasedConfiguration;
+import com.intellij.lang.javascript.flex.run.FlexLauncherDialog;
+import com.intellij.lang.javascript.flex.run.LauncherParameters;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleType;
@@ -25,6 +27,7 @@ import com.intellij.openapi.module.ModuleTypeManager;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.psi.PsiClass;
 import com.intellij.ui.ComboboxSpeedSearch;
 import com.intellij.ui.ListCellRendererWrapper;
@@ -57,15 +60,18 @@ class RandoriRunConfigurationEditor extends
     private JRadioButton useEmbeddedServer;
     private JRadioButton useExistingWebServer;
     private ButtonGroup webServerGroup;
+    private TextFieldWithBrowseButton launcherParametersTextWithBrowse;
 
     //private JTextField webRoot;
 
     private final Project project;
 
     private RandoriConfigurationModuleSelector moduleSelector;
+    private LauncherParameters launcherParameters;
 
     public RandoriRunConfigurationEditor(Project project) {
         this.project = project;
+        initLaunchWithTextWithBrowse();
     }
 
     @Override
@@ -74,8 +80,9 @@ class RandoriRunConfigurationEditor extends
         // apply the ui component values to the configuration
         //configuration.webRoot = webRoot.getText();
         configuration.indexRoot = indexRoot.getText();
-        configuration.explicitWebroot = webRoot.getText();
-        configuration.useExplicitWebroot = (useExistingWebServer.isSelected());
+        configuration.explicitWebRoot = webRoot.getText();
+        configuration.useExplicitWebRoot = (useExistingWebServer.isSelected());
+        configuration.launcherParameters = launcherParameters;
         moduleSelector.applyTo(configuration);
     }
 
@@ -84,16 +91,34 @@ class RandoriRunConfigurationEditor extends
         // reset ui components with config data
         //webRoot.setText(configuration.webRoot);
         indexRoot.setText(configuration.indexRoot);
-        webRoot.setText(configuration.explicitWebroot);
-        if (configuration.useExplicitWebroot) {
+        webRoot.setText(configuration.explicitWebRoot);
+        if (configuration.useExplicitWebRoot) {
             useExistingWebServer.setSelected(true);
             useEmbeddedServer.setSelected(false);
         } else {
             useExistingWebServer.setSelected(false);
             useEmbeddedServer.setSelected(true);
         }
-        webRoot.setEnabled(configuration.useExplicitWebroot);
+        webRoot.setEnabled(configuration.useExplicitWebRoot);
         moduleSelector.reset(configuration);
+
+        launcherParameters = configuration.launcherParameters.clone();
+        launcherParametersTextWithBrowse.getTextField().setText(launcherParameters.getPresentableText());
+    }
+
+    private void initLaunchWithTextWithBrowse()
+    {
+        launcherParametersTextWithBrowse.getTextField().setEditable(false);
+        launcherParametersTextWithBrowse.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                FlexLauncherDialog dialog = new FlexLauncherDialog(project, launcherParameters);
+                dialog.show();
+                if (dialog.isOK()) {
+                    launcherParameters = dialog.getLauncherParameters();
+                    launcherParametersTextWithBrowse.getTextField().setText(launcherParameters.getPresentableText());
+                }
+            }
+        });
     }
 
     @NotNull
@@ -121,6 +146,10 @@ class RandoriRunConfigurationEditor extends
     @Override
     protected void disposeEditor() {
         panel.setVisible(false);
+    }
+
+    private void createUIComponents() {
+        // TODO: place custom component creation code here 
     }
 
     public class RandoriConfigurationModuleSelector {
