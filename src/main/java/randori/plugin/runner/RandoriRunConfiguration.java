@@ -19,6 +19,7 @@ package randori.plugin.runner;
 import java.util.Arrays;
 import java.util.Collection;
 
+import com.intellij.lang.javascript.flex.run.LauncherParameters;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
@@ -40,16 +41,20 @@ import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.util.xmlb.XmlSerializer;
 
+import javax.swing.text.DefaultStyledDocument;
+
 /**
  * @author Michael Schmalle
  */
 @SuppressWarnings({ "rawtypes" })
 public class RandoriRunConfiguration extends ModuleBasedConfiguration<RunConfigurationModule>
 {
-    public boolean useExplicitWebroot = false;
-    public String explicitWebroot = "";
+    public boolean useExplicitWebRoot = false;
+    public String explicitWebRoot = "";
     public String indexRoot;
     private ExecutionEnvironment myEnvironment;
+    @NotNull
+    public LauncherParameters launcherParameters = new LauncherParameters();
 
     public RandoriRunConfiguration(String name, Project project, RandoriRunnerConfigurationType configurationType)
     {
