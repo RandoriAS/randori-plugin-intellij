@@ -17,6 +17,8 @@
 package randori.plugin.runner;
 
 import com.intellij.ide.BrowserUtil;
+import com.intellij.ide.browsers.BrowsersConfiguration;
+import com.intellij.ide.browsers.UrlOpener;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
@@ -206,6 +208,11 @@ public class RandoriServerComponent implements ProjectComponent
         // temp, will hook up properly, can create a config that says
         // something like preview in browser checkbox
         BrowserUtil.launchBrowser(url);
+    }
+
+    public void openURL (String relativeURL, String explicitWebRoot, BrowsersConfiguration.BrowserFamily browserFamily) {
+        String url = getURL(relativeURL, explicitWebRoot);
+        UrlOpener.launchBrowser(browserFamily, url);
     }
 
     String getURL(String index, String explicitWebRoot)
