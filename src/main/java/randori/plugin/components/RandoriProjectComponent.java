@@ -17,6 +17,11 @@
 package randori.plugin.components;
 
 import com.intellij.compiler.CompilerWorkspaceConfiguration;
+import com.intellij.ide.BrowserUtil;
+import com.intellij.ide.browsers.UrlOpener;
+import com.intellij.lang.javascript.flex.run.LauncherParameters;
+import com.intellij.openapi.application.Application;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.CompileScope;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.editor.Editor;
@@ -24,11 +29,11 @@ import com.intellij.openapi.editor.LogicalPosition;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ui.configuration.ClasspathEditor;
 import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileListener;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -140,10 +145,25 @@ public class RandoriProjectComponent implements ProjectComponent {
         }
     }
 
-    public void run(RandoriRunConfiguration configuration) {
-        RandoriServerComponent component = project.getComponent(RandoriServerComponent.class);
-        String explicitWebRoot = (configuration.useExplicitWebroot) ? configuration.explicitWebroot : "";
-        component.openURL(configuration.indexRoot, explicitWebRoot);
+    public void run(final RandoriRunConfiguration configuration) {
+        final RandoriServerComponent component = project.getComponent(RandoriServerComponent.class);
+        final String explicitWebRoot = (configuration.useExplicitWebRoot) ? configuration.explicitWebRoot : "";
+        final LauncherParameters launcherParameters = configuration.launcherParameters;
+
+        if (launcherParameters.getLauncherType() == LauncherParameters.LauncherType.Browser) {
+            Runnable runnable = new Runnable() {
+                public void run() {
+                    component.openURL(configuration.indexRoot, explicitWebRoot, launcherParameters.getBrowserFamily());
+                }
+            };
+            Application application = ApplicationManager.getApplication();
+            if (application.isDispatchThread()) {
+                runnable.run();
+            } else {
+                application.invokeLater(runnable);
+            }
+        } else
+            component.openURL(configuration.indexRoot, explicitWebRoot);
     }
 
     public boolean validateConfiguration(CompileScope scope) {

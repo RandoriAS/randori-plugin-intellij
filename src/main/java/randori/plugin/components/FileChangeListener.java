@@ -117,12 +117,10 @@ class FileChangeListener implements VirtualFileListener {
                     if (module != null) {
                         webModulesParents = module.getComponent(RandoriModuleComponent.class).getWebModulesParents();
 
-                        if (webModulesParents.size() > 0) {
-                            for (Module webModulesParent : webModulesParents) {
-                                boolean upToDate = compilerManager.isUpToDate(new ModuleCompileScope(webModulesParent, true));
-                                if ((!compilerManager.isCompilationActive()) && (!upToDate))
-                                    compilerManager.make(project, moduleManager.getModules(), null);
-                            }
+                        for (Module webModulesParent : webModulesParents) {
+                            boolean upToDate = compilerManager.isUpToDate(new ModuleCompileScope(webModulesParent, true));
+                            if ((!compilerManager.isCompilationActive()) && (!upToDate))
+                                compilerManager.make(project, moduleManager.getModules(), null);
                         }
                     }
                 }
