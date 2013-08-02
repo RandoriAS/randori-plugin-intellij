@@ -34,6 +34,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Chunk;
 import com.intellij.util.ThrowableRunnable;
 import org.jetbrains.annotations.NotNull;
+import randori.plugin.components.RandoriModuleComponent;
 import randori.plugin.components.RandoriProjectComponent;
 import randori.plugin.configuration.RandoriCompilerModel;
 import randori.plugin.module.RandoriWebModuleType;
@@ -136,13 +137,15 @@ class RandoriCompiler implements TranslatingCompiler {
                 assert projectModel != null;
 
                 for (Module module : compiledModules) {
-                    if (RandoriWebModuleType.isOfType(module) && module.getModuleFile() != null) {
-                        @SuppressWarnings("ConstantConditions") VirtualFile moduleBaseDir = module.getModuleFile().getParent();
-                        if (moduleBaseDir != null) {
-                            moduleBaseDir.findFileByRelativePath(projectModel.getBasePath());
-                            File generatedDir = new File(FileUtil.toSystemDependentName(moduleBaseDir.getPath() + File.separator
-                                    + projectModel.getBasePath()));
-                            dirs.add(generatedDir);
+                    if (RandoriWebModuleType.isOfType(module)) {
+                        final RandoriModuleComponent moduleComponent = module.getComponent(RandoriModuleComponent.class);
+                        for (VirtualFile webModuleParentContentRootFolder : moduleComponent.getWebModuleParentsContentRootFolder()) {
+                            if (webModuleParentContentRootFolder != null) {
+                                webModuleParentContentRootFolder.findFileByRelativePath(projectModel.getBasePath());
+                                File generatedDir = new File(FileUtil.toSystemDependentName(webModuleParentContentRootFolder.getPath()
+                                        + File.separator + projectModel.getBasePath()));
+                                dirs.add(generatedDir);
+                            }
                         }
                     }
 

@@ -27,6 +27,7 @@ import com.intellij.openapi.roots.libraries.LibraryUtil;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.ui.UIUtil;
 import org.apache.flex.compiler.internal.workspaces.Workspace;
 import org.jetbrains.annotations.NotNull;
 import randori.compiler.bundle.BundleConfiguration;
@@ -166,6 +167,14 @@ public class RandoriCompilerSession {
                         }
                     }
                 }
+
+                if ((project.isInitialized()) && (!project.isDisposed()) && (project.isOpen()) && (!project.isDefault())) {
+                    UIUtil.invokeAndWaitIfNeeded(new Runnable() {
+                        public void run() {
+                            project.getBaseDir().refresh(true, true);
+                        }
+                    });
+                }
             }
         }
 
@@ -189,18 +198,14 @@ public class RandoriCompilerSession {
             modifiedFiles = projectComponent.getModifiedFiles();
             moduleModel = moduleComponent.getState();
             usedModules = moduleComponent.getDependencies();
-
-            List<Module> webModulesParents = moduleComponent.getWebModulesParents();
             webModuleRblPaths = new ArrayList<String>();
 
-            if (isWebModule)
-                moduleBasePath = new File(module.getModuleFilePath()).getParent();
-            else
-                for (Module webModulesParent : webModulesParents) {
-                    moduleBasePath = webModulesParent.getModuleFile().getParent().getCanonicalPath();
-
-                    String librariesOutputPath = FileUtil.toSystemDependentName(moduleBasePath + File.separator
-                            + projectModel.getLibraryPath());
+            if (isWebModule) {
+                moduleBasePath = moduleComponent.getWebModuleParentsContentRootFolder().get(0).getCanonicalPath();
+            } else
+                for (VirtualFile webModuleParentContentRootFolder : moduleComponent.getWebModuleParentsContentRootFolder()) {
+                    String librariesOutputPath = FileUtil.toSystemDependentName(webModuleParentContentRootFolder.getCanonicalPath()
+                            + File.separator + projectModel.getLibraryPath());
                     String libraryOutputPath = librariesOutputPath + File.separator + module.getName();
                     String generatedLibPath = libraryOutputPath + File.separator + module.getName()
                             + RandoriLibraryType.LIBRARY_DOT_EXTENSION;
@@ -209,8 +214,6 @@ public class RandoriCompilerSession {
                 }
         }
     }
-
-    //--------------------------------------------------------------------------
 
     private void configureDependencies(CompilerArguments arguments) {
         arguments.clear();
