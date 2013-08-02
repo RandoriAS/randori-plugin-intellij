@@ -137,7 +137,7 @@ class RandoriCompiler implements TranslatingCompiler {
                 assert projectModel != null;
 
                 for (Module module : compiledModules) {
-                    if (RandoriWebModuleType.isOfType(module) && module.getModuleFile() != null) {
+                    if (RandoriWebModuleType.isOfType(module)) {
                         final RandoriModuleComponent moduleComponent = module.getComponent(RandoriModuleComponent.class);
                         for (VirtualFile webModuleParentContentRootFolder : moduleComponent.getWebModuleParentsContentRootFolder()) {
                             if (webModuleParentContentRootFolder != null) {
