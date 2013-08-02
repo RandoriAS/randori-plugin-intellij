@@ -115,7 +115,8 @@ public class RandoriProjectComponent implements ProjectComponent {
         if (!ProjectUtils.hasRandoriModuleType(project))
             return;
 
-        VirtualFileManager.getInstance().removeVirtualFileListener(fileChangeListener);
+        if (fileChangeListener != null)
+            VirtualFileManager.getInstance().removeVirtualFileListener(fileChangeListener);
     }
 
     @NotNull

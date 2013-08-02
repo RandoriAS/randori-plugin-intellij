@@ -194,7 +194,7 @@ public class RandoriCompilerSession {
             webModuleRblPaths = new ArrayList<String>();
 
             if (isWebModule)
-                moduleBasePath = module.getModuleFile().getParent().getCanonicalPath();
+                moduleBasePath = new File(module.getModuleFilePath()).getParent();
             else
                 for (Module webModulesParent : webModulesParents) {
                     moduleBasePath = webModulesParent.getModuleFile().getParent().getCanonicalPath();
