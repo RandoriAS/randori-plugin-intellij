@@ -20,6 +20,7 @@ import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.*;
+import com.intellij.openapi.projectRoots.impl.ProjectJdkImpl;
 import com.intellij.openapi.roots.JavadocOrderRootType;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.ProjectRootManager;
@@ -29,6 +30,7 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.util.PathUtil;
+import org.jetbrains.annotations.NotNull;
 import randori.compiler.bundle.*;
 import randori.compiler.bundle.io.StAXManifestReader;
 import randori.plugin.configuration.RandoriCompilerModel;
@@ -60,7 +62,7 @@ public class RandoriSdkType extends SdkType {
         super("Randori SDK");
     }
 
-    public static SdkType getInstance() {
+    public static RandoriSdkType getInstance() {
         return findInstance(RandoriSdkType.class);
     }
 
@@ -154,6 +156,12 @@ public class RandoriSdkType extends SdkType {
                     + "':\n" + e.getMessage() + ":\n" + stackTrace);
             e.printStackTrace();
         }
+    }
+
+    public Sdk createSdk(@NotNull String sdkName, @NotNull String home) {
+        ProjectJdkImpl sdk = new ProjectJdkImpl(sdkName, this, home.replace(File.separatorChar, '/'), null);
+        setupSdkPaths(sdk);
+        return sdk;
     }
 
     // called by SdkType.setupSdkPaths()
