@@ -27,7 +27,9 @@ import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.FileIndex;
+import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -64,6 +66,8 @@ public class RandoriModuleComponent implements ModuleComponent, Configurable,
     private List<Module> dependencies;
     private List<Module> webModulesParents;
 
+    private ModifiableRootModel modifiableRootModel;
+
     public RandoriModuleComponent(Module module, Project project) {
         this.module = module;
         this.project = project;
@@ -79,7 +83,7 @@ public class RandoriModuleComponent implements ModuleComponent, Configurable,
 
     @Override
     public void initComponent() {
-
+        modifiableRootModel = ModuleRootManager.getInstance(module).getModifiableModel();
     }
 
     @Override
@@ -169,6 +173,10 @@ public class RandoriModuleComponent implements ModuleComponent, Configurable,
         return webModulesParents;
     }
 
+    public ModifiableRootModel getModifiableRootModel() {
+        return modifiableRootModel;
+    }
+
     /**
      * Compute the direct dependencies of this module except this module and get its parents of RandoriWebModuleType.
      * <p/>
@@ -226,5 +234,34 @@ public class RandoriModuleComponent implements ModuleComponent, Configurable,
             fileIndex.iterateContent(new CompilerContentIterator(fileType, fileIndex, inSourceOnly, files));
         }
         return VfsUtil.toVirtualFileArray(files);
+    }
+
+    public List<VirtualFile> getWebModuleParentsContentRootFolder() {
+        List<VirtualFile> preferredContentRoots = new ArrayList<VirtualFile>();
+        for (Module webModulesParent : getWebModulesParents()) {
+            VirtualFile preferredContentEntry = getPreferredContentEntry(webModulesParent);
+            if (preferredContentEntry != null)
+                preferredContentRoots.add(preferredContentEntry.getCanonicalFile());
+        }
+        return preferredContentRoots;
+    }
+
+    private VirtualFile getPreferredContentEntry(final Module module) {
+        RandoriModuleComponent webModuleComponent = module.getComponent(RandoriModuleComponent.class);
+        ModifiableRootModel modifiableRootModel = webModuleComponent.getModifiableRootModel();
+        ContentEntry[] contentEntries = modifiableRootModel.getContentEntries();
+        ContentEntry preferredContentEntry = contentEntries[0];
+        for (ContentEntry contentEntry : contentEntries) {
+            if (contentEntry.getFile() != null) {
+                //noinspection ConstantConditions
+                String modulePathName = contentEntry.getFile().getCanonicalPath().toLowerCase();
+                String suffix = module.getName().toLowerCase();
+                if (modulePathName.endsWith(suffix)) {
+                    preferredContentEntry = contentEntry;
+                    break;
+                }
+            }
+        }
+        return preferredContentEntry.getFile();
     }
 }
