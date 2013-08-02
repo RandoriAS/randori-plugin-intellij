@@ -106,7 +106,7 @@ public class RandoriModuleComponent implements ModuleComponent, Configurable,
 
     @Override
     public void disposeComponent() {
-        dependencies = null;
+        modifiableRootModel.dispose();
     }
 
     @NotNull
