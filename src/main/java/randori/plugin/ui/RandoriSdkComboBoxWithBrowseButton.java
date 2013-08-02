@@ -133,11 +133,11 @@ public class RandoriSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton
                 editor.show();
                 if (editor.isOK()) {
                     Sdk selectedSdk = editor.getSelectedJdk();
-                    if (RandoriSdkComboBoxWithBrowseButton.this.sdkFilter.value(selectedSdk)) {
-                        RandoriSdkComboBoxWithBrowseButton.this.rebuildSdkListAndSelectSdk(selectedSdk);
+                    if (sdkFilter.value(selectedSdk)) {
+                        rebuildSdkListAndSelectSdk(selectedSdk);
                     }
                     else {
-                        RandoriSdkComboBoxWithBrowseButton.this.rebuildSdkListAndSelectSdk(null);
+                        rebuildSdkListAndSelectSdk(null);
                         if (selectedSdk != null)
                             Messages.showErrorDialog(RandoriSdkComboBoxWithBrowseButton.this, "SDK '" + selectedSdk.getName() + "' can not be selected here.\\nPlease select a Randori SDK.", "Select a Randori SDK");
                     }
@@ -166,8 +166,8 @@ public class RandoriSdkComboBoxWithBrowseButton extends ComboboxWithBrowseButton
         {
             Collections.sort(sdkList, new Comparator<Object>() {
                 public int compare(Object sdk1, Object sdk2) {
-                    if ((sdk1 == RandoriSdkComboBoxWithBrowseButton.this.bcSdk) && (sdk2 != RandoriSdkComboBoxWithBrowseButton.this.bcSdk)) return -1;
-                    if ((sdk1 != RandoriSdkComboBoxWithBrowseButton.this.bcSdk) && (sdk2 == RandoriSdkComboBoxWithBrowseButton.this.bcSdk)) return 1;
+                    if ((sdk1 == bcSdk) && (sdk2 != bcSdk)) return -1;
+                    if ((sdk1 != bcSdk) && (sdk2 == bcSdk)) return 1;
 
                     if (((sdk1 instanceof Sdk)) && ((sdk2 instanceof Sdk))) {
                         SdkTypeId type1 = ((Sdk)sdk1).getSdkType();
