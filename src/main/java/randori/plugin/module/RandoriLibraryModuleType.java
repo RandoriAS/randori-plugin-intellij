@@ -33,6 +33,10 @@ public class RandoriLibraryModuleType extends ModuleType<RandoriLibraryModuleBui
 
     @NonNls
     private static final String MODULE_ID = "RANDORI_LIBRARY_MODULE";
+    @NonNls
+    public static final String RANDORI_GROUP = "Randori";
+    @NonNls
+    public static final String PRESENTABLE_MODULE_NAME = "Randori Library Module";
 
     public RandoriLibraryModuleType()
     {
@@ -59,7 +63,7 @@ public class RandoriLibraryModuleType extends ModuleType<RandoriLibraryModuleBui
     @Override
     public String getName()
     {
-        return "Randori Library Module";
+        return PRESENTABLE_MODULE_NAME;
     }
 
     @Override
