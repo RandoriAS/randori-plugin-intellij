@@ -33,16 +33,16 @@ public class RandoriModuleConfigurable extends SettingsEditor<RandoriModuleModel
     private JCheckBox exportAsFiles;
     private JCheckBox generateRbl;
 
-    public void getData(RandoriModuleModel data)
+    public void getData(RandoriModuleModel model)
     {
-        data.setExportAsFile(exportAsFiles.isSelected());
-        data.setGenerateRbl(generateRbl.isSelected());
+        model.setExportAsFile(exportAsFiles.isSelected());
+        model.setGenerateRbl(generateRbl.isSelected());
     }
 
-    public void setData(RandoriModuleModel data)
+    public void setData(RandoriModuleModel model)
     {
-        exportAsFiles.setSelected(data.isExportAsFile());
-        generateRbl.setSelected(data.isGenerateRbl());
+        exportAsFiles.setSelected(model.isExportAsFile());
+        generateRbl.setSelected(model.isGenerateRbl());
     }
 
     @Override
@@ -71,8 +71,8 @@ public class RandoriModuleConfigurable extends SettingsEditor<RandoriModuleModel
     {
     }
 
-    public boolean isModified(RandoriModuleModel data)
+    public boolean isModified(RandoriModuleModel model)
     {
-        return exportAsFiles.isSelected() != data.isExportAsFile() || generateRbl.isSelected() != data.isGenerateRbl();
+        return exportAsFiles.isSelected() != model.isExportAsFile() || generateRbl.isSelected() != model.isGenerateRbl();
     }
 }

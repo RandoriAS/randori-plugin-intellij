@@ -16,24 +16,16 @@
 
 package randori.plugin.module;
 
-import com.intellij.ide.util.projectWizard.JavaModuleBuilder;
 import com.intellij.openapi.module.ModuleType;
-import com.intellij.openapi.projectRoots.SdkTypeId;
-import randori.plugin.roots.RandoriSdkType;
 
 /**
  * @author Frédéric THOMAS
  */
-public class RandoriModuleBuilder extends JavaModuleBuilder {
+public class RandoriLibraryModuleBuilder extends RandoriModuleBuilder {
 
     @SuppressWarnings("rawtypes")
     @Override
     public ModuleType getModuleType() {
-        return RandoriWebModuleType.getInstance();
-    }
-
-    @Override
-    public boolean isSuitableSdkType(SdkTypeId sdkType) {
-        return RandoriSdkType.getInstance() == sdkType;
+        return RandoriLibraryModuleType.getInstance();
     }
 }

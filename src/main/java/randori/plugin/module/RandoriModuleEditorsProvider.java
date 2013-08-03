@@ -37,7 +37,7 @@ public class RandoriModuleEditorsProvider implements
             ModuleConfigurationState state)
     {
         final Module module = state.getRootModel().getModule();
-        if (ModuleType.get(module) != RandoriModuleType.getInstance())
+        if (!RandoriWebModuleType.isOfType(module) && !RandoriLibraryModuleType.isOfType(module))
             return ModuleConfigurationEditor.EMPTY;
 
         final DefaultModuleConfigurationEditorFactory editorFactory = DefaultModuleConfigurationEditorFactory
@@ -46,7 +46,7 @@ public class RandoriModuleEditorsProvider implements
         editors.add(editorFactory.createModuleContentRootsEditor(state));
         editors.add(editorFactory.createOutputEditor(state));
         editors.add(editorFactory.createClasspathEditor(state));
-        //editors.add(new PluginModuleBuildConfEditor(state));
+        //editors.add(new RandoriModuleEditor(state));
 
         return editors.toArray(new ModuleConfigurationEditor[editors.size()]);
     }

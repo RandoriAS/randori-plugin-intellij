@@ -32,32 +32,32 @@ import com.intellij.openapi.vfs.*;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import randori.plugin.configuration.RandoriCompilerModel;
+import randori.plugin.module.RandoriWebModuleType;
 import randori.plugin.util.ProjectUtils;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
  * @author Michael Schmalle
  * @author Frédéric THOMAS
  */
-class FileChangeListener implements VirtualFileListener
-{
+class FileChangeListener implements VirtualFileListener {
     private final Project project;
 
-    public FileChangeListener(Project project)
-    {
+    public FileChangeListener(Project project) {
         this.project = project;
     }
 
-    void validateAndParse(final VirtualFileEvent event, final boolean add, final boolean remove)
-    {
+    @SuppressWarnings("ConstantConditions")
+    void validateAndParse(final VirtualFileEvent event, final boolean add, final boolean remove) {
         final VirtualFile file = event.getFile();
         final boolean isActionScriptFile = FileUtilRt.extensionEquals(file.getPath(),
                 ActionScriptFileType.INSTANCE.getDefaultExtension());
-        final boolean isBelongModule = ModuleUtilCore.findModuleForFile(file, project) != null;
+        final Module moduleForFile = ModuleUtilCore.findModuleForFile(file, project);
+        final boolean isBelongModule = moduleForFile != null;
 
-        if (project == ProjectUtils.getProject() && isActionScriptFile && isBelongModule)
-        {
+        if (project == ProjectUtils.getProject() && isActionScriptFile && isBelongModule) {
             List<VirtualFile> modifiedFiles;
             final RandoriProjectComponent projectComponent = project.getComponent(RandoriProjectComponent.class);
             modifiedFiles = projectComponent.getModifiedFiles();
@@ -75,39 +75,53 @@ class FileChangeListener implements VirtualFileListener
 
             if (state != null && event.isFromSave() && state.isMakeOnSave())
                 executeMake(event);
+
+        } else if (moduleForFile != null && moduleForFile.getModuleFile() != null && moduleForFile.getModuleFile().equals(file)) {
+            updateDependenciesOnUIThread(moduleForFile);
         }
     }
 
-    private void executeMake(final VirtualFileEvent event)
-    {
+    private void executeMake(final VirtualFileEvent event) {
         ProgressManager.getInstance()
                 .run(new Task.Backgroundable(project, AnalysisScopeBundle.message("analyzing.project", new Object[0]),
                         true) {
-                    public void run(@NotNull ProgressIndicator indicator)
-                    {
+                    public void run(@NotNull ProgressIndicator indicator) {
                         FileChangeListener.this.executeMakeInUIThread(event);
                     }
                 });
     }
 
+    private void updateDependenciesOnUIThread(final Module module) {
+
+        if ((project.isInitialized()) && (!project.isDisposed()) && (project.isOpen()) && (!project.isDefault())) {
+            UIUtil.invokeAndWaitIfNeeded(new Runnable() {
+                public void run() {
+                    final RandoriModuleComponent moduleComponent = module.getComponent(RandoriModuleComponent.class);
+                    moduleComponent.updateDependencies();
+                }
+            });
+        }
+    }
+
     @SuppressWarnings("unused")
-    private void executeMakeInUIThread(VirtualFileEvent event)
-    {
-        if ((project.isInitialized()) && (!project.isDisposed()) && (project.isOpen()) && (!project.isDefault()))
-        {
+    private void executeMakeInUIThread(final VirtualFileEvent event) {
+        if ((project.isInitialized()) && (!project.isDisposed()) && (project.isOpen()) && (!project.isDefault())) {
             final ModuleManager moduleManager = ModuleManager.getInstance(project);
             final CompilerManager compilerManager = CompilerManager.getInstance(project);
 
             UIUtil.invokeAndWaitIfNeeded(new Runnable() {
-                public void run()
-                {
-                    final Module rootModule = moduleManager.findModuleByName(project.getName());
+                public void run() {
+                    final Module module = ModuleUtilCore.findModuleForFile(event.getFile(), project);
+                    List<Module> webModulesParents = null;
 
-                    if (rootModule != null)
-                    {
-                        if ((!compilerManager.isCompilationActive())
-                                && (!compilerManager.isUpToDate(new ModuleCompileScope(rootModule, true))))
-                            compilerManager.make(project, moduleManager.getModules(), null);
+                    if (module != null) {
+                        webModulesParents = module.getComponent(RandoriModuleComponent.class).getWebModulesParents();
+
+                        for (Module webModulesParent : webModulesParents) {
+                            boolean upToDate = compilerManager.isUpToDate(new ModuleCompileScope(webModulesParent, true));
+                            if ((!compilerManager.isCompilationActive()) && (!upToDate))
+                                compilerManager.make(project, moduleManager.getModules(), null);
+                        }
                     }
                 }
             });
@@ -115,60 +129,50 @@ class FileChangeListener implements VirtualFileListener
     }
 
     @Override
-    public void propertyChanged(VirtualFilePropertyEvent event)
-    {
+    public void propertyChanged(VirtualFilePropertyEvent event) {
         if (event.getPropertyName().equals(VirtualFile.PROP_NAME)
                 && VirtualFile.isValidName(event.getNewValue().toString()))
             validateAndParse(event, true, false);
     }
 
     @Override
-    public void contentsChanged(VirtualFileEvent event)
-    {
+    public void contentsChanged(VirtualFileEvent event) {
         validateAndParse(event, true, false);
     }
 
     @Override
-    public void fileCreated(VirtualFileEvent event)
-    {
+    public void fileCreated(VirtualFileEvent event) {
         validateAndParse(event, true, false);
     }
 
     @Override
-    public void fileDeleted(VirtualFileEvent event)
-    {
+    public void fileDeleted(VirtualFileEvent event) {
         validateAndParse(event, false, true);
     }
 
     @Override
-    public void fileMoved(VirtualFileMoveEvent event)
-    {
+    public void fileMoved(VirtualFileMoveEvent event) {
         validateAndParse(event, false, false);
     }
 
     @Override
-    public void fileCopied(VirtualFileCopyEvent event)
-    {
+    public void fileCopied(VirtualFileCopyEvent event) {
         validateAndParse(event, true, false);
     }
 
     @Override
-    public void beforePropertyChange(VirtualFilePropertyEvent event)
-    {
+    public void beforePropertyChange(VirtualFilePropertyEvent event) {
     }
 
     @Override
-    public void beforeContentsChange(VirtualFileEvent event)
-    {
+    public void beforeContentsChange(VirtualFileEvent event) {
     }
 
     @Override
-    public void beforeFileDeletion(VirtualFileEvent event)
-    {
+    public void beforeFileDeletion(VirtualFileEvent event) {
     }
 
     @Override
-    public void beforeFileMovement(VirtualFileMoveEvent event)
-    {
+    public void beforeFileMovement(VirtualFileMoveEvent event) {
     }
 }

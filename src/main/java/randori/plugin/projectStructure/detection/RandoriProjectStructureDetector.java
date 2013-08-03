@@ -96,7 +96,8 @@ public class RandoriProjectStructureDetector extends ProjectStructureDetector
                             .suggestRootForFileWithPackageStatement(child, base, PACKAGE_NAME_FETCHER, false);
                     if (root != null)
                     {
-                        result.add(new RandoriModuleSourceRoot(root.getFirst()));
+                        result.add(new RandoriWebModuleSourceRoot(root.getFirst()));
+                        result.add(new RandoriLibraryModuleSourceRoot(root.getFirst()));
                         return DirectoryProcessingResult.skipChildrenAndParentsUpTo(root.getFirst());
                     }
                     else

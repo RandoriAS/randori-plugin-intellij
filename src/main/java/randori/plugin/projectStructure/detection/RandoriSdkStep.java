@@ -28,7 +28,7 @@ import javax.swing.*;
 /**
  * @author Frédéric THOMAS Date: 19/04/13 Time: 20:44
  */
-class RandoriSdkStep extends ModuleWizardStep
+public class RandoriSdkStep extends ModuleWizardStep
 {
 
     private final WizardContext context;

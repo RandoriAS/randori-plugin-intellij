@@ -34,21 +34,21 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Chunk;
 import com.intellij.util.ThrowableRunnable;
 import org.jetbrains.annotations.NotNull;
+import randori.plugin.components.RandoriModuleComponent;
 import randori.plugin.components.RandoriProjectComponent;
 import randori.plugin.configuration.RandoriCompilerModel;
+import randori.plugin.module.RandoriWebModuleType;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
  * IDEA Compiler class for calling the internal compiler API.
- * 
+ *
  * @author Frédéric THOMAS
  */
-class RandoriCompiler implements TranslatingCompiler
-{
+class RandoriCompiler implements TranslatingCompiler {
 
     private static final Logger LOG = Logger.getInstance("#randori.compiler.RandoriCompiler");
     private final Project project;
@@ -56,27 +56,23 @@ class RandoriCompiler implements TranslatingCompiler
     private int sessionId;
     private RandoriCompilerSession compilerSession;
 
-    public RandoriCompiler(Project project)
-    {
+    public RandoriCompiler(Project project) {
         this.project = project;
 
         projectComponent = project.getComponent(RandoriProjectComponent.class);
     }
 
     @Override
-    public boolean isCompilableFile(VirtualFile file, CompileContext context)
-    {
+    public boolean isCompilableFile(VirtualFile file, CompileContext context) {
         return FileUtilRt.extensionEquals(file.getPath(), ActionScriptFileType.INSTANCE.getDefaultExtension());
     }
 
     @Override
-    public void compile(CompileContext context, Chunk<Module> moduleChunk, VirtualFile[] files, OutputSink sink)
-    {
+    public void compile(CompileContext context, Chunk<Module> moduleChunk, VirtualFile[] files, OutputSink sink) {
         context.getProgressIndicator().checkCanceled();
-        int moduleCount = moduleChunk.getNodes().size();
+        int moduleCount = context.getCompileScope().getAffectedModules().length;
 
-        for (Module module : moduleChunk.getNodes())
-        {
+        for (Module module : moduleChunk.getNodes()) {
             final boolean isLastModule = --moduleCount == 0;
             List<VirtualFile> modifiedFiles = project.getComponent(RandoriProjectComponent.class).getModifiedFiles();
 
@@ -84,41 +80,32 @@ class RandoriCompiler implements TranslatingCompiler
             boolean success;
 
 
-            if (context.hashCode() != sessionId)
-            {
+            if (context.hashCode() != sessionId) {
                 sessionId = context.hashCode();
                 compilerSession = new RandoriCompilerSession(project);
-            }
-            else
+            } else
                 doClean = false;
 
-            if (context.isMake() && modifiedFiles.size() > 0)
-            {
+            if (context.isMake() && modifiedFiles.size() > 0) {
                 LOG.info("Starting Randori compiler... Make " + module.getName());
                 context.getProgressIndicator().setText("Starting Randori compiler... Make " + module.getName());
 
                 success = compilerSession.make(module);
-            }
-            else if (context.isRebuild())
-            {
+            } else if (context.isRebuild()) {
                 if (doClean)
-                    clearAffectedOutputPathsIfPossible(context, moduleChunk.getNodes().iterator());
+                    clearAffectedOutputPathsIfPossible(context, context.getCompileScope().getAffectedModules());
 
                 LOG.info("Starting Randori compiler... Rebuild " + module.getName());
                 context.getProgressIndicator().setText("Starting Randori compiler... Rebuild " + module.getName());
 
                 success = compilerSession.build(module);
-            }
-            else
+            } else
                 return;
 
-            if (success)
-            {
+            if (success) {
                 if (isLastModule && modifiedFiles.size() > 0)
                     modifiedFiles.removeAll(modifiedFiles);
-            }
-            else
-            {
+            } else {
                 context.getProgressIndicator().cancel();
             }
 
@@ -132,34 +119,37 @@ class RandoriCompiler implements TranslatingCompiler
 
     @NotNull
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return "Randori Compiler";
     }
 
     @Override
-    public boolean validateConfiguration(CompileScope scope)
-    {
+    public boolean validateConfiguration(CompileScope scope) {
         return projectComponent.validateConfiguration(scope);
     }
 
-    private void clearAffectedOutputPathsIfPossible(final CompileContext context, final Iterator<Module> moduleIterator)
-    {
+    private void clearAffectedOutputPathsIfPossible(final CompileContext context, final Module[] compiledModules) {
         final List<File> outPutDirs = new ReadAction<List<File>>() {
-            protected void run(final Result<List<File>> result)
-            {
+            protected void run(final Result<List<File>> result) {
                 final List<File> dirs = new ArrayList<File>();
                 final RandoriCompilerModel projectModel = RandoriCompilerModel.getInstance(project).getState();
-                final VirtualFile baseDir = project.getBaseDir();
+
                 assert projectModel != null;
 
-                baseDir.findFileByRelativePath(projectModel.getBasePath());
-                File generatedDir = new File(FileUtil.toSystemDependentName(baseDir.getPath() + File.separator
-                        + projectModel.getBasePath()));
-                dirs.add(generatedDir);
+                for (Module module : compiledModules) {
+                    if (RandoriWebModuleType.isOfType(module)) {
+                        final RandoriModuleComponent moduleComponent = module.getComponent(RandoriModuleComponent.class);
+                        for (VirtualFile webModuleParentContentRootFolder : moduleComponent.getWebModuleParentsContentRootFolder()) {
+                            if (webModuleParentContentRootFolder != null) {
+                                webModuleParentContentRootFolder.findFileByRelativePath(projectModel.getBasePath());
+                                File generatedDir = new File(FileUtil.toSystemDependentName(webModuleParentContentRootFolder.getPath()
+                                        + File.separator + projectModel.getBasePath()));
+                                dirs.add(generatedDir);
+                            }
+                        }
+                    }
 
-                while (moduleIterator.hasNext()) {
-                    VirtualFile outPutDir = context.getModuleOutputDirectory(moduleIterator.next());
+                    VirtualFile outPutDir = context.getModuleOutputDirectory(module);
                     if (outPutDir != null) {
                         dirs.add(new File(outPutDir.getCanonicalPath()));
                     }
@@ -167,12 +157,10 @@ class RandoriCompiler implements TranslatingCompiler
                 result.setResult(dirs);
             }
         }.execute().getResultObject();
-        if (outPutDirs.size() > 0)
-        {
+        if (outPutDirs.size() > 0) {
             CompilerUtil.runInContext(context, CompilerBundle.message("progress.clearing.output"),
                     new ThrowableRunnable<RuntimeException>() {
-                        public void run()
-                        {
+                        public void run() {
                             CompilerUtil.clearOutputDirectories(outPutDirs);
                         }
                     });

@@ -19,63 +19,59 @@ package randori.plugin.module;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.ModuleTypeManager;
-import randori.plugin.ui.icons.RandoriIcons;
 import org.jetbrains.annotations.NonNls;
+import randori.plugin.ui.icons.RandoriIcons;
 
 import javax.swing.*;
 
 /**
  * @author Michael Schmalle
+ * @author Frédéric THOMAS
  */
-public class RandoriModuleType extends ModuleType<RandoriModuleBuilder>
-{
+public class RandoriWebModuleType extends ModuleType<RandoriModuleBuilder> {
 
     @NonNls
-    private static final String MODULE_ID = "RANDORI_MODULE";
+    private static final String MODULE_ID = "RANDORI_WEB_MODULE";
+    @NonNls
+    public static final String RANDORI_GROUP = "Randori";
+    @NonNls
+    public static final String PRESENTABLE_MODULE_NAME = "Randori Web Module";
 
-    public RandoriModuleType()
-    {
+    public RandoriWebModuleType() {
         super(MODULE_ID);
     }
 
-    public static RandoriModuleType getInstance()
-    {
-        return (RandoriModuleType) ModuleTypeManager.getInstance().findByID(MODULE_ID);
+    public static RandoriWebModuleType getInstance() {
+        return (RandoriWebModuleType) ModuleTypeManager.getInstance().findByID(MODULE_ID);
     }
 
-    public static boolean isOfType(Module module)
-    {
-        return get(module) instanceof RandoriModuleType;
+    public static boolean isOfType(Module module) {
+        return get(module) instanceof RandoriWebModuleType;
     }
 
     // create New Project
     @Override
-    public RandoriModuleBuilder createModuleBuilder()
-    {
+    public RandoriModuleBuilder createModuleBuilder() {
         return new RandoriModuleBuilder();
     }
 
     @Override
-    public String getName()
-    {
-        return "Randori Module";
+    public String getName() {
+        return PRESENTABLE_MODULE_NAME;
     }
 
     @Override
-    public String getDescription()
-    {
-        return "This module type is used to create Randori AS3 projects using the Randori JavaScript cross compiler";
+    public String getDescription() {
+        return "This module type is used to create Randori AS3 Web projects using the Randori JavaScript cross compiler";
     }
 
     @Override
-    public Icon getBigIcon()
-    {
+    public Icon getBigIcon() {
         return RandoriIcons.Randori24;
     }
 
     @Override
-    public Icon getNodeIcon(boolean isOpened)
-    {
+    public Icon getNodeIcon(boolean isOpened) {
         return RandoriIcons.Randori16;
     }
 }
