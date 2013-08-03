@@ -209,6 +209,7 @@
       <include name="plugins/JavaScriptLanguage/lib/JavascriptLanguage.jar"/>
       <include name="plugins/JavaScriptLanguage/lib/resources_en.jar"/>
       <include name="plugins/flex/lib/FlexSupport.jar"/>
+      <include name="plugins/flex/lib/flex-shared.jar"/>
       <include name="plugins/flex/lib/resources_en.jar"/>
     </fileset>
   </path>
