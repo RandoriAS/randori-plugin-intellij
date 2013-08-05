@@ -1,12 +1,13 @@
 <idea-plugin version="2" url="http://randoriframework.com">
     <name>Randori Compiler</name>
-    <version>0.3.0</version>
+    <version>0.3.0.1</version>
     <idea-version since-build="129.713"/>
 
     <vendor>Teoti Graphix, LLC</vendor>
     <category>Framework integration</category>
 
     <description><![CDATA[
+    <p>THIS IS THE NIGHTLY BUILD</p>
     <p>The Randori Framework is a tool that helps in making LARGE Javascript application development manageable.</p>
     <p>It consists of an Actionscript cross-compiler and a client-side JavaScript framework.</p>
     <p>Please visit <a href="http://randoriframework.com" target="_blank">http://randoriframework.com</a> for more information.</p>
