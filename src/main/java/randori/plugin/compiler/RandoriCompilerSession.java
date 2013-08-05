@@ -201,7 +201,8 @@ public class RandoriCompilerSession {
             webModuleRblPaths = new ArrayList<String>();
 
             if (isWebModule) {
-                moduleBasePath = moduleComponent.getWebModuleParentsContentRootFolder().get(0).getCanonicalPath();
+                if (moduleComponent.getWebModuleParentsContentRootFolder().size() > 0)
+                    moduleBasePath = moduleComponent.getWebModuleParentsContentRootFolder().get(0).getCanonicalPath();
             } else
                 for (VirtualFile webModuleParentContentRootFolder : moduleComponent.getWebModuleParentsContentRootFolder()) {
                     String librariesOutputPath = FileUtil.toSystemDependentName(webModuleParentContentRootFolder.getCanonicalPath()

@@ -250,18 +250,21 @@ public class RandoriModuleComponent implements ModuleComponent, Configurable,
         RandoriModuleComponent webModuleComponent = module.getComponent(RandoriModuleComponent.class);
         ModifiableRootModel modifiableRootModel = webModuleComponent.getModifiableRootModel();
         ContentEntry[] contentEntries = modifiableRootModel.getContentEntries();
-        ContentEntry preferredContentEntry = contentEntries[0];
-        for (ContentEntry contentEntry : contentEntries) {
-            if (contentEntry.getFile() != null) {
-                //noinspection ConstantConditions
-                String modulePathName = contentEntry.getFile().getCanonicalPath().toLowerCase();
-                String suffix = module.getName().toLowerCase();
-                if (modulePathName.endsWith(suffix)) {
-                    preferredContentEntry = contentEntry;
-                    break;
+        ContentEntry preferredContentEntry = null;
+        if (contentEntries.length > 0) {
+            preferredContentEntry = contentEntries[0];
+            for (ContentEntry contentEntry : contentEntries) {
+                if (contentEntry.getFile() != null) {
+                    //noinspection ConstantConditions
+                    String modulePathName = contentEntry.getFile().getCanonicalPath().toLowerCase();
+                    String suffix = module.getName().toLowerCase();
+                    if (modulePathName.endsWith(suffix)) {
+                        preferredContentEntry = contentEntry;
+                        break;
+                    }
                 }
             }
         }
-        return preferredContentEntry.getFile();
+        return (preferredContentEntry == null) ? null : preferredContentEntry.getFile();
     }
 }
