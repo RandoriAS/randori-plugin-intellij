@@ -5,12 +5,12 @@ package ${PACKAGE_NAME}
     public class ${NAME} extends AbstractMediator
     {
 
-        override protected function onRegister():void
+        override public function initialize():void
         {
 
         }
 
-        override protected function onDeregister():void
+        override public function destroy():void
         {
 
         }
