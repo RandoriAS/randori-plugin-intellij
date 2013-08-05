@@ -162,6 +162,7 @@
     <copy file="${module.randori-plugin-intellij.basedir}/lib/external/commons-lang3-3.1.jar" tofile="${zipdirectory}/commons-lang3-3.1.jar"/>
     <copy file="${module.randori-plugin-intellij.basedir}/lib/external/velocity-1.6.2-dep.jar" tofile="${zipdirectory}/velocity-1.6.2-dep.jar"/>
     <copy file="${randori.compiler.path}/randori.jar" tofile="${zipdirectory}/randori.jar"/>
+    <copy file="${randori.compiler.path}/commons-compress-1.5.jar" tofile="${zipdirectory}/commons-compress-1.5.jar"/>
     <copy file="${randori.compiler.path}/truezip-driver-file-7.7.2.jar" tofile="${zipdirectory}/truezip-driver-file-7.7.2.jar"/>
     <copy file="${randori.compiler.path}/truezip-driver-zip-7.7.2.jar" tofile="${zipdirectory}/truezip-driver-zip-7.7.2.jar"/>
     <copy file="${randori.compiler.path}/truezip-file-7.7.2.jar" tofile="${zipdirectory}/truezip-file-7.7.2.jar"/>
