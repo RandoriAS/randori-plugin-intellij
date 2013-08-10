@@ -128,57 +128,59 @@ public class RandoriCompilerSession {
     }
 
     private boolean build(Module module, boolean doBuild, boolean doExport) {
-        boolean success = true;
+        boolean success = false;
 
         isWebModule = ProjectUtils.isRandoriWebModule(module);
 
-        prepareCompilation(module);
+        if (prepareCompilation(module)) {
+            success = true;
 
-        if (isWebModule || isMake || (isRebuild && moduleModel.isGenerateRbl())) {
-            CompilerArguments arguments = new CompilerArguments();
-            configureDependencies(arguments);
-            final IBundleConfiguration configuration;
+            if (isWebModule || isMake || (isRebuild && moduleModel.isGenerateRbl())) {
+                CompilerArguments arguments = new CompilerArguments();
+                configureDependencies(arguments);
+                final IBundleConfiguration configuration;
 
-            clearProblems();
+                clearProblems();
 
-            if (compiler instanceof RandoriProjectCompiler) {
-                compiler.configure(arguments.toArguments());
-                dumpCompilationInfo("Compiling Web Module: " + module.getName() + "\n\n" +
-                        StringUtils.join(arguments.toArguments(), "\n"));
-            } else if (compiler instanceof RandoriBundleCompiler) {
-                configuration = createConfiguration(arguments);
-                ((RandoriBundleCompiler) compiler).configure(configuration);
-                dumpCompilationInfo("Compiling Rbl: " + configuration.getBundelName() + "\n\n" +
-                        StringUtils.join(((BundleConfiguration) configuration).toArguments(), "\n"));
-            }
-
-            // Checked twice because the compiler.compile return true even if it throws errors
-            success = compiler.compile(doBuild, doExport) && !lastCompiler.getProblemQuery().hasErrors();
-
-            // If we're compiling a web module, copy the SDK libs to the appropriate place.
-            // If we compile a lib module, copy the just compile Rbl to its others web module parents.
-            if (success) {
-                if (doExport && isWebModule) {
-                    RandoriSdkType.copySdkLibraries(project, moduleBasePath);
-                } else if (webModuleRblPaths != null && webModuleRblPaths.size() > 1) {
-                    File rblFile = new File(webModuleRblPaths.get(0));
-                    for (int i = 1; i < webModuleRblPaths.size(); i++) {
-                        File rblDestination = new File(webModuleRblPaths.get(i));
-                        try {
-                            FileUtilRt.copy(rblFile, rblDestination);
-                            dumpCompilationInfo("Copying " + rblFile.getName() + " to " + rblDestination.getPath());
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
+                if (compiler instanceof RandoriProjectCompiler) {
+                    compiler.configure(arguments.toArguments());
+                    dumpCompilationInfo("Compiling Web Module: " + module.getName() + "\n\n" +
+                            StringUtils.join(arguments.toArguments(), "\n"));
+                } else if (compiler instanceof RandoriBundleCompiler) {
+                    configuration = createConfiguration(arguments);
+                    ((RandoriBundleCompiler) compiler).configure(configuration);
+                    dumpCompilationInfo("Compiling Rbl: " + configuration.getBundelName() + "\n\n" +
+                            StringUtils.join(((BundleConfiguration) configuration).toArguments(), "\n"));
                 }
 
-                if ((project.isInitialized()) && (!project.isDisposed()) && (project.isOpen()) && (!project.isDefault())) {
-                    UIUtil.invokeAndWaitIfNeeded(new Runnable() {
-                        public void run() {
-                            project.getBaseDir().refresh(true, true);
+                // Checked twice because the compiler.compile return true even if it throws errors
+                success = compiler.compile(doBuild, doExport) && !lastCompiler.getProblemQuery().hasErrors();
+
+                // If we're compiling a web module, copy the SDK libs to the appropriate location.
+                // If we compile a lib module, only copy the compile Rbl to its others web module parents.
+                if (success) {
+                    if (doExport && isWebModule) {
+                        RandoriSdkType.copySdkLibraries(project, moduleBasePath);
+                    } else if (webModuleRblPaths != null && webModuleRblPaths.size() > 1) {
+                        File rblFile = new File(webModuleRblPaths.get(0));
+                        for (int i = 1; i < webModuleRblPaths.size(); i++) {
+                            File rblDestination = new File(webModuleRblPaths.get(i));
+                            try {
+                                FileUtilRt.copy(rblFile, rblDestination);
+                                dumpCompilationInfo("Copying " + rblFile.getName() + " to " + rblDestination.getPath());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                         }
-                    });
+                    }
+
+                    if ((project.isInitialized()) && (!project.isDisposed()) && (project.isOpen()) && (!project.isDefault())) {
+                        UIUtil.invokeAndWaitIfNeeded(new Runnable() {
+                            public void run() {
+                                project.getBaseDir().refresh(true, true);
+                            }
+                        });
+                    }
                 }
             }
         }
@@ -186,8 +188,8 @@ public class RandoriCompilerSession {
         return success;
     }
 
-    @SuppressWarnings("ConstantConditions")
-    void prepareCompilation(Module module) {
+    private boolean prepareCompilation(Module module) {
+        boolean isCompilationPrepared = false;
         this.module = module;
 
         //workspace = new Workspace();
@@ -200,6 +202,8 @@ public class RandoriCompilerSession {
         final RandoriModuleComponent moduleComponent = module.getComponent(RandoriModuleComponent.class);
 
         usedModules = new ArrayList<Module>();
+        moduleModel = null;
+        modifiedFiles = null;
 
         if (moduleComponent != null) {
             modifiedFiles = projectComponent.getModifiedFiles();
@@ -222,7 +226,9 @@ public class RandoriCompilerSession {
 
                     webModuleRblPaths.add(generatedLibPath);
                 }
+            isCompilationPrepared = true;
         }
+        return isCompilationPrepared;
     }
 
     private void configureDependencies(CompilerArguments arguments) {
