@@ -33,6 +33,7 @@ import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Chunk;
 import com.intellij.util.ThrowableRunnable;
+import org.apache.flex.utils.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import randori.plugin.components.RandoriModuleComponent;
 import randori.plugin.components.RandoriProjectComponent;
@@ -112,7 +113,7 @@ class RandoriCompiler implements TranslatingCompiler {
             // If compilation failed or it is the last module, Show the problem window
             if (!success || isLastModule)
                 ApplicationManager.getApplication().invokeLater(
-                        new RandoriCompilerSession.ProblemBuildRunnable(project, RandoriCompilerSession
+                        new RandoriCompilerSession.ProblemBuildRunnable(project, module, RandoriCompilerSession
                                 .getLastCompiler(), true));
         }
     }
@@ -157,7 +158,15 @@ class RandoriCompiler implements TranslatingCompiler {
                 result.setResult(dirs);
             }
         }.execute().getResultObject();
+
         if (outPutDirs.size() > 0) {
+
+            List<String> dirPaths = new ArrayList<String>();
+            for (File outPutDir : outPutDirs) dirPaths.add(outPutDir.getPath());
+
+            RandoriCompilerSession.dumpCompilationInfo(CompilerBundle.message("progress.clearing.output") + "\n" +
+                    StringUtils.join(dirPaths.toArray(new String[dirPaths.size()]), "\n"));
+
             CompilerUtil.runInContext(context, CompilerBundle.message("progress.clearing.output"),
                     new ThrowableRunnable<RuntimeException>() {
                         public void run() {

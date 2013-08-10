@@ -28,7 +28,9 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ui.UIUtil;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.flex.compiler.internal.workspaces.Workspace;
+import org.apache.flex.utils.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import randori.compiler.bundle.BundleConfiguration;
 import randori.compiler.bundle.IBundleConfiguration;
@@ -52,6 +54,7 @@ import randori.plugin.util.ProjectUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -74,6 +77,7 @@ public class RandoriCompilerSession {
     private boolean isWebModule;
     private List<String> webModuleRblPaths;
     private String moduleBasePath;
+    private VirtualFile[] libraryRoots;
 
     public static void parseAll(@NotNull Project project) {
         if (ProjectUtils.isSDKInstalled(project) && ProjectUtils.hasRandoriModuleType(project)) {
@@ -87,11 +91,11 @@ public class RandoriCompilerSession {
 
                 if (!compilerSession.parse(module)) {
                     ApplicationManager.getApplication().invokeLater(
-                            new ProblemBuildRunnable(project, lastCompiler, false));
+                            new ProblemBuildRunnable(project, module, lastCompiler, false));
                     return;
                 }
             }
-            ApplicationManager.getApplication().invokeLater(new ProblemBuildRunnable(project, lastCompiler, false));
+            ApplicationManager.getApplication().invokeLater(new ProblemBuildRunnable(project, null, lastCompiler, false));
         }
     }
 
@@ -141,11 +145,13 @@ public class RandoriCompilerSession {
 
             clearProblems();
 
-            if (compiler instanceof RandoriProjectCompiler)
+            if (compiler instanceof RandoriProjectCompiler) {
                 compiler.configure(arguments.toArguments());
-            else if (compiler instanceof RandoriBundleCompiler) {
+                dumpCompilationInfo(StringUtils.join(arguments.toArguments(), "\n"));
+            } else if (compiler instanceof RandoriBundleCompiler) {
                 configuration = createConfiguration(arguments);
                 ((RandoriBundleCompiler) compiler).configure(configuration);
+                dumpCompilationInfo("Compiling Rbl: " + configuration.getBundelName());
             }
 
             // Checked twice because the compiler.compile return true even if it throws errors
@@ -162,6 +168,7 @@ public class RandoriCompilerSession {
                         File rblDestination = new File(webModuleRblPaths.get(i));
                         try {
                             FileUtilRt.copy(rblFile, rblDestination);
+                            dumpCompilationInfo("Copying " + rblFile.getName() + " to " + rblDestination.getPath() + "\n");
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -181,6 +188,14 @@ public class RandoriCompilerSession {
         return success;
     }
 
+    public static void dumpCompilationInfo(String configuration) {
+        System.out.println();
+        System.out.println("----------------- Dumping compilation info ----------------");
+        System.out.println(configuration);
+        System.out.println("-------------- Ends Dumping compilation info --------------");
+        System.out.println();
+    }
+
     @SuppressWarnings("ConstantConditions")
     void prepareCompilation(Module module) {
         this.module = module;
@@ -194,10 +209,15 @@ public class RandoriCompilerSession {
         final RandoriProjectComponent projectComponent = project.getComponent(RandoriProjectComponent.class);
         final RandoriModuleComponent moduleComponent = module.getComponent(RandoriModuleComponent.class);
 
+        usedModules = new ArrayList<Module>();
+
         if (moduleComponent != null) {
             modifiedFiles = projectComponent.getModifiedFiles();
             moduleModel = moduleComponent.getState();
-            usedModules = moduleComponent.getDependencies();
+            List<Module> dependencies = moduleComponent.getDependencies();
+            usedModules = getRecursivelyUsedModules(dependencies.toArray(new Module[dependencies.size()]));
+
+            libraryRoots = getLibraryRoots();
             webModuleRblPaths = new ArrayList<String>();
 
             if (isWebModule) {
@@ -214,6 +234,51 @@ public class RandoriCompilerSession {
                     webModuleRblPaths.add(generatedLibPath);
                 }
         }
+    }
+
+    private static List<Module> getRecursivelyUsedModules(Module[] usedModules) {
+        if (usedModules.length > 0)
+            for (Module usedModule : usedModules) {
+                RandoriModuleComponent moduleComponent = usedModule.getComponent(RandoriModuleComponent.class);
+                List<Module> dependencies = moduleComponent.getDependencies();
+                if (dependencies.size() > 0) {
+                    Module[] moduleDependencies = dependencies.toArray(new Module[dependencies.size()]);
+                    usedModules = (Module[]) ArrayUtils.addAll(usedModules, moduleDependencies);
+                    getRecursivelyUsedModules(moduleDependencies);
+                }
+            }
+
+        return Arrays.asList(usedModules);
+    }
+
+    private List<VirtualFile> getLibraryRootsWithNoModuleSources() {
+        VirtualFile[] libraryRootsWithNoModuleSources = libraryRoots.clone();
+
+        if (!ArrayUtils.isEmpty(libraryRoots))
+            for (VirtualFile libraryRoot : libraryRoots) {
+                if (!libraryRoot.getPath().endsWith(".swc")) {
+                    String libraryName = libraryRoot.getNameWithoutExtension();
+                    for (Module usedModule : usedModules) {
+                        boolean existsAsModule = libraryName.equalsIgnoreCase(usedModule.getName());
+                        boolean isStillInList = Arrays.asList(libraryRootsWithNoModuleSources).contains(libraryRoot);
+                        if (existsAsModule && isStillInList) {
+                            libraryRootsWithNoModuleSources = (VirtualFile[]) ArrayUtils.removeElement(libraryRootsWithNoModuleSources, libraryRoot);
+                            break;
+                        }
+                    }
+                }
+            }
+
+        return Arrays.asList(libraryRootsWithNoModuleSources);
+    }
+
+    private VirtualFile[] getLibraryRoots() {
+        Module[] modules;
+        if (usedModules != null && usedModules.size() > 0)
+            modules = (Module[]) ArrayUtils.addAll(new Module[]{module}, usedModules.toArray());
+        else modules = new Module[]{module};
+
+        return LibraryUtil.getLibraryRoots(modules, false, false);
     }
 
     private void configureDependencies(CompilerArguments arguments) {
@@ -243,17 +308,16 @@ public class RandoriCompilerSession {
                 }
             }
 
-            Module[] modules = isWebModule ? ModuleManager.getInstance(project).getModules() : new Module[]{module};
-            final VirtualFile[] libraryRoots = LibraryUtil.getLibraryRoots(modules, false, false);
-
-            for (VirtualFile library : libraryRoots) {
+            // Add SWCs and RBLs paths.
+            List<VirtualFile> effectiveLibraryRoots = getLibraryRootsWithNoModuleSources();
+            for (VirtualFile library : effectiveLibraryRoots) {
                 final String libraryPath = library.getPath();
 
                 if (FileUtilRt.getExtension(libraryPath).equals(
                         RandoriApplicationComponent.RBL_FILE_TYPE.getDefaultExtension())) {
                     arguments.addBundlePath(libraryPath);
                 } else
-                    arguments.addLibraryPath(libraryPath);
+                    arguments.addLibraryPath(libraryPath.replace("!", ""));
             }
         }
     }
@@ -297,7 +361,7 @@ public class RandoriCompilerSession {
         return configuration;
     }
 
-    void clearProblems() {
+    private void clearProblems() {
         ApplicationManager.getApplication().invokeLater(new ProblemClearRunnable());
     }
 
@@ -327,11 +391,13 @@ public class RandoriCompilerSession {
 
     public static class ProblemBuildRunnable implements Runnable {
         private final Project project;
+        private final Module module;
         private final RandoriProject compiler;
         private final boolean isBuild;
 
-        ProblemBuildRunnable(Project project, RandoriProject compiler, boolean isBuild) {
+        ProblemBuildRunnable(Project project, Module module, RandoriProject compiler, boolean isBuild) {
             this.project = project;
+            this.module = module;
             this.compiler = compiler;
             this.isBuild = isBuild;
         }
@@ -348,10 +414,12 @@ public class RandoriCompilerSession {
                         + "</a> for more information", project);
             } else {
                 final String successBuildMessage;
-                if (isBuild)
-                    successBuildMessage = "Successfully compiled and built project";
-                else
-                    successBuildMessage = "Successfully parsed project";
+                final String projectName = module != null ? project.getName() + "/" + module.getName() : project.getName();
+
+                if (isBuild) {
+                    successBuildMessage = "Successfully compiled and built " + projectName;
+                } else
+                    successBuildMessage = "Successfully parsed " + projectName;
 
                 NotificationUtils.sendRandoriInformation("Success", successBuildMessage, project);
             }

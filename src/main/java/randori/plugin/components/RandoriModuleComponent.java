@@ -17,6 +17,7 @@
 package randori.plugin.components;
 
 import com.intellij.compiler.impl.CompilerContentIterator;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
@@ -27,13 +28,12 @@ import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ContentEntry;
-import com.intellij.openapi.roots.FileIndex;
-import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.roots.*;
+import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.xmlb.XmlSerializerUtil;
+import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import randori.plugin.configuration.RandoriModuleConfigurable;
@@ -67,6 +67,7 @@ public class RandoriModuleComponent implements ModuleComponent, Configurable,
     private List<Module> webModulesParents;
 
     private ModifiableRootModel modifiableRootModel;
+    private ArrayList<Library> libraries;
 
     public RandoriModuleComponent(Module module, Project project) {
         this.module = module;
@@ -84,6 +85,7 @@ public class RandoriModuleComponent implements ModuleComponent, Configurable,
     @Override
     public void initComponent() {
         modifiableRootModel = ModuleRootManager.getInstance(module).getModifiableModel();
+        updateDependencies();
     }
 
     @Override
@@ -162,11 +164,20 @@ public class RandoriModuleComponent implements ModuleComponent, Configurable,
     public void disposeUIResources() {
     }
 
+    @NotNull
     public List<Module> getDependencies() {
-        if (dependencies == null)
+        if (ArrayUtils.isEmpty(dependencies.toArray()) || dependencies.get(0) == null)
             updateDependencies();
 
         return dependencies;
+    }
+
+    @NotNull
+    public List<Library> getLibraries() {
+        if (ArrayUtils.isEmpty(dependencies.toArray()) || dependencies.get(0) == null)
+            updateDependencies();
+
+        return libraries;
     }
 
     public List<Module> getWebModulesParents() {
@@ -185,21 +196,23 @@ public class RandoriModuleComponent implements ModuleComponent, Configurable,
      */
     public void updateDependencies() {
         dependencies = new ArrayList<Module>();
-        getUsedDependencies(module);
+        libraries = new ArrayList<Library>();
+        dependencies.add(module);
+        getUsedDependencies();
         dependencies.remove(0);
 
-        webModulesParents = RandoriWebModuleType.isOfType(module) ?
-                Arrays.asList(module) :
-                ModuleUtil.getParentModulesOfType(RandoriWebModuleType.getInstance(), module);
+        if (ApplicationManager.getApplication().isReadAccessAllowed())
+            webModulesParents = RandoriWebModuleType.isOfType(module) ?
+                    Arrays.asList(module) :
+                    ModuleUtil.getParentModulesOfType(RandoriWebModuleType.getInstance(), module);
     }
 
-    private void getUsedDependencies(Module module) {
-        dependencies.add(module);
-        final Module[] usedDependencies = ModuleRootManager.getInstance(module).getDependencies();
-        for (Module dependency : usedDependencies) {
-            if (!dependencies.contains(dependency)) {
-                getUsedDependencies(dependency);
-            }
+    private void getUsedDependencies() {
+        for (OrderEntry orderEntry : getModifiableRootModel().getOrderEntries()) {
+            if (orderEntry instanceof LibraryOrderEntry)
+                libraries.add(((LibraryOrderEntry) orderEntry).getLibrary());
+            else if (orderEntry instanceof ModuleOrderEntry)
+                dependencies.add(((ModuleOrderEntry) orderEntry).getModule());
         }
     }
 
