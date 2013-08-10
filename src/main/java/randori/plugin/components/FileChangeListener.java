@@ -32,10 +32,8 @@ import com.intellij.openapi.vfs.*;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import randori.plugin.configuration.RandoriCompilerModel;
-import randori.plugin.module.RandoriWebModuleType;
 import randori.plugin.util.ProjectUtils;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -76,7 +74,7 @@ class FileChangeListener implements VirtualFileListener {
             if (state != null && event.isFromSave() && state.isMakeOnSave())
                 executeMake(event);
 
-        } else if (moduleForFile != null && moduleForFile.getModuleFile() != null && moduleForFile.getModuleFile().equals(file)) {
+        } else if (isBelongModule && moduleForFile.getModuleFile() != null && moduleForFile.getModuleFile().equals(file)) {
             updateDependenciesOnUIThread(moduleForFile);
         }
     }
@@ -103,7 +101,6 @@ class FileChangeListener implements VirtualFileListener {
         }
     }
 
-    @SuppressWarnings("unused")
     private void executeMakeInUIThread(final VirtualFileEvent event) {
         if ((project.isInitialized()) && (!project.isDisposed()) && (project.isOpen()) && (!project.isDefault())) {
             final ModuleManager moduleManager = ModuleManager.getInstance(project);
