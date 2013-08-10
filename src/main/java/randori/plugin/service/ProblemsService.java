@@ -58,7 +58,7 @@ public class ProblemsService
 
     public boolean hasProblems()
     {
-        return problems.size() > 0;
+        return problems.isEmpty();
     }
 
     public boolean hasErrors()

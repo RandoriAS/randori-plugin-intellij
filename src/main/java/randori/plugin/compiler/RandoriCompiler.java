@@ -87,7 +87,7 @@ class RandoriCompiler implements TranslatingCompiler {
             } else
                 doClean = false;
 
-            if (context.isMake() && modifiedFiles.size() > 0) {
+            if (context.isMake() && modifiedFiles.isEmpty()) {
                 LOG.info("Starting Randori compiler... Make " + module.getName());
                 context.getProgressIndicator().setText("Starting Randori compiler... Make " + module.getName());
 
@@ -104,7 +104,7 @@ class RandoriCompiler implements TranslatingCompiler {
                 return;
 
             if (success) {
-                if (isLastModule && modifiedFiles.size() > 0)
+                if (isLastModule && modifiedFiles.isEmpty())
                     modifiedFiles.removeAll(modifiedFiles);
             } else {
                 context.getProgressIndicator().cancel();
@@ -159,7 +159,7 @@ class RandoriCompiler implements TranslatingCompiler {
             }
         }.execute().getResultObject();
 
-        if (outPutDirs.size() > 0) {
+        if (outPutDirs.isEmpty()) {
 
             List<String> dirPaths = new ArrayList<String>();
             for (File outPutDir : outPutDirs) dirPaths.add(outPutDir.getPath());

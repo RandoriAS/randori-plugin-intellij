@@ -221,7 +221,7 @@ public class RandoriCompilerSession {
             webModuleRblPaths = new ArrayList<String>();
 
             if (isWebModule) {
-                if (moduleComponent.getWebModuleParentsContentRootFolder().size() > 0)
+                if (moduleComponent.getWebModuleParentsContentRootFolder().isEmpty())
                     moduleBasePath = moduleComponent.getWebModuleParentsContentRootFolder().get(0).getCanonicalPath();
             } else
                 for (VirtualFile webModuleParentContentRootFolder : moduleComponent.getWebModuleParentsContentRootFolder()) {
@@ -241,7 +241,7 @@ public class RandoriCompilerSession {
             for (Module usedModule : usedModules) {
                 RandoriModuleComponent moduleComponent = usedModule.getComponent(RandoriModuleComponent.class);
                 List<Module> dependencies = moduleComponent.getDependencies();
-                if (dependencies.size() > 0) {
+                if (dependencies.isEmpty()) {
                     Module[] moduleDependencies = dependencies.toArray(new Module[dependencies.size()]);
                     usedModules = (Module[]) ArrayUtils.addAll(usedModules, moduleDependencies);
                     getRecursivelyUsedModules(moduleDependencies);
@@ -274,7 +274,7 @@ public class RandoriCompilerSession {
 
     private VirtualFile[] getLibraryRoots() {
         Module[] modules;
-        if (usedModules != null && usedModules.size() > 0)
+        if (usedModules != null && usedModules.isEmpty())
             modules = (Module[]) ArrayUtils.addAll(new Module[]{module}, usedModules.toArray());
         else modules = new Module[]{module};
 
