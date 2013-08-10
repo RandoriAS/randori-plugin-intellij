@@ -45,14 +45,14 @@ class RandoriLibraryRootsDetector extends LibraryRootsDetectorImpl
         public boolean value(DetectedLibraryRoot root)
         {
             LibraryRootType libraryRootType = root.getTypes().get(0);
-            return (libraryRootType.getType() == OrderRootType.CLASSES) && (libraryRootType.isJarDirectory()) || libraryRootType.getType() == OrderRootType.SOURCES;
+            return libraryRootType.getType() == OrderRootType.CLASSES || libraryRootType.getType() == OrderRootType.SOURCES;
         }
     };
 
     public RandoriLibraryRootsDetector()
     {
-        super(Arrays.asList(new RandoriLibraryBinariesRootDetector(), new RandoriDocsRootDetector(),
-                new RandoriSourcesRootDetector()));
+        super(Arrays.asList(new RandoriLibraryBinariesRootDetector(), new RandoriLibraryDocsRootDetector(),
+                new RandoriLibrarySourcesRootDetector(), new RandoriLibraryFoldersRootDetector()));
     }
 
     public Collection<DetectedLibraryRoot> detectRoots(@NotNull VirtualFile rootCandidate,
@@ -60,8 +60,9 @@ class RandoriLibraryRootsDetector extends LibraryRootsDetectorImpl
     {
         Collection<DetectedLibraryRoot> roots = super.detectRoots(rootCandidate, progressIndicator);
         boolean libFoldersFound = ContainerUtil.find(roots, DETECTED_LIBRARY_ROOT_CONDITION) != null;
-        final List<LibraryRootType> types = Arrays.asList(new LibraryRootType(OrderRootType.CLASSES, false),
-                new LibraryRootType(OrderRootType.SOURCES, false));
+        final List<LibraryRootType> types =
+                Arrays.asList(new LibraryRootType(OrderRootType.CLASSES, false),
+                        new LibraryRootType(OrderRootType.SOURCES, false));
 
         if (libFoldersFound)
         {
@@ -90,10 +91,10 @@ class RandoriLibraryRootsDetector extends LibraryRootsDetectorImpl
 
         if (rootType.getType() == OrderRootType.CLASSES) {
             if (rootType.isJarDirectory()) {
-                return "Folder with RBLs or SWCs";
+                return "RBL or SWC file";
             }
 
-            return FlexBundle.message("as.libraries.root.detector.name");
+            return "Folder with RBLs or SWCs";
         }
 
         if ((rootType.getType() instanceof JavadocOrderRootType))
