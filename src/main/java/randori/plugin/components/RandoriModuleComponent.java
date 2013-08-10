@@ -24,12 +24,13 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleComponent;
-import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.roots.libraries.LibraryUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.xmlb.XmlSerializerUtil;
@@ -197,23 +198,60 @@ public class RandoriModuleComponent implements ModuleComponent, Configurable,
     public void updateDependencies() {
         dependencies = new ArrayList<Module>();
         libraries = new ArrayList<Library>();
-        dependencies.add(module);
         getUsedDependencies();
-        dependencies.remove(0);
 
         if (ApplicationManager.getApplication().isReadAccessAllowed())
-            webModulesParents = RandoriWebModuleType.isOfType(module) ?
-                    Arrays.asList(module) :
-                    ModuleUtil.getParentModulesOfType(RandoriWebModuleType.getInstance(), module);
+            webModulesParents = getRecursivelyWebModuleParents(module);
     }
 
-    private void getUsedDependencies() {
-        for (OrderEntry orderEntry : getModifiableRootModel().getOrderEntries()) {
-            if (orderEntry instanceof LibraryOrderEntry)
-                libraries.add(((LibraryOrderEntry) orderEntry).getLibrary());
-            else if (orderEntry instanceof ModuleOrderEntry)
-                dependencies.add(((ModuleOrderEntry) orderEntry).getModule());
+    public List<Module> getRecursiveDependencies() {
+        Module[] result = getDependencies().toArray(new Module[getDependencies().size()]);
+
+        for (Module dependency : result) {
+            RandoriModuleComponent moduleComponent = dependency.getComponent(RandoriModuleComponent.class);
+            List<Module> dependencies = moduleComponent.getDependencies();
+            if (!dependencies.isEmpty()) {
+                Module[] moduleDependencies = dependencies.toArray(new Module[dependencies.size()]);
+                result = (Module[]) org.apache.commons.lang.ArrayUtils.addAll(result, moduleDependencies);
+                List<Module> recursivelyUsedModules = moduleComponent.getRecursiveDependencies();
+                result = ArrayUtils.addAll(result, recursivelyUsedModules.toArray(new Module[recursivelyUsedModules.size()]));
+            }
         }
+
+        return Arrays.asList(result);
+    }
+
+
+    public List<VirtualFile> getLibraryRootsGottenNoModuleSources() {
+        VirtualFile[] result = getLibraryRoots();
+        final List<Module> recursiveDependencies = getRecursiveDependencies();
+
+        if (!org.apache.commons.lang.ArrayUtils.isEmpty(result))
+            for (VirtualFile libraryRoot : result) {
+                if (!libraryRoot.getPath().endsWith(".swc")) {
+                    String libraryName = libraryRoot.getNameWithoutExtension();
+                    for (Module usedModule : recursiveDependencies) {
+                        boolean existsAsModule = libraryName.equalsIgnoreCase(usedModule.getName());
+                        boolean isStillInList = Arrays.asList(result).contains(libraryRoot);
+                        if (existsAsModule && isStillInList) {
+                            result = (VirtualFile[]) org.apache.commons.lang.ArrayUtils.removeElement(result, libraryRoot);
+                            break;
+                        }
+                    }
+                }
+            }
+
+        return Arrays.asList(result);
+    }
+
+    public VirtualFile[] getLibraryRoots() {
+        Module[] modules;
+        final List<Module> recursiveDependencies = getRecursiveDependencies();
+        if (recursiveDependencies != null && !recursiveDependencies.isEmpty())
+            modules = (Module[]) org.apache.commons.lang.ArrayUtils.addAll(new Module[]{module}, recursiveDependencies.toArray());
+        else modules = new Module[]{module};
+
+        return LibraryUtil.getLibraryRoots(modules, false, false);
     }
 
     protected FileIndex[] getFileIndices(boolean inMainModule, boolean inSubModules) {
@@ -257,6 +295,36 @@ public class RandoriModuleComponent implements ModuleComponent, Configurable,
                 preferredContentRoots.add(preferredContentEntry.getCanonicalFile());
         }
         return preferredContentRoots;
+    }
+
+    private void getUsedDependencies() {
+        for (OrderEntry orderEntry : getModifiableRootModel().getOrderEntries()) {
+            if (orderEntry instanceof LibraryOrderEntry)
+                libraries.add(((LibraryOrderEntry) orderEntry).getLibrary());
+            else if (orderEntry instanceof ModuleOrderEntry)
+                dependencies.add(((ModuleOrderEntry) orderEntry).getModule());
+        }
+    }
+
+    private List<Module> getRecursivelyWebModuleParents(@NotNull Module module) {
+        Module[] result;
+
+        if (RandoriWebModuleType.isOfType(module))
+            result = new Module[]{module};
+        else {
+            result = new Module[0];
+            List<Module> parents = ModuleManager.getInstance(module.getProject()).getModuleDependentModules(module);
+            for (Module parent : parents) {
+                if (RandoriWebModuleType.isOfType(parent))
+                    result = ArrayUtils.add(result, parent);
+                else {
+                    final List<Module> webModuleParents = getRecursivelyWebModuleParents(parent);
+                    if (!webModuleParents.isEmpty())
+                        result = ArrayUtils.addAll(result, webModuleParents.toArray(new Module[webModuleParents.size()]));
+                }
+            }
+        }
+        return Arrays.asList(result);
     }
 
     private VirtualFile getPreferredContentEntry(final Module module) {

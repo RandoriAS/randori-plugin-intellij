@@ -154,7 +154,7 @@ public class RblFileDecompiler implements BinaryFileDecompiler
             }
         }
 
-        if (libraries.isEmpty())
+        if (!libraries.isEmpty())
             librariesInputStream = new SequenceInputStream(Collections.enumeration(libraries));
 
         return librariesInputStream;
