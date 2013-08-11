@@ -16,12 +16,6 @@
 
 package randori.plugin.library;
 
-import java.util.Collection;
-
-import org.jetbrains.annotations.NotNull;
-
-import randori.plugin.projectStructure.detection.RandoriProjectStructureDetector;
-
 import com.intellij.ide.util.projectWizard.importSources.util.CommonSourceRootDetectionUtil;
 import com.intellij.lang.javascript.JavaScriptSupportLoader;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -32,70 +26,69 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileVisitor;
 import com.intellij.util.containers.DistinctRootsCollection;
+import org.jetbrains.annotations.NotNull;
+import randori.plugin.projectStructure.detection.RandoriProjectStructureDetector;
+
+import java.util.Collection;
 
 /**
  * @author Frédéric THOMAS Date: 17/06/13 Time: 16:37
  */
-public class RandoriSourcesRootDetector extends RootDetector
-{
+public class RandoriLibrarySourcesRootDetector extends RootDetector {
 
-    protected RandoriSourcesRootDetector()
-    {
-        super(OrderRootType.SOURCES, false, "RBL sources detector");
+    protected RandoriLibrarySourcesRootDetector() {
+        super(OrderRootType.SOURCES, false, "RBL/SWC source");
     }
 
     /**
      * Find suitable roots in {@code rootCandidate} or its descendants.
-     * 
-     * @param rootCandidate file selected in the file chooser by user
+     *
+     * @param rootCandidate     file selected in the file chooser by user
      * @param progressIndicator can be used to show information about the progress and to abort searching if process is
-     * cancelled
+     *                          cancelled
      * @return suitable roots
      */
     @NotNull
     @Override
     public Collection<VirtualFile> detectRoots(@NotNull VirtualFile rootCandidate,
-            @NotNull ProgressIndicator progressIndicator)
-    {
+                                               @NotNull ProgressIndicator progressIndicator) {
         DistinctRootsCollection<VirtualFile> result = new DistinctRootsCollection<VirtualFile>() {
             @Override
-            protected boolean isAncestor(@NotNull VirtualFile ancestor, @NotNull VirtualFile file)
-            {
+            protected boolean isAncestor(@NotNull VirtualFile ancestor, @NotNull VirtualFile file) {
                 return VfsUtilCore.isAncestor(ancestor, file, false);
             }
         };
+
+        String extension = rootCandidate.getExtension();
+        if (!rootCandidate.isDirectory() && rootCandidate.getParent() != null && extension != null
+                && (extension.equalsIgnoreCase("swc") || extension.equalsIgnoreCase("rbl")))
+            rootCandidate = rootCandidate.getParent();
+
         collectRoots(rootCandidate, result, rootCandidate, progressIndicator);
 
         return result;
     }
 
     private void collectRoots(final VirtualFile startFile, final Collection<VirtualFile> result, final VirtualFile topmostRoot,
-            final ProgressIndicator progressIndicator)
-    {
+                              final ProgressIndicator progressIndicator) {
 
         VfsUtilCore.visitChildrenRecursively(startFile, new VirtualFileVisitor(VirtualFileVisitor.NO_FOLLOW_SYMLINKS) {
 
             @NotNull
-            public VirtualFileVisitor.Result visitFileEx(@NotNull VirtualFile file)
-            {
+            public VirtualFileVisitor.Result visitFileEx(@NotNull VirtualFile file) {
                 progressIndicator.checkCanceled();
                 progressIndicator.setText2(file.getPresentableUrl());
                 String extension = file.getExtension();
 
-                if (!file.isDirectory() && extension != null)
-                {
+                if (!file.isDirectory() && extension != null) {
                     if (JavaScriptSupportLoader.ECMA_SCRIPT_L4.equals(JavaScriptSupportLoader
-                            .getLanguageDialect(extension)))
-                    {
+                            .getLanguageDialect(extension))) {
                         Pair<VirtualFile, String> root = CommonSourceRootDetectionUtil.VIRTUAL_FILE.suggestRootForFileWithPackageStatement(
                                 file, topmostRoot, RandoriProjectStructureDetector.PACKAGE_NAME_FETCHER, false);
-                        if (root != null)
-                        {
-                            VirtualFile detectedRoot;
-                            detectedRoot = root.first;
+                        if (root != null) {
+                            VirtualFile detectedRoot = root.first;
                             result.add(detectedRoot);
-                            if (VfsUtilCore.isAncestor(detectedRoot, startFile, false))
-                            {
+                            if (VfsUtilCore.isAncestor(detectedRoot, startFile, false)) {
                                 return skipTo(detectedRoot);
                             }
                         }

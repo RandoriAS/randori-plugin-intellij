@@ -29,7 +29,6 @@ import com.intellij.openapi.roots.ui.configuration.libraryEditor.DefaultLibraryR
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryEditor;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.ui.UIBundle;
 import icons.FlexIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -43,7 +42,7 @@ import java.util.List;
  */
 class RandoriLibraryRootsComponentDescriptor extends LibraryRootsComponentDescriptor
 {
-    final static String CHOOSE_LIBRARY_FILE_DESCRIPTION = "<html>Select *.swc or *.rbl files and/or folders containing *.swc, *.rbl or raw ActionScript files.<br>"
+    final static String CHOOSE_LIBRARY_FILE_DESCRIPTION = "<html>Select *.swc or *.rbl files and/or folders containing *.swc, *.rbl files.<br>"
             + ApplicationNamesInfo.getInstance().getFullProductName()
             + " will analyze the contents of the selected folders and automatically assign the files contained therein to the appropriate categories (Classes, Sources and Documentation).";
 
@@ -80,8 +79,6 @@ class RandoriLibraryRootsComponentDescriptor extends LibraryRootsComponentDescri
     @NotNull
     public FileChooserDescriptor createAttachFilesChooserDescriptor(String libraryName)
     {
-        //final FileChooserDescriptor descriptor = new FileChooserDescriptor(true, true, true, false, true, true);
-
         final FileChooserDescriptor descriptor = new FileChooserDescriptor(true, true, true, false, false, true) {
             @Override
             public boolean isFileSelectable(VirtualFile file)

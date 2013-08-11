@@ -27,17 +27,20 @@ import com.intellij.openapi.compiler.CompilerBundle;
 import com.intellij.openapi.compiler.TranslatingCompiler;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Chunk;
 import com.intellij.util.ThrowableRunnable;
+import org.apache.flex.utils.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import randori.plugin.components.RandoriModuleComponent;
 import randori.plugin.components.RandoriProjectComponent;
 import randori.plugin.configuration.RandoriCompilerModel;
 import randori.plugin.module.RandoriWebModuleType;
+import randori.plugin.util.ProjectUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -74,11 +77,11 @@ class RandoriCompiler implements TranslatingCompiler {
 
         for (Module module : moduleChunk.getNodes()) {
             final boolean isLastModule = --moduleCount == 0;
-            List<VirtualFile> modifiedFiles = project.getComponent(RandoriProjectComponent.class).getModifiedFiles();
+            final RandoriModuleComponent moduleComponent = module.getComponent(RandoriModuleComponent.class);
+            List<VirtualFile> modifiedFiles = moduleComponent.getAllModifiedFiles();
 
             boolean doClean = true;
             boolean success;
-
 
             if (context.hashCode() != sessionId) {
                 sessionId = context.hashCode();
@@ -86,7 +89,7 @@ class RandoriCompiler implements TranslatingCompiler {
             } else
                 doClean = false;
 
-            if (context.isMake() && modifiedFiles.size() > 0) {
+            if (context.isMake() && !modifiedFiles.isEmpty()) {
                 LOG.info("Starting Randori compiler... Make " + module.getName());
                 context.getProgressIndicator().setText("Starting Randori compiler... Make " + module.getName());
 
@@ -103,17 +106,25 @@ class RandoriCompiler implements TranslatingCompiler {
                 return;
 
             if (success) {
-                if (isLastModule && modifiedFiles.size() > 0)
-                    modifiedFiles.removeAll(modifiedFiles);
+                if (!modifiedFiles.isEmpty() && ProjectUtils.isRandoriWebModule(module))
+                    moduleComponent.removeAllModifiedFiles(false);
+
+                if (isLastModule) {
+                    final Module[] modules = ModuleManager.getInstance(project).getModules();
+                    for (Module moduleToClean : modules) {
+                        final RandoriModuleComponent moduleToCleanComponent = moduleToClean.getComponent(RandoriModuleComponent.class);
+                        final List<VirtualFile> fileList = moduleToCleanComponent.getModifiedFiles();
+                        fileList.removeAll(fileList);
+                    }
+                }
             } else {
                 context.getProgressIndicator().cancel();
             }
 
             // If compilation failed or it is the last module, Show the problem window
-            if (!success || isLastModule)
-                ApplicationManager.getApplication().invokeLater(
-                        new RandoriCompilerSession.ProblemBuildRunnable(project, RandoriCompilerSession
-                                .getLastCompiler(), true));
+            ApplicationManager.getApplication().invokeLater(
+                    new RandoriCompilerSession.ProblemBuildRunnable(project, module, RandoriCompilerSession
+                            .getLastCompiler(), true));
         }
     }
 
@@ -157,7 +168,15 @@ class RandoriCompiler implements TranslatingCompiler {
                 result.setResult(dirs);
             }
         }.execute().getResultObject();
-        if (outPutDirs.size() > 0) {
+
+        if (!outPutDirs.isEmpty()) {
+
+            List<String> dirPaths = new ArrayList<String>();
+            for (File outPutDir : outPutDirs) dirPaths.add(outPutDir.getPath());
+
+            RandoriCompilerSession.dumpCompilationInfo(CompilerBundle.message("progress.clearing.output") + "\n" +
+                    StringUtils.join(dirPaths.toArray(new String[dirPaths.size()]), "\n"));
+
             CompilerUtil.runInContext(context, CompilerBundle.message("progress.clearing.output"),
                     new ThrowableRunnable<RuntimeException>() {
                         public void run() {
