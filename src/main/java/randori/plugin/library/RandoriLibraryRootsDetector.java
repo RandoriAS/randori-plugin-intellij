@@ -37,44 +37,37 @@ import java.util.List;
 /**
  * @author Frédéric THOMAS Date: 27/04/13 Time: 06:37
  */
-class RandoriLibraryRootsDetector extends LibraryRootsDetectorImpl
-{
+class RandoriLibraryRootsDetector extends LibraryRootsDetectorImpl {
 
     private static final Condition<DetectedLibraryRoot> DETECTED_LIBRARY_ROOT_CONDITION = new Condition<DetectedLibraryRoot>() {
         @Override
-        public boolean value(DetectedLibraryRoot root)
-        {
+        public boolean value(DetectedLibraryRoot root) {
             LibraryRootType libraryRootType = root.getTypes().get(0);
-            return libraryRootType.getType() == OrderRootType.CLASSES || libraryRootType.getType() == OrderRootType.SOURCES;
+            return (libraryRootType.getType() == OrderRootType.CLASSES && libraryRootType.isJarDirectory()) || libraryRootType.getType() == OrderRootType.SOURCES;
         }
     };
 
-    public RandoriLibraryRootsDetector()
-    {
+    public RandoriLibraryRootsDetector() {
         super(Arrays.asList(new RandoriLibraryBinariesRootDetector(), new RandoriLibraryDocsRootDetector(),
                 new RandoriLibrarySourcesRootDetector(), new RandoriLibraryFoldersRootDetector()));
     }
 
     public Collection<DetectedLibraryRoot> detectRoots(@NotNull VirtualFile rootCandidate,
-            @NotNull ProgressIndicator progressIndicator)
-    {
+                                                       @NotNull ProgressIndicator progressIndicator) {
         Collection<DetectedLibraryRoot> roots = super.detectRoots(rootCandidate, progressIndicator);
         boolean libFoldersFound = ContainerUtil.find(roots, DETECTED_LIBRARY_ROOT_CONDITION) != null;
         final List<LibraryRootType> types =
-                Arrays.asList(new LibraryRootType(OrderRootType.CLASSES, false),
+                Arrays.asList(new LibraryRootType(OrderRootType.CLASSES, true),
                         new LibraryRootType(OrderRootType.SOURCES, false));
 
-        if (libFoldersFound)
-        {
+        if (libFoldersFound) {
             Collections.reverse(types);
         }
 
         return ContainerUtil.map(roots, new Function<DetectedLibraryRoot, DetectedLibraryRoot>() {
             @Override
-            public DetectedLibraryRoot fun(DetectedLibraryRoot root)
-            {
-                if (root.getTypes().get(0).getType() == OrderRootType.SOURCES)
-                {
+            public DetectedLibraryRoot fun(DetectedLibraryRoot root) {
+                if (root.getTypes().get(0).getType() == OrderRootType.SOURCES) {
                     return new DetectedLibraryRoot(root.getFile(), types);
                 }
                 return root;
@@ -82,10 +75,8 @@ class RandoriLibraryRootsDetector extends LibraryRootsDetectorImpl
         });
     }
 
-    public String getRootTypeName(@NotNull LibraryRootType rootType)
-    {
-        if (rootType.getType() == OrderRootType.SOURCES)
-        {
+    public String getRootTypeName(@NotNull LibraryRootType rootType) {
+        if (rootType.getType() == OrderRootType.SOURCES) {
             return FlexBundle.message("sources.root.detector.name");
         }
 
@@ -97,8 +88,7 @@ class RandoriLibraryRootsDetector extends LibraryRootsDetectorImpl
             return "Folder with RBLs or SWCs";
         }
 
-        if ((rootType.getType() instanceof JavadocOrderRootType))
-        {
+        if ((rootType.getType() instanceof JavadocOrderRootType)) {
             return FlexBundle.message("docs.root.detector.name");
         }
         return null;

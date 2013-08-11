@@ -17,8 +17,6 @@
 package randori.plugin.components;
 
 import com.intellij.compiler.CompilerWorkspaceConfiguration;
-import com.intellij.ide.BrowserUtil;
-import com.intellij.ide.browsers.UrlOpener;
 import com.intellij.lang.javascript.flex.run.LauncherParameters;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
@@ -33,7 +31,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ui.configuration.ClasspathEditor;
 import com.intellij.openapi.roots.ui.configuration.ModulesConfigurator;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileListener;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -50,9 +47,6 @@ import randori.plugin.ui.ProblemsToolWindowFactory;
 import randori.plugin.util.ProjectUtils;
 import randori.plugin.util.VFileUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * The project component manages the global state of the current project and wrap the compiler.
  *
@@ -63,7 +57,6 @@ public class RandoriProjectComponent implements ProjectComponent {
     public static final String COMPONENT_NAME = "RandoriProject";
     private final Project project;
     private VirtualFileListener fileChangeListener;
-    private List<VirtualFile> modifiedFiles;
 
     public RandoriProjectComponent(Project project) {
         this.project = project;
@@ -76,7 +69,6 @@ public class RandoriProjectComponent implements ProjectComponent {
     @Override
     public void projectOpened() {
         if (ProjectUtils.hasRandoriModuleType(project)) {
-            modifiedFiles = new ArrayList<VirtualFile>();
 
             CompilerWorkspaceConfiguration workspaceConfiguration = CompilerWorkspaceConfiguration.getInstance(project)
                     .getState();
@@ -105,7 +97,6 @@ public class RandoriProjectComponent implements ProjectComponent {
                     }
                 });
             }
-            modifiedFiles = null;
         }
     }
 
@@ -123,10 +114,6 @@ public class RandoriProjectComponent implements ProjectComponent {
     @Override
     public String getComponentName() {
         return COMPONENT_NAME;
-    }
-
-    public List<VirtualFile> getModifiedFiles() {
-        return modifiedFiles;
     }
 
     /**

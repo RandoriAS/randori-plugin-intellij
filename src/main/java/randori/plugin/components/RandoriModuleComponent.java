@@ -30,7 +30,6 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.roots.libraries.LibraryUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.xmlb.XmlSerializerUtil;
@@ -64,6 +63,7 @@ public class RandoriModuleComponent implements ModuleComponent, Configurable,
 
     private RandoriModuleConfigurable form;
     private RandoriModuleModel state;
+    private List<VirtualFile> modifiedFiles;
     private List<Module> dependencies;
     private List<Module> webModulesParents;
 
@@ -101,10 +101,12 @@ public class RandoriModuleComponent implements ModuleComponent, Configurable,
 
     @Override
     public void projectOpened() {
+        modifiedFiles = new ArrayList<VirtualFile>();
     }
 
     @Override
     public void projectClosed() {
+        modifiedFiles = null;
     }
 
     @Override
@@ -165,6 +167,36 @@ public class RandoriModuleComponent implements ModuleComponent, Configurable,
     public void disposeUIResources() {
     }
 
+    public List<VirtualFile> getModifiedFiles() {
+        return modifiedFiles;
+    }
+
+    public List<VirtualFile> getAllModifiedFiles() {
+        List<VirtualFile> allModifiedFiles = new ArrayList<VirtualFile>(modifiedFiles);
+
+        for (Module usedModule : getAllDependencies()) {
+            RandoriModuleComponent usedModuleComponent = usedModule.getComponent(RandoriModuleComponent.class);
+            allModifiedFiles.addAll(usedModuleComponent.getModifiedFiles());
+        }
+
+        return allModifiedFiles;
+    }
+
+    public void removeAllModifiedFiles(boolean force) {
+
+        modifiedFiles.removeAll(modifiedFiles);
+
+        for (Module usedModule : getAllDependencies()) {
+            RandoriModuleComponent usedModuleComponent = usedModule.getComponent(RandoriModuleComponent.class);
+
+            if (force || usedModuleComponent.getWebModulesParents().size() == 1) {
+                final List<VirtualFile> virtualFileList = usedModuleComponent.getModifiedFiles();
+                if (!virtualFileList.isEmpty())
+                    virtualFileList.removeAll(virtualFileList);
+            }
+        }
+    }
+
     @NotNull
     public List<Module> getDependencies() {
         if (ArrayUtils.isEmpty(dependencies.toArray()) || dependencies.get(0) == null)
@@ -204,7 +236,7 @@ public class RandoriModuleComponent implements ModuleComponent, Configurable,
             webModulesParents = getRecursivelyWebModuleParents(module);
     }
 
-    public List<Module> getRecursiveDependencies() {
+    public List<Module> getAllDependencies() {
         Module[] result = getDependencies().toArray(new Module[getDependencies().size()]);
 
         for (Module dependency : result) {
@@ -212,46 +244,13 @@ public class RandoriModuleComponent implements ModuleComponent, Configurable,
             List<Module> dependencies = moduleComponent.getDependencies();
             if (!dependencies.isEmpty()) {
                 Module[] moduleDependencies = dependencies.toArray(new Module[dependencies.size()]);
-                result = (Module[]) org.apache.commons.lang.ArrayUtils.addAll(result, moduleDependencies);
-                List<Module> recursivelyUsedModules = moduleComponent.getRecursiveDependencies();
+                result = (Module[]) ArrayUtils.addAll(result, moduleDependencies);
+                List<Module> recursivelyUsedModules = moduleComponent.getAllDependencies();
                 result = ArrayUtils.addAll(result, recursivelyUsedModules.toArray(new Module[recursivelyUsedModules.size()]));
             }
         }
 
         return Arrays.asList(result);
-    }
-
-
-    public List<VirtualFile> getLibraryRootsGottenNoModuleSources() {
-        VirtualFile[] result = getLibraryRoots();
-        final List<Module> recursiveDependencies = getRecursiveDependencies();
-
-        if (!org.apache.commons.lang.ArrayUtils.isEmpty(result))
-            for (VirtualFile libraryRoot : result) {
-                if (!libraryRoot.getPath().endsWith(".swc")) {
-                    String libraryName = libraryRoot.getNameWithoutExtension();
-                    for (Module usedModule : recursiveDependencies) {
-                        boolean existsAsModule = libraryName.equalsIgnoreCase(usedModule.getName());
-                        boolean isStillInList = Arrays.asList(result).contains(libraryRoot);
-                        if (existsAsModule && isStillInList) {
-                            result = (VirtualFile[]) org.apache.commons.lang.ArrayUtils.removeElement(result, libraryRoot);
-                            break;
-                        }
-                    }
-                }
-            }
-
-        return Arrays.asList(result);
-    }
-
-    public VirtualFile[] getLibraryRoots() {
-        Module[] modules;
-        final List<Module> recursiveDependencies = getRecursiveDependencies();
-        if (recursiveDependencies != null && !recursiveDependencies.isEmpty())
-            modules = (Module[]) org.apache.commons.lang.ArrayUtils.addAll(new Module[]{module}, recursiveDependencies.toArray());
-        else modules = new Module[]{module};
-
-        return LibraryUtil.getLibraryRoots(modules, false, false);
     }
 
     protected FileIndex[] getFileIndices(boolean inMainModule, boolean inSubModules) {
@@ -298,7 +297,10 @@ public class RandoriModuleComponent implements ModuleComponent, Configurable,
     }
 
     private void getUsedDependencies() {
-        for (OrderEntry orderEntry : getModifiableRootModel().getOrderEntries()) {
+        if (ApplicationManager.getApplication().isReadAccessAllowed())
+            modifiableRootModel = ModuleRootManager.getInstance(module).getModifiableModel();
+
+        for (OrderEntry orderEntry : modifiableRootModel.getOrderEntries()) {
             if (orderEntry instanceof LibraryOrderEntry)
                 libraries.add(((LibraryOrderEntry) orderEntry).getLibrary());
             else if (orderEntry instanceof ModuleOrderEntry)

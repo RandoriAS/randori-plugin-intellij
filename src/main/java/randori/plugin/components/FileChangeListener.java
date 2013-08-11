@@ -57,8 +57,8 @@ class FileChangeListener implements VirtualFileListener {
 
         if (project == ProjectUtils.getProject() && isActionScriptFile && isBelongModule) {
             List<VirtualFile> modifiedFiles;
-            final RandoriProjectComponent projectComponent = project.getComponent(RandoriProjectComponent.class);
-            modifiedFiles = projectComponent.getModifiedFiles();
+            final RandoriModuleComponent moduleComponent = moduleForFile.getComponent(RandoriModuleComponent.class);
+            modifiedFiles = moduleComponent.getModifiedFiles();
 
             if (modifiedFiles == null)
                 return;
