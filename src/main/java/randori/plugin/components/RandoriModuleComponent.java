@@ -17,23 +17,23 @@
 package randori.plugin.components;
 
 import com.intellij.compiler.impl.CompilerContentIterator;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleComponent;
-import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ContentEntry;
-import com.intellij.openapi.roots.FileIndex;
-import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.roots.*;
+import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.xmlb.XmlSerializerUtil;
+import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import randori.plugin.configuration.RandoriModuleConfigurable;
@@ -63,10 +63,12 @@ public class RandoriModuleComponent implements ModuleComponent, Configurable,
 
     private RandoriModuleConfigurable form;
     private RandoriModuleModel state;
+    private List<VirtualFile> modifiedFiles;
     private List<Module> dependencies;
     private List<Module> webModulesParents;
 
     private ModifiableRootModel modifiableRootModel;
+    private ArrayList<Library> libraries;
 
     public RandoriModuleComponent(Module module, Project project) {
         this.module = module;
@@ -84,6 +86,7 @@ public class RandoriModuleComponent implements ModuleComponent, Configurable,
     @Override
     public void initComponent() {
         modifiableRootModel = ModuleRootManager.getInstance(module).getModifiableModel();
+        updateDependencies();
     }
 
     @Override
@@ -98,10 +101,12 @@ public class RandoriModuleComponent implements ModuleComponent, Configurable,
 
     @Override
     public void projectOpened() {
+        modifiedFiles = new ArrayList<VirtualFile>();
     }
 
     @Override
     public void projectClosed() {
+        modifiedFiles = null;
     }
 
     @Override
@@ -162,11 +167,50 @@ public class RandoriModuleComponent implements ModuleComponent, Configurable,
     public void disposeUIResources() {
     }
 
+    public List<VirtualFile> getModifiedFiles() {
+        return modifiedFiles;
+    }
+
+    public List<VirtualFile> getAllModifiedFiles() {
+        List<VirtualFile> allModifiedFiles = new ArrayList<VirtualFile>(modifiedFiles);
+
+        for (Module usedModule : getAllDependencies()) {
+            RandoriModuleComponent usedModuleComponent = usedModule.getComponent(RandoriModuleComponent.class);
+            allModifiedFiles.addAll(usedModuleComponent.getModifiedFiles());
+        }
+
+        return allModifiedFiles;
+    }
+
+    public void removeAllModifiedFiles(boolean force) {
+
+        modifiedFiles.removeAll(modifiedFiles);
+
+        for (Module usedModule : getAllDependencies()) {
+            RandoriModuleComponent usedModuleComponent = usedModule.getComponent(RandoriModuleComponent.class);
+
+            if (force || usedModuleComponent.getWebModulesParents().size() == 1) {
+                final List<VirtualFile> virtualFileList = usedModuleComponent.getModifiedFiles();
+                if (!virtualFileList.isEmpty())
+                    virtualFileList.removeAll(virtualFileList);
+            }
+        }
+    }
+
+    @NotNull
     public List<Module> getDependencies() {
-        if (dependencies == null)
+        if (ArrayUtils.isEmpty(dependencies.toArray()) || dependencies.get(0) == null)
             updateDependencies();
 
         return dependencies;
+    }
+
+    @NotNull
+    public List<Library> getLibraries() {
+        if (ArrayUtils.isEmpty(dependencies.toArray()) || dependencies.get(0) == null)
+            updateDependencies();
+
+        return libraries;
     }
 
     public List<Module> getWebModulesParents() {
@@ -185,22 +229,28 @@ public class RandoriModuleComponent implements ModuleComponent, Configurable,
      */
     public void updateDependencies() {
         dependencies = new ArrayList<Module>();
-        getUsedDependencies(module);
-        dependencies.remove(0);
+        libraries = new ArrayList<Library>();
+        getUsedDependencies();
 
-        webModulesParents = RandoriWebModuleType.isOfType(module) ?
-                Arrays.asList(module) :
-                ModuleUtil.getParentModulesOfType(RandoriWebModuleType.getInstance(), module);
+        if (ApplicationManager.getApplication().isReadAccessAllowed())
+            webModulesParents = getRecursivelyWebModuleParents(module);
     }
 
-    private void getUsedDependencies(Module module) {
-        dependencies.add(module);
-        final Module[] usedDependencies = ModuleRootManager.getInstance(module).getDependencies();
-        for (Module dependency : usedDependencies) {
-            if (!dependencies.contains(dependency)) {
-                getUsedDependencies(dependency);
+    public List<Module> getAllDependencies() {
+        Module[] result = getDependencies().toArray(new Module[getDependencies().size()]);
+
+        for (Module dependency : result) {
+            RandoriModuleComponent moduleComponent = dependency.getComponent(RandoriModuleComponent.class);
+            List<Module> dependencies = moduleComponent.getDependencies();
+            if (!dependencies.isEmpty()) {
+                Module[] moduleDependencies = dependencies.toArray(new Module[dependencies.size()]);
+                result = (Module[]) ArrayUtils.addAll(result, moduleDependencies);
+                List<Module> recursivelyUsedModules = moduleComponent.getAllDependencies();
+                result = ArrayUtils.addAll(result, recursivelyUsedModules.toArray(new Module[recursivelyUsedModules.size()]));
             }
         }
+
+        return Arrays.asList(result);
     }
 
     protected FileIndex[] getFileIndices(boolean inMainModule, boolean inSubModules) {
@@ -244,6 +294,39 @@ public class RandoriModuleComponent implements ModuleComponent, Configurable,
                 preferredContentRoots.add(preferredContentEntry.getCanonicalFile());
         }
         return preferredContentRoots;
+    }
+
+    private void getUsedDependencies() {
+        if (ApplicationManager.getApplication().isReadAccessAllowed())
+            modifiableRootModel = ModuleRootManager.getInstance(module).getModifiableModel();
+
+        for (OrderEntry orderEntry : modifiableRootModel.getOrderEntries()) {
+            if (orderEntry instanceof LibraryOrderEntry)
+                libraries.add(((LibraryOrderEntry) orderEntry).getLibrary());
+            else if (orderEntry instanceof ModuleOrderEntry)
+                dependencies.add(((ModuleOrderEntry) orderEntry).getModule());
+        }
+    }
+
+    private List<Module> getRecursivelyWebModuleParents(@NotNull Module module) {
+        Module[] result;
+
+        if (RandoriWebModuleType.isOfType(module))
+            result = new Module[]{module};
+        else {
+            result = new Module[0];
+            List<Module> parents = ModuleManager.getInstance(module.getProject()).getModuleDependentModules(module);
+            for (Module parent : parents) {
+                if (RandoriWebModuleType.isOfType(parent))
+                    result = ArrayUtils.add(result, parent);
+                else {
+                    final List<Module> webModuleParents = getRecursivelyWebModuleParents(parent);
+                    if (!webModuleParents.isEmpty())
+                        result = ArrayUtils.addAll(result, webModuleParents.toArray(new Module[webModuleParents.size()]));
+                }
+            }
+        }
+        return Arrays.asList(result);
     }
 
     private VirtualFile getPreferredContentEntry(final Module module) {

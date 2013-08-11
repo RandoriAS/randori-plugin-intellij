@@ -30,17 +30,16 @@ import de.schlichtherle.truezip.file.TVFS;
 import de.schlichtherle.truezip.fs.FsSyncException;
 import de.schlichtherle.truezip.fs.archive.zip.ZipDriver;
 import de.schlichtherle.truezip.socket.sl.IOPoolLocator;
-import randori.plugin.ui.icons.RandoriIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import randori.plugin.ui.icons.RandoriIcons;
 
 import javax.swing.*;
 
 /**
  * @author Frédéric THOMAS Date: 30/04/13 Time: 15:38
  */
-public class RandoriApplicationComponent extends FileTypeFactory implements ApplicationComponent
-{
+public class RandoriApplicationComponent extends FileTypeFactory implements ApplicationComponent {
     private static final String RBL_EXTENSION = "rbl";
 
     public static final Language DECOMPILED_RBL = new Language(JavaScriptSupportLoader.ECMA_SCRIPT_L4, "Decompiled RBL") {
@@ -48,15 +47,13 @@ public class RandoriApplicationComponent extends FileTypeFactory implements Appl
     };
 
     @Override
-    public void initComponent()
-    {
+    public void initComponent() {
         TConfig.get().setArchiveDetector(new TArchiveDetector("rbl|swc", new ZipDriver(IOPoolLocator.SINGLETON)));
 
     }
 
     @Override
-    public void disposeComponent()
-    {
+    public void disposeComponent() {
         try {
             TVFS.umount();
         } catch (FsSyncException e) {
@@ -65,16 +62,13 @@ public class RandoriApplicationComponent extends FileTypeFactory implements Appl
     }
 
     @Override
-    public void createFileTypes(@NotNull FileTypeConsumer consumer)
-    {
-        consumer.consume(ArchiveFileType.INSTANCE, RBL_EXTENSION);
+    public void createFileTypes(@NotNull FileTypeConsumer consumer) {
         consumer.consume(RBL_FILE_TYPE, RBL_EXTENSION);
     }
 
     @NotNull
     @Override
-    public String getComponentName()
-    {
+    public String getComponentName() {
         return "RandoriApplicationComponent";
     }
 
@@ -82,46 +76,39 @@ public class RandoriApplicationComponent extends FileTypeFactory implements Appl
 
         @NotNull
         @Override
-        public String getName()
-        {
+        public String getName() {
             return "RBL";
         }
 
         @NotNull
         @Override
-        public String getDescription()
-        {
+        public String getDescription() {
             return "Randori Resource Bundle Library";
         }
 
         @NotNull
         @Override
-        public String getDefaultExtension()
-        {
+        public String getDefaultExtension() {
             return RBL_EXTENSION;
         }
 
-        public Icon getIcon()
-        {
+        public Icon getIcon() {
             return RandoriIcons.Randori16;
         }
 
         @Override
-        public boolean isBinary()
-        {
+        public boolean isBinary() {
             return true;
         }
 
         @Override
-        public boolean isReadOnly()
-        {
+        public boolean isReadOnly() {
             return true;
         }
 
         @Nullable
         @Override
-        public String getCharset(@NotNull VirtualFile file, byte[] content)
-        {
+        public String getCharset(@NotNull VirtualFile file, byte[] content) {
             return null;
         }
 
