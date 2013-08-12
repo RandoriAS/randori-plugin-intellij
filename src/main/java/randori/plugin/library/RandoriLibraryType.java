@@ -18,10 +18,7 @@ package randori.plugin.library;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.libraries.LibraryType;
-import com.intellij.openapi.roots.libraries.LibraryTypeService;
-import com.intellij.openapi.roots.libraries.NewLibraryConfiguration;
-import com.intellij.openapi.roots.libraries.PersistentLibraryKind;
+import com.intellij.openapi.roots.libraries.*;
 import com.intellij.openapi.roots.libraries.ui.LibraryEditorComponent;
 import com.intellij.openapi.roots.libraries.ui.LibraryPropertiesEditor;
 import com.intellij.openapi.roots.libraries.ui.LibraryRootsComponentDescriptor;
@@ -38,7 +35,7 @@ import javax.swing.*;
 /**
  * @author Frédéric THOMAS Date: 27/04/13 Time: 20:50
  */
-public class RandoriLibraryType extends LibraryType<RandoriLibraryProperties> {
+public class RandoriLibraryType extends LibraryType<DummyLibraryProperties> {
     private static final String LIBRARY_KIND = "randori.rbl";
     public static final String LIBRARY_EXTENSION = "rbl";
     public static final String LIBRARY_DOT_EXTENSION = ".rbl";
@@ -47,12 +44,12 @@ public class RandoriLibraryType extends LibraryType<RandoriLibraryProperties> {
         return LibraryType.EP_NAME.findExtension(RandoriLibraryType.class);
     }
 
-    public static final PersistentLibraryKind<RandoriLibraryProperties> RANDORI_LIBRARY =
-            new PersistentLibraryKind<RandoriLibraryProperties>(LIBRARY_KIND) {
+    public static final PersistentLibraryKind<DummyLibraryProperties> RANDORI_LIBRARY =
+            new PersistentLibraryKind<DummyLibraryProperties>(LIBRARY_KIND) {
 
                 @NotNull
-                public RandoriLibraryProperties createDefaultProperties() {
-                    return new RandoriLibraryProperties();
+                public DummyLibraryProperties createDefaultProperties() {
+                    return new DummyLibraryProperties();
                 }
             };
 
