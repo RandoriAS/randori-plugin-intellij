@@ -80,6 +80,9 @@
         <component>
             <implementation-class>randori.plugin.runner.RandoriRunnerConfigurationType</implementation-class>
         </component>
+        <component>
+            <implementation-class>randori.plugin.components.RandoriApplicationComponent</implementation-class>
+        </component>
     </application-components>
 
     <project-components>
@@ -112,6 +115,11 @@
             <add-to-group group-id="BuildMenu" anchor="last"/>
             <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl P"/>
         </action>
+
+        <group>
+            <action id="randori.plugin.action.MarkLibraryRootAction" class="randori.plugin.action.MarkLibraryRootAction" text="Add as Randori Library..."/>
+            <add-to-group group-id="ProjectViewPopupMenuSettingsGroup" relative-to-action="MarkRootGroup" anchor="after"/>
+        </group>
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
