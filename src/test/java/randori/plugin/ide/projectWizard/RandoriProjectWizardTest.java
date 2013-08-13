@@ -10,9 +10,11 @@ import com.intellij.ide.util.projectWizard.ModuleWizardStep;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Consumer;
 import randori.plugin.RandoriTestUtil;
 import randori.plugin.module.RandoriWebModuleType;
@@ -25,6 +27,10 @@ import java.io.FilenameFilter;
  * @author Frédéric THOMAS
  */
 public class RandoriProjectWizardTest extends ProjectWizardTestCase {
+
+    static {
+        System.setProperty("idea.disposer.debug", "off");
+    }
 
     public void testCreateProject() throws Exception {
         Sdk randoriSdk = RandoriTestUtil.createRandoriSdk();
@@ -49,6 +55,7 @@ public class RandoriProjectWizardTest extends ProjectWizardTestCase {
         }
     }
 
+    @SuppressWarnings("ConstantConditions")
     public void testImportSimpleProject() throws Exception {
         final boolean[] isProjectNameStepPassed = {false};
         final boolean[] isRootsDetectionStepPassed = {false};
@@ -56,15 +63,24 @@ public class RandoriProjectWizardTest extends ProjectWizardTestCase {
         final boolean[] isModulesRandoriSdkStepPassed = {false};
 
         final ImportFromSourcesProvider provider = new ImportFromSourcesProvider();
-        final File contentRootFile = new File(RandoriTestUtil.getTestDataPath(this) + "simpleModule");
-        final File sourceRootFile = new File(RandoriTestUtil.getTestDataPath(this) + "simpleModule/src");
+
+        final File contentRootFile = new File(RandoriTestUtil.getTestDataPath(this) + "simpleProject");
+        assertTrue(contentRootFile.exists());
+
+        final File sourceRootFile = new File(RandoriTestUtil.getTestDataPath(this) + "simpleProject/src");
+        assertTrue(sourceRootFile.exists());
+
+        final Sdk mockRandoriSdk = RandoriTestUtil.getMockRandoriSdk();
+        assertNotNull(mockRandoriSdk);
+
+        ProjectJdkTable.getInstance().addJdk(mockRandoriSdk);
 
         final Module simpleModule = importProjectFrom(contentRootFile.getAbsolutePath(), new Consumer<ModuleWizardStep>() {
             @Override
             public void consume(ModuleWizardStep moduleWizardStep) {
                 if (moduleWizardStep instanceof ProjectNameStep) {
                     ProjectNameStep projectNameStep = (ProjectNameStep) moduleWizardStep;
-                    assertEquals(projectNameStep.getProjectName(), "simpleModule");
+                    assertEquals(projectNameStep.getProjectName(), "simpleProject");
                     isProjectNameStepPassed[0] = true;
                 } else if (moduleWizardStep instanceof RootsDetectionStep) {
                     isRootsDetectionStepPassed[0] = true;
@@ -80,6 +96,26 @@ public class RandoriProjectWizardTest extends ProjectWizardTestCase {
         assertTrue("Wizard should show RootsDetectionStep", isRootsDetectionStepPassed[0]);
         assertTrue("Wizard should show LibrariesDetectionStep", isLibrariesDetectionStepPassed[0]);
         assertTrue("Wizard should show RandoriSdkStep", isModulesRandoriSdkStepPassed[0]);
+
+        final Project project = simpleModule.getProject();
+        final ModuleRootManager moduleRootManager = ModuleRootManager.getInstance(simpleModule);
+
+        assertTrue("The project should be initialized", project.isInitialized());
+
+        final VirtualFile contentRootVFile = getVirtualFile(contentRootFile);
+        assertEquals("The project baseDir should be " + contentRootVFile.getPath(), contentRootVFile.getPath(), project.getBaseDir().getPath());
+        assertEquals("The project name should be simpleProject", "simpleProject", project.getName());
+        assertNotNull("The project SDK should be set", ProjectRootManager.getInstance(project).getProjectSdk());
+        assertEquals("The project SDK Name should be the same than the Mocked SDK",
+                ProjectRootManager.getInstance(project).getProjectSdk().getName(),
+                mockRandoriSdk.getName());
+
+        assertEquals("The module name should be the same than the project one", project.getName(), simpleModule.getName());
+        assertNotNull("The module SDK should be set", ProjectRootManager.getInstance(project).getProjectSdk());
+        assertTrue("The module SDK should be inherited from the project's one", moduleRootManager.isSdkInherited());
+
+        final VirtualFile sourceRootVFile = getVirtualFile(sourceRootFile);
+        assertEquals("The source root should be " + sourceRootVFile.getPath(), sourceRootVFile.getPath(), moduleRootManager.getSourceRoots()[0].getPath());
     }
 
     @Override

@@ -53,7 +53,7 @@ public class RandoriTestUtil {
     }
 
     private static File getPathForRandoriSdkNamed(String name) {
-        return new File(TEST_BASE_PATH, "sdk/" + name);
+        return new File(TEST_BASE_PATH, "randori/plugin/sdk/" + name);
     }
 
     public static String getTestDataPath(TestCase testCase) {
