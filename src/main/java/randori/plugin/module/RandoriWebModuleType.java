@@ -19,6 +19,7 @@ package randori.plugin.module;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
 import com.intellij.openapi.module.ModuleTypeManager;
+import org.jetbrains.annotations.NonNls;
 import randori.plugin.ui.icons.RandoriIcons;
 import org.jetbrains.annotations.NonNls;
 
@@ -33,6 +34,10 @@ public class RandoriWebModuleType extends ModuleType<RandoriModuleBuilder>
 
     @NonNls
     private static final String MODULE_ID = "RANDORI_WEB_MODULE";
+    @NonNls
+    public static final String RANDORI_GROUP = "Randori";
+    @NonNls
+    public static final String PRESENTABLE_MODULE_NAME = "Randori Web Module";
 
     public RandoriWebModuleType()
     {

@@ -25,7 +25,7 @@ import java.io.File;
 /**
  * @author Frédéric THOMAS Date: 19/04/13 Time: 19:40
  */
-class RandoriWebModuleSourceRoot extends DetectedSourceRoot
+public class RandoriWebModuleSourceRoot extends DetectedSourceRoot
 {
     public RandoriWebModuleSourceRoot(final File directory)
     {

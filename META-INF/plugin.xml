@@ -115,7 +115,7 @@
 
     <extensions defaultExtensionNs="com.intellij">
 
-        <projectStructureDetector implementation="randori.plugin.projectStructure.detection.RandoriProjectStructureDetector"/>
+        <projectStructureDetector implementation="randori.plugin.projectStructure.detection.RandoriProjectStructureDetector"  order="first"/>
 
         <moduleType id="RANDORI_WEB_MODULE"
                     implementationClass="randori.plugin.module.RandoriWebModuleType"
