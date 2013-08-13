@@ -27,6 +27,7 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
+import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ui.UIUtil;
 import org.apache.flex.compiler.internal.workspaces.Workspace;
@@ -257,29 +258,43 @@ public class RandoriCompilerSession {
                 }
             }
 
-            // Add SWCs and RBLs paths.
+            // Add SWCs and RBLs paths if there is no corresponding module dependencies except when
+            // the library is a folder, in this case, all valid children libraries are added.
             final RandoriModuleComponent moduleComponent = module.getComponent(RandoriModuleComponent.class);
             List<Library> libraries = moduleComponent.getLibraries();
 
             for (Library library : libraries) {
                 final VirtualFile[] classPaths = library.getFiles(OrderRootType.CLASSES);
 
-                for (VirtualFile classPath : classPaths) {
-                    final String path = classPath.getPath();
-                    final String extension = classPath.getExtension();
+                for (VirtualFile classPath : classPaths)
 
-                    if (extension != null) {
-                        if (extension.equalsIgnoreCase("swc")) {
-                            arguments.addLibraryPath(path.replace("!/", ""));
-                            break;
-                        } else if (extension.equalsIgnoreCase("rbl")) {
-                            arguments.addBundlePath(path);
-                            break;
-                        }
-                    }
-                }
+                    // If the Lib is a folder, add only *.rbl, not *.swc
+                    // It is important because it maps the IDE behavior.
+                    if (classPath.isDirectory() && !classPath.getFileSystem().equals(JarFileSystem.getInstance()))
+                        for (VirtualFile virtualFile : classPath.getChildren())
+                            addLibraryIfPossible(arguments, virtualFile, true);
+
+                    // else add *.rbl and *.swc
+                    else if (addLibraryIfPossible(arguments, classPath, false)) break;
+
             }
         }
+    }
+
+    private boolean addLibraryIfPossible(CompilerArguments arguments, VirtualFile classPath, boolean rblOnly) {
+        final String path = classPath.getPath();
+        final String extension = classPath.getExtension();
+
+        if (extension != null) {
+            if (!rblOnly && extension.equalsIgnoreCase("swc")) {
+                arguments.addLibraryPath(path.replace("!/", ""));
+                return true;
+            } else if (extension.equalsIgnoreCase("rbl")) {
+                arguments.addBundlePath(path);
+                return true;
+            }
+        }
+        return false;
     }
 
     private void configure(CompilerArguments arguments) {
