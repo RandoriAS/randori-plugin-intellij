@@ -30,10 +30,10 @@ import java.util.Collection;
 /**
  * @author Frédéric THOMAS Date: 17/06/13 Time: 16:37
  */
-public class RandoriDocsRootDetector extends RootDetector
+public class RandoriLibraryDocsRootDetector extends RootDetector
 {
 
-    protected RandoriDocsRootDetector()
+    protected RandoriLibraryDocsRootDetector()
     {
         super(OrderRootType.DOCUMENTATION, false, "RBL documentation detector");
     }

@@ -109,6 +109,7 @@
       <include name="jre/lib/ext/localedata.jar"/>
       <include name="jre/lib/ext/sunjce_provider.jar"/>
       <include name="jre/lib/ext/sunmscapi.jar"/>
+      <include name="jre/lib/ext/sunpkcs11.jar"/>
     </fileset>
     <fileset dir="${jdk.home.idea_iu-129.451}">
       <include name="lib/alloy.jar"/>
@@ -127,7 +128,6 @@
       <include name="lib/commons-httpclient-3.1-patched.jar"/>
       <include name="lib/commons-logging-1.1.1.jar"/>
       <include name="lib/commons-net-3.1.jar"/>
-      <include name="lib/css-api.jar"/>
       <include name="lib/ecj-4.2.1.jar"/>
       <include name="lib/extensions.jar"/>
       <include name="lib/forms_rt.jar"/>
@@ -203,12 +203,14 @@
       <include name="plugins/PersistenceSupport/lib/resources_en.jar"/>
       <include name="plugins/DatabaseSupport/lib/database-openapi.jar"/>
       <include name="plugins/DatabaseSupport/lib/resources_en.jar"/>
+      <include name="plugins/CSS/lib/css.jar"/>
       <include name="plugins/CSS/lib/css-openapi.jar"/>
       <include name="plugins/CSS/lib/resources_en.jar"/>
       <include name="plugins/uml/lib/diagram-api.jar"/>
       <include name="plugins/JavaScriptLanguage/lib/JavascriptLanguage.jar"/>
       <include name="plugins/JavaScriptLanguage/lib/resources_en.jar"/>
       <include name="plugins/flex/lib/FlexSupport.jar"/>
+      <include name="plugins/flex/lib/flex-shared.jar"/>
       <include name="plugins/flex/lib/resources_en.jar"/>
     </fileset>
   </path>
