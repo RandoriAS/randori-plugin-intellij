@@ -55,19 +55,19 @@ public class RandoriProjectWizardTest extends ProjectWizardTestCase {
         }
     }
 
-    @SuppressWarnings("ConstantConditions")
     public void testImportSimpleProject() throws Exception {
         final boolean[] isProjectNameStepPassed = {false};
         final boolean[] isRootsDetectionStepPassed = {false};
         final boolean[] isLibrariesDetectionStepPassed = {false};
         final boolean[] isModulesRandoriSdkStepPassed = {false};
 
+        final String projectName = "simpleProject";
         final ImportFromSourcesProvider provider = new ImportFromSourcesProvider();
 
-        final File contentRootFile = new File(RandoriTestUtil.getTestDataPath(this) + "simpleProject");
+        final File contentRootFile = new File(RandoriTestUtil.getTestDataPath(this) + projectName);
         assertTrue(contentRootFile.exists());
 
-        final File sourceRootFile = new File(RandoriTestUtil.getTestDataPath(this) + "simpleProject/src");
+        final File sourceRootFile = new File(RandoriTestUtil.getTestDataPath(this) + projectName + "/src");
         assertTrue(sourceRootFile.exists());
 
         final Sdk mockRandoriSdk = RandoriTestUtil.getMockRandoriSdk();
@@ -80,7 +80,7 @@ public class RandoriProjectWizardTest extends ProjectWizardTestCase {
             public void consume(ModuleWizardStep moduleWizardStep) {
                 if (moduleWizardStep instanceof ProjectNameStep) {
                     ProjectNameStep projectNameStep = (ProjectNameStep) moduleWizardStep;
-                    assertEquals(projectNameStep.getProjectName(), "simpleProject");
+                    assertEquals(projectNameStep.getProjectName(), projectName);
                     isProjectNameStepPassed[0] = true;
                 } else if (moduleWizardStep instanceof RootsDetectionStep) {
                     isRootsDetectionStepPassed[0] = true;
@@ -97,6 +97,58 @@ public class RandoriProjectWizardTest extends ProjectWizardTestCase {
         assertTrue("Wizard should show LibrariesDetectionStep", isLibrariesDetectionStepPassed[0]);
         assertTrue("Wizard should show RandoriSdkStep", isModulesRandoriSdkStepPassed[0]);
 
+        checkBasicProjectSettings(contentRootFile, sourceRootFile, mockRandoriSdk, simpleModule, projectName);
+    }
+
+
+    /*public void testImportSimpleProjectWithNestedModule() throws Exception {
+        final boolean[] isProjectNameStepPassed = {false};
+        final boolean[] isRootsDetectionStepPassed = {false};
+        final boolean[] isLibrariesDetectionStepPassed = {false};
+        final boolean[] isModulesRandoriSdkStepPassed = {false};
+
+        final String projectName = "simpleProjectWithNestedModule";
+        final ImportFromSourcesProvider provider = new ImportFromSourcesProvider();
+
+        final File contentRootFile = new File(RandoriTestUtil.getTestDataPath(this) + projectName);
+        assertTrue(contentRootFile.exists());
+
+        final File sourceRootFile = new File(RandoriTestUtil.getTestDataPath(this) + projectName + "/src");
+        assertTrue(sourceRootFile.exists());
+
+        final Sdk mockRandoriSdk = RandoriTestUtil.getMockRandoriSdk();
+        assertNotNull(mockRandoriSdk);
+
+        ProjectJdkTable.getInstance().addJdk(mockRandoriSdk);
+
+        final Module nestedModule = importProjectFrom(contentRootFile.getAbsolutePath(), new Consumer<ModuleWizardStep>() {
+            @Override
+            public void consume(ModuleWizardStep moduleWizardStep) {
+                if (moduleWizardStep instanceof ProjectNameStep) {
+                    ProjectNameStep projectNameStep = (ProjectNameStep) moduleWizardStep;
+                    assertEquals(projectNameStep.getProjectName(), projectName);
+                    isProjectNameStepPassed[0] = true;
+                } else if (moduleWizardStep instanceof RootsDetectionStep) {
+                    isRootsDetectionStepPassed[0] = true;
+                } else if (moduleWizardStep instanceof LibrariesDetectionStep) {
+                    isLibrariesDetectionStepPassed[0] = true;
+                } else if (moduleWizardStep instanceof RandoriSdkStep) {
+                    isModulesRandoriSdkStepPassed[0] = true;
+                }
+            }
+        }, provider);
+
+        assertTrue("Wizard should show ProjectNameStep", isProjectNameStepPassed[0]);
+        assertTrue("Wizard should show RootsDetectionStep", isRootsDetectionStepPassed[0]);
+        assertTrue("Wizard should show LibrariesDetectionStep", isLibrariesDetectionStepPassed[0]);
+        assertTrue("Wizard should show RandoriSdkStep", isModulesRandoriSdkStepPassed[0]);
+
+        final Module simpleModule = ModuleManager.getInstance(getProject()).getModules()[0];
+        checkBasicProjectSettings(contentRootFile, sourceRootFile, mockRandoriSdk, simpleModule, projectName);
+    }*/
+
+    @SuppressWarnings("ConstantConditions")
+    private void checkBasicProjectSettings(File contentRootFile, File sourceRootFile, Sdk mockRandoriSdk, Module simpleModule, String projectName) {
         final Project project = simpleModule.getProject();
         final ModuleRootManager moduleRootManager = ModuleRootManager.getInstance(simpleModule);
 
@@ -104,7 +156,7 @@ public class RandoriProjectWizardTest extends ProjectWizardTestCase {
 
         final VirtualFile contentRootVFile = getVirtualFile(contentRootFile);
         assertEquals("The project baseDir should be " + contentRootVFile.getPath(), contentRootVFile.getPath(), project.getBaseDir().getPath());
-        assertEquals("The project name should be simpleProject", "simpleProject", project.getName());
+        assertEquals("The project name should be " + projectName, projectName, project.getName());
         assertNotNull("The project SDK should be set", ProjectRootManager.getInstance(project).getProjectSdk());
         assertEquals("The project SDK Name should be the same than the Mocked SDK",
                 ProjectRootManager.getInstance(project).getProjectSdk().getName(),

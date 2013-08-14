@@ -33,6 +33,7 @@ import javax.swing.event.HyperlinkEvent;
 public class NotificationUtils
 {
     public static final String RANDORI = "Randori";
+    public static final String COMPILER = "Compiler";
 
     public static void sendRandoriInformation(String title, String message,
             final Project project)
@@ -55,21 +56,28 @@ public class NotificationUtils
     }
 
     public static void sendRandoriNotification(String title, String message,
-            final Project project, NotificationType notificationType)
+                                               final Project project, NotificationType notificationType)
     {
-        final Notification notification = new Notification(RANDORI, title,
+        sendRandoriNotification(RANDORI, title, message, project, notificationType);
+
+    }
+
+    public static void sendRandoriNotification(String groupDisplayId, String title, String message,
+                                               final Project project, NotificationType notificationType)
+    {
+        final Notification notification = new Notification(groupDisplayId, title,
                 message, notificationType, new NotificationListener() {
-                    @Override
-                    public void hyperlinkUpdate(
-                            @NotNull Notification notification,
-                            @NotNull HyperlinkEvent event)
-                    {
-                        if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED)
-                        {
-                            openAssociatedWindow(event, project);
-                        }
-                    }
-                });
+            @Override
+            public void hyperlinkUpdate(
+                    @NotNull Notification notification,
+                    @NotNull HyperlinkEvent event)
+            {
+                if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED)
+                {
+                    openAssociatedWindow(event, project);
+                }
+            }
+        });
         notification.hideBalloon();
         Notifications.Bus.notify(notification, project);
     }

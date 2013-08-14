@@ -41,6 +41,7 @@ public class RandoriCompilerConfigurable implements SearchableConfigurable, Conf
     private JTextField basePath;
     private JTextField libraryPath;
     private JCheckBox validateCSSClasses;
+    private JCheckBox showDebugInfo;
 
     public RandoriCompilerConfigurable (Project project) {
         model = RandoriCompilerModel.getInstance(project);
@@ -54,7 +55,10 @@ public class RandoriCompilerConfigurable implements SearchableConfigurable, Conf
 
     @Override
     public boolean isModified() {
-        return !Comparing.equal(model.isMakeOnSave(), makeOnSave.isSelected()) || isModified(basePath, model.getBasePath()) || isModified(libraryPath, model.getLibraryPath())
+        return !Comparing.equal(model.isShowDebugInfo(), showDebugInfo.isSelected())
+                || !Comparing.equal(model.isMakeOnSave(), makeOnSave.isSelected())
+                || isModified(basePath, model.getBasePath())
+                || isModified(libraryPath, model.getLibraryPath())
                 || validateCSSClasses.isSelected() != model.isValidateCSSClasses();
     }
 
@@ -69,6 +73,7 @@ public class RandoriCompilerConfigurable implements SearchableConfigurable, Conf
         model.setBasePath(basePath.getText());
         model.setLibraryPath(libraryPath.getText());
         model.setValidateCSSClasses(validateCSSClasses.isSelected());
+        model.setShowDebugInfo(showDebugInfo.isSelected());
     }
 
     @Override
@@ -77,6 +82,7 @@ public class RandoriCompilerConfigurable implements SearchableConfigurable, Conf
         basePath.setText(model.getBasePath());
         libraryPath.setText(model.getLibraryPath());
         validateCSSClasses.setSelected(model.isValidateCSSClasses());
+        showDebugInfo.setSelected(model.isShowDebugInfo());
     }
 
     @Override

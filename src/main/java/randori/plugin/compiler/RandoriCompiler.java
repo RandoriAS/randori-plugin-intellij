@@ -40,6 +40,7 @@ import randori.plugin.components.RandoriModuleComponent;
 import randori.plugin.components.RandoriProjectComponent;
 import randori.plugin.configuration.RandoriCompilerModel;
 import randori.plugin.module.RandoriWebModuleType;
+import randori.plugin.util.LogUtils;
 import randori.plugin.util.ProjectUtils;
 
 import java.io.File;
@@ -174,7 +175,7 @@ class RandoriCompiler implements TranslatingCompiler {
             List<String> dirPaths = new ArrayList<String>();
             for (File outPutDir : outPutDirs) dirPaths.add(outPutDir.getPath());
 
-            RandoriCompilerSession.dumpCompilationInfo(CompilerBundle.message("progress.clearing.output") + "\n" +
+            LogUtils.dumpCompilationInfo(LOG, project, CompilerBundle.message("progress.clearing.output") + "\n" +
                     StringUtils.join(dirPaths.toArray(new String[dirPaths.size()]), "\n"));
 
             CompilerUtil.runInContext(context, CompilerBundle.message("progress.clearing.output"),

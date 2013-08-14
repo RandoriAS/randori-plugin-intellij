@@ -39,6 +39,7 @@ public class RandoriCompilerModel implements PersistentStateComponent<RandoriCom
     public static final boolean makeProjectOnSaveEnabled = CORES_COUNT > 2;
 
     private boolean makeOnSave;
+    private boolean showDebugInfo;
 
     @NotNull
     public static RandoriCompilerModel getInstance(Project project)
@@ -51,6 +52,9 @@ public class RandoriCompilerModel implements PersistentStateComponent<RandoriCom
         makeOnSave = true;
     }
 
+    //----------------------------------
+    // makeOnSave
+    //----------------------------------
     public boolean isMakeOnSave()
     {
         return makeOnSave && makeProjectOnSaveEnabled;
@@ -60,6 +64,18 @@ public class RandoriCompilerModel implements PersistentStateComponent<RandoriCom
     {
         this.makeOnSave = makeOnSave;
     }
+
+    //----------------------------------
+    // showDebugInfo
+    //----------------------------------
+    public boolean isShowDebugInfo() {
+        return showDebugInfo;
+    }
+
+    public void setShowDebugInfo(boolean showDebugInfo) {
+        this.showDebugInfo = showDebugInfo;
+    }
+
     //----------------------------------
     // webRoot
     //----------------------------------
