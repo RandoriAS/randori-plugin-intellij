@@ -49,14 +49,12 @@ public class RandoriCompilerConfigurable implements SearchableConfigurable, Conf
     @Nullable
     @Override
     public JComponent createComponent() {
-        makeOnSave.setEnabled(RandoriCompilerModel.makeProjectOnSaveEnabled);
         return myMainPanel;
     }
 
     @Override
     public boolean isModified() {
         return !Comparing.equal(model.isShowDebugInfo(), showDebugInfo.isSelected())
-                || !Comparing.equal(model.isMakeOnSave(), makeOnSave.isSelected())
                 || isModified(basePath, model.getBasePath())
                 || isModified(libraryPath, model.getLibraryPath())
                 || validateCSSClasses.isSelected() != model.isValidateCSSClasses();
@@ -69,7 +67,6 @@ public class RandoriCompilerConfigurable implements SearchableConfigurable, Conf
 
     @Override
     public void apply() throws ConfigurationException {
-        model.setMakeOnSave(makeOnSave.isSelected());
         model.setBasePath(basePath.getText());
         model.setLibraryPath(libraryPath.getText());
         model.setValidateCSSClasses(validateCSSClasses.isSelected());
@@ -78,7 +75,6 @@ public class RandoriCompilerConfigurable implements SearchableConfigurable, Conf
 
     @Override
     public void reset() {
-        makeOnSave.setSelected(model.isMakeOnSave());
         basePath.setText(model.getBasePath());
         libraryPath.setText(model.getLibraryPath());
         validateCSSClasses.setSelected(model.isValidateCSSClasses());
