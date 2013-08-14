@@ -47,7 +47,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * @author Michael Schmalle•
+ * @author Michael Schmalle
  * @author Roland Zwaga
  * @author Frédéric THOMAS
  */
