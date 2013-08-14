@@ -74,6 +74,7 @@ public class RandoriModuleComponent implements ModuleComponent, Configurable,
         this.module = module;
         this.project = project;
         state = new RandoriModuleModel();
+        modifiedFiles = new ArrayList<VirtualFile>();
         webModulesParents = new ArrayList<Module>();
     }
 
@@ -101,7 +102,7 @@ public class RandoriModuleComponent implements ModuleComponent, Configurable,
 
     @Override
     public void projectOpened() {
-        modifiedFiles = new ArrayList<VirtualFile>();
+
     }
 
     @Override
@@ -172,11 +173,14 @@ public class RandoriModuleComponent implements ModuleComponent, Configurable,
     }
 
     public List<VirtualFile> getAllModifiedFiles() {
-        List<VirtualFile> allModifiedFiles = new ArrayList<VirtualFile>(modifiedFiles);
+        List<VirtualFile> allModifiedFiles = modifiedFiles != null ?
+                new ArrayList<VirtualFile>(modifiedFiles) :
+                new ArrayList<VirtualFile>();
 
         for (Module usedModule : getAllDependencies()) {
             RandoriModuleComponent usedModuleComponent = usedModule.getComponent(RandoriModuleComponent.class);
-            allModifiedFiles.addAll(usedModuleComponent.getModifiedFiles());
+            if (usedModuleComponent != null)
+                allModifiedFiles.addAll(usedModuleComponent.getModifiedFiles());
         }
 
         return allModifiedFiles;
@@ -241,12 +245,14 @@ public class RandoriModuleComponent implements ModuleComponent, Configurable,
 
         for (Module dependency : result) {
             RandoriModuleComponent moduleComponent = dependency.getComponent(RandoriModuleComponent.class);
-            List<Module> dependencies = moduleComponent.getDependencies();
-            if (!dependencies.isEmpty()) {
-                Module[] moduleDependencies = dependencies.toArray(new Module[dependencies.size()]);
-                result = (Module[]) ArrayUtils.addAll(result, moduleDependencies);
-                List<Module> recursivelyUsedModules = moduleComponent.getAllDependencies();
-                result = ArrayUtils.addAll(result, recursivelyUsedModules.toArray(new Module[recursivelyUsedModules.size()]));
+            if (moduleComponent != null) {
+                List<Module> dependencies = moduleComponent.getDependencies();
+                if (!dependencies.isEmpty()) {
+                    Module[] moduleDependencies = dependencies.toArray(new Module[dependencies.size()]);
+                    result = (Module[]) ArrayUtils.addAll(result, moduleDependencies);
+                    List<Module> recursivelyUsedModules = moduleComponent.getAllDependencies();
+                    result = ArrayUtils.addAll(result, recursivelyUsedModules.toArray(new Module[recursivelyUsedModules.size()]));
+                }
             }
         }
 
