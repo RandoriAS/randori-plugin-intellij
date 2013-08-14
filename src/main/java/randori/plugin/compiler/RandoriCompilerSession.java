@@ -272,7 +272,7 @@ public class RandoriCompilerSession {
             List<Library> libraries = moduleComponent.getLibraries();
 
             for (Library library : libraries) {
-                final VirtualFile[] classPaths = library.getFiles(OrderRootType.CLASSES);
+                final VirtualFile[] classPaths = library.getModifiableModel().getFiles(OrderRootType.CLASSES);
 
                 for (VirtualFile classPath : classPaths)
 

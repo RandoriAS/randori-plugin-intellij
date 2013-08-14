@@ -141,10 +141,14 @@ public class ProjectUtils {
 
     public static List<String> getAllModuleSourcePaths(Module module) {
         ArrayList<String> result = new ArrayList<String>();
-        VirtualFile[] sourceRoots = ModuleRootManager.getInstance(module).getSourceRoots();
+        final ModuleRootManager manager = ModuleRootManager.getInstance(module);
 
-        for (VirtualFile sourceRoot : sourceRoots) {
-            result.add(sourceRoot.getPath());
+        if (manager != null) {
+            VirtualFile[] sourceRoots = manager.getSourceRoots();
+
+            for (VirtualFile sourceRoot : sourceRoots) {
+                result.add(sourceRoot.getPath());
+            }
         }
 
         return result;

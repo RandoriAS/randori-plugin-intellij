@@ -16,22 +16,13 @@
 
 package randori.plugin.components;
 
-import com.intellij.analysis.AnalysisScopeBundle;
-import com.intellij.compiler.impl.ModuleCompileScope;
 import com.intellij.lang.javascript.ActionScriptFileType;
-import com.intellij.openapi.compiler.CompilerManager;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.*;
 import com.intellij.util.ui.UIUtil;
-import org.jetbrains.annotations.NotNull;
-import randori.plugin.configuration.RandoriCompilerModel;
 import randori.plugin.util.ProjectUtils;
 
 import java.util.List;
@@ -69,24 +60,9 @@ class FileChangeListener implements VirtualFileListener {
             if (remove && modifiedFiles.contains(file))
                 modifiedFiles.remove(file);
 
-            RandoriCompilerModel state = RandoriCompilerModel.getInstance(project).getState();
-
-            if (state != null && event.isFromSave() && state.isMakeOnSave())
-                executeMake(event);
-
         } else if (isBelongModule && moduleForFile.getModuleFile() != null && moduleForFile.getModuleFile().equals(file)) {
             updateDependenciesOnUIThread(moduleForFile);
         }
-    }
-
-    private void executeMake(final VirtualFileEvent event) {
-        ProgressManager.getInstance()
-                .run(new Task.Backgroundable(project, AnalysisScopeBundle.message("analyzing.project", new Object[0]),
-                        true) {
-                    public void run(@NotNull ProgressIndicator indicator) {
-                        FileChangeListener.this.executeMakeInUIThread(event);
-                    }
-                });
     }
 
     private void updateDependenciesOnUIThread(final Module module) {
@@ -96,30 +72,6 @@ class FileChangeListener implements VirtualFileListener {
                 public void run() {
                     final RandoriModuleComponent moduleComponent = module.getComponent(RandoriModuleComponent.class);
                     moduleComponent.updateDependencies();
-                }
-            });
-        }
-    }
-
-    private void executeMakeInUIThread(final VirtualFileEvent event) {
-        if ((project.isInitialized()) && (!project.isDisposed()) && (project.isOpen()) && (!project.isDefault())) {
-            final ModuleManager moduleManager = ModuleManager.getInstance(project);
-            final CompilerManager compilerManager = CompilerManager.getInstance(project);
-
-            UIUtil.invokeAndWaitIfNeeded(new Runnable() {
-                public void run() {
-                    final Module module = ModuleUtilCore.findModuleForFile(event.getFile(), project);
-                    List<Module> webModulesParents = null;
-
-                    if (module != null) {
-                        webModulesParents = module.getComponent(RandoriModuleComponent.class).getWebModulesParents();
-
-                        for (Module webModulesParent : webModulesParents) {
-                            boolean upToDate = compilerManager.isUpToDate(new ModuleCompileScope(webModulesParent, true));
-                            if ((!compilerManager.isCompilationActive()) && (!upToDate))
-                                compilerManager.make(project, moduleManager.getModules(), null);
-                        }
-                    }
                 }
             });
         }
