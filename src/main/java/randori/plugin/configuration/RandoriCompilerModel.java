@@ -35,34 +35,12 @@ public class RandoriCompilerModel implements PersistentStateComponent<RandoriCom
 
     public static final String COMPONENT_NAME = "RandoriCompilerModel";
 
-    private static final int CORES_COUNT = Runtime.getRuntime().availableProcessors();
-    public static final boolean makeProjectOnSaveEnabled = CORES_COUNT > 2;
-
-    private boolean makeOnSave;
     private boolean showDebugInfo;
 
     @NotNull
     public static RandoriCompilerModel getInstance(Project project)
     {
         return ServiceManager.getService(project, RandoriCompilerModel.class);
-    }
-
-    public RandoriCompilerModel()
-    {
-        makeOnSave = true;
-    }
-
-    //----------------------------------
-    // makeOnSave
-    //----------------------------------
-    public boolean isMakeOnSave()
-    {
-        return makeOnSave && makeProjectOnSaveEnabled;
-    }
-
-    public void setMakeOnSave(boolean makeOnSave)
-    {
-        this.makeOnSave = makeOnSave;
     }
 
     //----------------------------------
